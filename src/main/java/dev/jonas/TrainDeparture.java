@@ -32,6 +32,36 @@ public class TrainDeparture {
   }
 
   /**
+   * Constructs a new {@code TrainDeparture} with the given parameters.
+   *
+   * @param departureTime  Scheduled time for departure of train.
+   * @param line Scheduled line of train
+   * @param destination End-destination of train.
+   * @param track Number of the departure-track.
+   * @param trainNumber Unique number for the {@code TrainDeparture}.
+   *
+   * @see #setDepartureTime(int[])
+   * @see #setLine(String)
+   * @see #setDestination(String)
+   * @see #setTrack(int)
+   * @see #setTrainNumber(int)
+   * @since 1.0.0
+   */
+  public TrainDeparture(
+      int[] departureTime,
+      String line,
+      String destination,
+      int track,
+      int trainNumber) {
+    setDepartureTime(departureTime);
+    setLine(line);
+    setDestination(destination);
+    setTrack(track);
+    setDelay(new int[]{0, 0});
+    setTrainNumber(trainNumber);
+  }
+
+  /**
    * Sets the departure time of the {@code TrainDeparture}.
    * Each {@code TrainDeparture} has two departure times,
    * one representing hours, and one representing minutes.
@@ -207,8 +237,7 @@ public class TrainDeparture {
             || getDepartureTime()[0] == 0
             || getDepartureTime()[1] == 0
             || getDestination().isEmpty()
-    )
-    {
+    ) {
       return "";
     }
 
