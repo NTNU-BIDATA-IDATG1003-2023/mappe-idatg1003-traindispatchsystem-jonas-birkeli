@@ -28,6 +28,7 @@ public class TrainDeparture {
     setDestination("");
     setTrack(-1);
     setDelay(new int[]{0, 0});
+    setTrainNumber(-1);
   }
 
   /**
