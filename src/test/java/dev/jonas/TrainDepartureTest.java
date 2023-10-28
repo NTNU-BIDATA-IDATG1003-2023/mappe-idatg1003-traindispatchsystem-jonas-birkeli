@@ -2,6 +2,14 @@ package dev.jonas;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * The {@code TrainDepartureTest} class is a test class for {@code TrainDeparture}.
+ * It tests all methods in {@code TrainDeparture}.
+ *
+ * @see TrainDeparture
+ * @version 1.0.0
+ * @since 1.0.0
+ */
 class TrainDepartureTest {
   TrainDeparture trainDeparture;
 
