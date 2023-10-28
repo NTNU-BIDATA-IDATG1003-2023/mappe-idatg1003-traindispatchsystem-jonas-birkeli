@@ -196,20 +196,21 @@ public class TrainDeparture {
    * @since 1.0.0
    */
   public String getDetails() {
+    // Using StringBuilder for efficiency and readability
     StringBuilder objectInfomation;
     objectInfomation = new StringBuilder();
 
-
+    // Appending details of the train departure to StringBuilder
     objectInfomation
-        .append(getLine())
-        .append(" ")
-        .append(getTrack())
-        .append(" ")
         .append(getDepartureTime()[0])
         .append(":")
         .append(getDepartureTime()[1])
         .append(" ")
-        .append(getDestination());
+        .append(getLine())
+        .append(" ")
+        .append(getDestination())
+        .append(" ")
+        .append(getTrack());
 
     return objectInfomation.toString();
   }
