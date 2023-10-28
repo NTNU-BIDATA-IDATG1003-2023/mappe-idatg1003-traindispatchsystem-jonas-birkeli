@@ -188,6 +188,9 @@ public class TrainDeparture {
   /**
    * Returns a string representation of the {@code TrainDeparture}.
    * Similar to what you see at an actual train station.
+   * Departure time includes any set delay.
+   * If some values are not set, they return string will be empty.
+   * Includes newline at the end if all values are set.
    *
    * @see #getLine()
    * @see #getTrack()
@@ -197,21 +200,34 @@ public class TrainDeparture {
    * @since 1.0.0
    */
   public String getDetails() {
+    // If some values are not set, return empty string
+    if (
+        getLine().isEmpty()
+            || getTrack() == -1
+            || getDepartureTime()[0] == 0
+            || getDepartureTime()[1] == 0
+            || getDestination().isEmpty()
+    )
+    {
+      return "";
+    }
+
     // Using StringBuilder for efficiency and readability
     StringBuilder objectInfomation;
     objectInfomation = new StringBuilder();
 
     // Appending details of the train departure to StringBuilder
     objectInfomation
-        .append(getDepartureTime()[0])
+        .append(getDepartureTime()[0] + getDelay()[0])
         .append(":")
-        .append(getDepartureTime()[1])
+        .append(getDepartureTime()[1] + getDelay()[1])
         .append(" ")
         .append(getLine())
         .append(" ")
         .append(getDestination())
         .append(" ")
-        .append(getTrack());
+        .append(getTrack())
+        .append("\n");
 
     return objectInfomation.toString();
   }
