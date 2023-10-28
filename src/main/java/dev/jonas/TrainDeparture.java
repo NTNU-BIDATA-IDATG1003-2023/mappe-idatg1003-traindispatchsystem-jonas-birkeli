@@ -218,6 +218,7 @@ public class TrainDeparture {
   /**
    * Returns a string representation of the {@code TrainDeparture}.
    * Similar to what you see at an actual train station.
+   * Format is always the same length with whitespaces appended to the destination field.
    * Departure time includes any set delay.
    * If some values are not set, they return string will be empty.
    * Includes newline at the end if all values are set.
@@ -241,6 +242,16 @@ public class TrainDeparture {
       return "";
     }
 
+    // Reversing the input
+    StringBuilder inputReversed = new StringBuilder();
+    inputReversed.append(getDestination());
+    inputReversed.reverse();
+
+    String whitespacesReversed = String.format("%1$17s", inputReversed);
+    // Catting the leading whitespaces to reversed destination
+    StringBuilder destination = new StringBuilder(whitespacesReversed);
+    destination.reverse();
+
     // Using StringBuilder for efficiency and readability
     StringBuilder objectInfomation;
     objectInfomation = new StringBuilder();
@@ -253,7 +264,7 @@ public class TrainDeparture {
         .append(" ")
         .append(getLine())
         .append(" ")
-        .append(getDestination())
+        .append(destination)
         .append(" ")
         .append(getTrack())
         .append("\n");
