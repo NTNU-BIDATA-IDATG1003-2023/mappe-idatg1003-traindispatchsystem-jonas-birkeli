@@ -155,13 +155,14 @@ public class DispatchApp {
       // If choice is valid, the loop is broken
       validChoice = true;
     }
-    this.state = choice;  // Change state of program to corresponding user input
+    state = choice;  // Change state of program to corresponding user input
   }
 
   /**
    * Displays all train departures.
    * If some info from one departure is missing, it will not be displayed.
-   * If departure time is earlier than current time, it will not be displayed.  TODO: Implement this
+   * If departure time is earlier than current time, it will not be displayed.
+   *
    * <p>
    *   The departures are displayed in the following format:
    *   <ul>
@@ -188,11 +189,20 @@ public class DispatchApp {
 
     System.out.println(header);
 
-    // TODO: Implement streams to filter departures earlier than current time
-    for (TrainDeparture departure : departures) {
-      System.out.print(departure.getDetails());
-    }
-    this.state = STATE_MAIN_MENU;
+    departures
+        .stream()
+        .filter(
+            d -> d.getDepartureTime()[0] >= currentTime[0]
+                && d.getDepartureTime()[1] >= currentTime[1]
+        )  // Filter out departures earlier than current time with same hour
+        .map(TrainDeparture::getDetails)
+        .forEach(
+            System.out::print  // Newline is included in getDetails()
+        );
+
+    System.out.println("\n");
+
+    state = STATE_MAIN_MENU;
     // TODO: Implement method to exit when user presses enter
   }
 
@@ -223,28 +233,24 @@ public class DispatchApp {
       for (int i = 0; i < fields.length; i++) {
         values[i] = getValidStringInput(fields[i] + ": ");
       }
-      try {
-        // Try to parse user input to correct data types
-        int[] departureTime = new int[]{Integer.parseInt(values[0]), Integer.parseInt(values[1])};
-        String line = values[2];
-        String destination = values[3];
-        int track = Integer.parseInt(values[4]);
-        int trainNumber = Integer.parseInt(values[5]);
+      // Try to parse user input to correct data types
+      int[] departureTime = new int[]{Integer.parseInt(values[0]), Integer.parseInt(values[1])};
+      String line = values[2];
+      String destination = values[3];
+      int track = Integer.parseInt(values[4]);
+      int trainNumber = Integer.parseInt(values[5]);
 
-        // Create new TrainDeparture object with user input
-        TrainDeparture trainDeparture = new TrainDeparture(
-            departureTime, line, destination, track, trainNumber
-        );
-        departures.add(trainDeparture); // Add departure to list of departures
+      // Create new TrainDeparture object with user input
+      TrainDeparture trainDeparture = new TrainDeparture(
+          departureTime, line, destination, track, trainNumber
+      );
+      departures.add(trainDeparture); // Add departure to list of departures
 
-        // If no exception is thrown, the input is valid.
-        validInput = true;
-      } catch (NumberFormatException | NoSuchElementException | IllegalStateException e) {
-        System.out.println("Invalid input. Please try again.");
-      }
+      // If no exception is thrown, the input is valid.
+      validInput = true;
     }
     // Change state of program to main menu
-    this.state = STATE_MAIN_MENU;
+    state = STATE_MAIN_MENU;
   }
 
   /**
@@ -254,10 +260,12 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void assignTrackToTrainDeparture() {
+    state = STATE_MAIN_MENU;
+    // Change state of program to main menu before code in case of early return
+
     if (selectedDeparture == null) {
       // If no departure is selected, the method returns early
       System.out.println("No train departure selected. Please try again.");
-      this.state = STATE_MAIN_MENU;
       return;
     }
 
@@ -268,8 +276,6 @@ public class DispatchApp {
 
     selectedDeparture.setTrack(track);
     // Updates track of selected departure
-
-    this.state = STATE_MAIN_MENU;
   }
 
   /**
@@ -279,23 +285,24 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void assignDelayToTrainDeparture() {
-    if (this.selectedDeparture == null) {
+    state = STATE_MAIN_MENU;
+    // Change state of program to main menu before code in case of early return
+
+    if (selectedDeparture == null) {
       // If no departure is selected, the method returns early
       System.out.println("No train departure selected. Please try again.");
-      this.state = STATE_MAIN_MENU;
+
       return;
     }
 
     System.out.println("Assign delay to train departure");
-    System.out.println(this.selectedDeparture.getDetails()); // Prints details of selected departure
+    System.out.println(selectedDeparture.getDetails()); // Prints details of selected departure
 
     int delayHour = getValidIntInput("Enter delay hour: ");
     int delayMinute = getValidIntInput("Enter delay minute: ");
 
-    this.selectedDeparture.setDelay(new int[]{delayHour, delayMinute});
+    selectedDeparture.setDelay(new int[]{delayHour, delayMinute});
     // Updates delay of departure
-
-    this.state = STATE_MAIN_MENU;
   }
 
   /**
@@ -308,19 +315,23 @@ public class DispatchApp {
   private void searchTrainDepartureByNumber() {
     System.out.println("Search train departure by number");
     int trainNumber = getValidIntInput("Enter train number: ");
-    for (TrainDeparture departure : this.departures) {  // TODO: Implement streams
-      if (departure.getTrainNumber() == trainNumber) {
-        this.selectedDeparture = departure;
-        System.out.println("Train departure found:");
-        System.out.println(selectedDeparture.getDetails());
-        this.state = STATE_MAIN_MENU;
-        return;
-      }
-    }
-    System.out.println(
-        "No train departure found with train number " + trainNumber + ". Please try again."
-    );
-    this.state = STATE_MAIN_MENU;
+    departures
+        .stream()
+        .filter(d -> d.getTrainNumber() == trainNumber)
+        .findFirst()
+        .ifPresentOrElse(
+            d -> {
+              selectedDeparture = d;
+              System.out.println("Train departure found:");
+              System.out.println(selectedDeparture.getDetails());
+            },
+            () -> System.out.println(
+                "No train departure found with train number " + trainNumber + ". Please try again."
+            )
+        );
+
+    state = STATE_MAIN_MENU;
+    // TODO: Implement method to exit when user presses enter
   }
 
   /**
@@ -333,19 +344,22 @@ public class DispatchApp {
   private void searchTrainDepartureByDestination() {
     System.out.println("Search train departure by destination");
     String destination = getValidStringInput("Enter destination: ");
-    for (TrainDeparture departure : this.departures) {  // TODO: Implement streams
-      if (departure.getDestination().equals(destination)) {
-        this.selectedDeparture = departure;  // Update selected departure
-        System.out.println("Train departure found:");
-        System.out.println(selectedDeparture.getDetails());
-        this.state = STATE_MAIN_MENU;
-        return;
-      }
-    }
-    System.out.println(
-        "No train departure found with destination " + destination + ". Please try again."
-    );
-    this.state = STATE_MAIN_MENU;
+
+    departures
+        .stream()
+        .filter(d -> d.getDestination().equals(destination))
+        .findFirst()
+        .ifPresentOrElse(
+            d -> {
+              selectedDeparture = d;
+              System.out.println("Train departure found:");
+              System.out.println(selectedDeparture.getDetails());
+            },
+            () -> System.out.println(
+                "No train departure found with destination " + destination + ". Please try again."
+            )
+        );
+    state = STATE_MAIN_MENU;
   }
 
   /**
@@ -357,8 +371,8 @@ public class DispatchApp {
     System.out.println("Change time of program.");
     int hour = getValidIntInput("Enter hour: ");
     int minute = getValidIntInput("Enter minute: ");
-    this.currentTime = new int[]{hour, minute};
-    this.state = STATE_MAIN_MENU;
+    currentTime = new int[]{hour, minute};
+    state = STATE_MAIN_MENU;
   }
 
   /**
@@ -368,8 +382,8 @@ public class DispatchApp {
    */
   private void exitApplication() {
     System.out.println("Exiting application...");
-    this.state = STATE_MAIN_MENU;
-    this.running = false;
+    state = STATE_MAIN_MENU;
+    running = false;
   }
 
   /**
