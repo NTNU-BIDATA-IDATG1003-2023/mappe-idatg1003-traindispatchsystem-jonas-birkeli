@@ -197,7 +197,14 @@ public class DispatchApp {
    * @see TrainDeparture
    */
   private void addTrainDeparture() {
-    String[] fields = {"Departure hour", "Departure minute", "Line", "Destination", "Track", "Train number"};
+    String[] fields = {
+        "Departure hour",
+        "Departure minute",
+        "Line",
+        "Destination",
+        "Track",
+        "Train number"
+    };
     String[] values = new String[fields.length];
     boolean validInput = false;
 
@@ -215,7 +222,9 @@ public class DispatchApp {
         String destination = values[3];
         int track = Integer.parseInt(values[4]);
         int trainNumber = Integer.parseInt(values[5]);
-        TrainDeparture trainDeparture = new TrainDeparture(departureTime, line, destination, track, trainNumber);
+        TrainDeparture trainDeparture = new TrainDeparture(
+            departureTime, line, destination, track, trainNumber
+        );
         departures.add(trainDeparture);
 
         // If no exception is thrown, the input is valid.
@@ -267,7 +276,9 @@ public class DispatchApp {
     System.out.println(this.selectedDeparture.getDetails());
     System.out.println("Enter delay in the format {HH, mm}: ");
     String[] delay = scanner.nextLine().split(", ");
-    this.selectedDeparture.setDelay(new int[]{Integer.parseInt(delay[0]), Integer.parseInt(delay[1])});
+    this.selectedDeparture.setDelay(
+        new int[]{Integer.parseInt(delay[0]), Integer.parseInt(delay[1])}
+    );
 
     this.state = STATE_MAIN_MENU;
   }
@@ -291,13 +302,16 @@ public class DispatchApp {
         return;
       }
     }
-    System.out.println("No train departure found with train number " + trainNumber + ". Please try again.");
+    System.out.println(
+        "No train departure found with train number " + trainNumber + ". Please try again."
+    );
     this.state = STATE_MAIN_MENU;
   }
 
   /**
    * Searches for a {@code TrainDeparture} by destination.
-   * If no {@code TrainDeparture} is found, the method returns early.
+   * If no {@code TrainDeparture} is found, an error message is displayed,
+   * and selected departure is not changed
    *
    * @since 1.0.0
    */
@@ -314,7 +328,9 @@ public class DispatchApp {
         return;
       }
     }
-    System.out.println("No train departure found with destination " + destination + ". Please try again.");
+    System.out.println(
+        "No train departure found with destination " + destination + ". Please try again."
+    );
     this.state = STATE_MAIN_MENU;
   }
 
