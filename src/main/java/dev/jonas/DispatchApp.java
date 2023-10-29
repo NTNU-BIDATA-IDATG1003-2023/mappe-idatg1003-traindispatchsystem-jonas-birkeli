@@ -10,7 +10,7 @@ import java.util.Scanner;
  * and runs continuously until the user chooses to exit the program.
  *
  * @author Jonas Birkeli
- * @version 1.0.0
+ * @version 1.1.0
  * @since 1.0.0
  */
 public class DispatchApp {
@@ -33,6 +33,16 @@ public class DispatchApp {
   private static final int STATE_CHANGE_TIME = 7;
   private static final int STATE_EXIT = 8;
 
+  /**
+   * Starts the {@code DispatchApp} and runs it
+   * continuously until the user chooses to exit the program.
+   * The program starts in the main menu.
+   *
+   * @param args Command line arguments (Not used)
+   * @since 1.0.0
+   * @see #start()
+   * @see #mainMenu()
+   */
   public static void main(String[] args) {
     DispatchApp dispatchApp = new DispatchApp();
     dispatchApp.start();
@@ -135,18 +145,15 @@ public class DispatchApp {
     while (!validChoice) {
       System.out.println(message);
 
-      try {
-        choice = Integer.parseInt(scanner.nextLine());
-        if (choice < 1 || choice > 8) {
-          System.out.println("Choice must be between 1 and 8. Please try again.");
-          continue;
-        }
-        // If no exception is thrown and choice is between 1 and 8,
-        // the choice is valid.
-        validChoice = true;
-      } catch (NumberFormatException | NoSuchElementException | IllegalStateException e) {
-        System.out.println("Invalid choice. Please try again.");
+      choice = getValidIntInput("Enter choice: ");
+      // Any expeption in {@link #getValidIntInput(String)} is caught, no need to try catch block.
+
+      if (choice < 1 || choice > 8) {
+        System.out.println("Choice must be between 1 and 8. Please try again.");
+        continue;
       }
+      // If choice is valid, the loop is broken
+      validChoice = true;
     }
     this.state = choice;  // Change state of program to corresponding user input
   }
@@ -168,14 +175,16 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void viewTrainDepartures() {
+    String currentTimeString = String.format("%02d:%02d", currentTime[0], currentTime[1]);
     // Format of which departures are displayed:
     StringBuilder header;
     header = new StringBuilder();
     header
         .append("AVGANGER Departures")
+        .append("        ")
+        .append("SPOR Track")
         .append(" - ")
-        .append("SPOT Track")
-        .append("\n");
+        .append(currentTimeString);
 
     System.out.println(header);
 
@@ -212,8 +221,7 @@ public class DispatchApp {
       // Continuously ask for user input until a valid choice is made
       // Stores user input in values array
       for (int i = 0; i < fields.length; i++) {
-        System.out.println(fields[i] + ": ");
-        values[i] = scanner.nextLine();
+        values[i] = getValidStringInput(fields[i] + ": ");
       }
       try {
         // Try to parse user input to correct data types
@@ -222,10 +230,12 @@ public class DispatchApp {
         String destination = values[3];
         int track = Integer.parseInt(values[4]);
         int trainNumber = Integer.parseInt(values[5]);
+
+        // Create new TrainDeparture object with user input
         TrainDeparture trainDeparture = new TrainDeparture(
             departureTime, line, destination, track, trainNumber
         );
-        departures.add(trainDeparture);
+        departures.add(trainDeparture); // Add departure to list of departures
 
         // If no exception is thrown, the input is valid.
         validInput = true;
@@ -245,6 +255,7 @@ public class DispatchApp {
    */
   private void assignTrackToTrainDeparture() {
     if (selectedDeparture == null) {
+      // If no departure is selected, the method returns early
       System.out.println("No train departure selected. Please try again.");
       this.state = STATE_MAIN_MENU;
       return;
@@ -252,9 +263,11 @@ public class DispatchApp {
 
     System.out.println("Assign track to train departure");
     System.out.println(selectedDeparture.getDetails());
-    System.out.println("Enter track number: ");
-    int track = Integer.parseInt(scanner.nextLine());
+
+    int track = getValidIntInput("Enter track number: ");
+
     selectedDeparture.setTrack(track);
+    // Updates track of selected departure
 
     this.state = STATE_MAIN_MENU;
   }
@@ -267,32 +280,34 @@ public class DispatchApp {
    */
   private void assignDelayToTrainDeparture() {
     if (this.selectedDeparture == null) {
+      // If no departure is selected, the method returns early
       System.out.println("No train departure selected. Please try again.");
       this.state = STATE_MAIN_MENU;
       return;
     }
 
     System.out.println("Assign delay to train departure");
-    System.out.println(this.selectedDeparture.getDetails());
-    System.out.println("Enter delay in the format {HH, mm}: ");
-    String[] delay = scanner.nextLine().split(", ");
-    this.selectedDeparture.setDelay(
-        new int[]{Integer.parseInt(delay[0]), Integer.parseInt(delay[1])}
-    );
+    System.out.println(this.selectedDeparture.getDetails()); // Prints details of selected departure
+
+    int delayHour = getValidIntInput("Enter delay hour: ");
+    int delayMinute = getValidIntInput("Enter delay minute: ");
+
+    this.selectedDeparture.setDelay(new int[]{delayHour, delayMinute});
+    // Updates delay of departure
 
     this.state = STATE_MAIN_MENU;
   }
 
   /**
    * Searches for a {@code TrainDeparture} by train number.
-   * If no {@code TrainDeparture} is found, the method returns early.
+   * If no {@code TrainDeparture} is found, an error message is displayed,
+   * and selected departure is not changed
    *
    * @since 1.0.0
    */
   private void searchTrainDepartureByNumber() {
     System.out.println("Search train departure by number");
-    System.out.println("Enter train number: ");
-    int trainNumber = Integer.parseInt(scanner.nextLine());
+    int trainNumber = getValidIntInput("Enter train number: ");
     for (TrainDeparture departure : this.departures) {  // TODO: Implement streams
       if (departure.getTrainNumber() == trainNumber) {
         this.selectedDeparture = departure;
@@ -317,8 +332,7 @@ public class DispatchApp {
    */
   private void searchTrainDepartureByDestination() {
     System.out.println("Search train departure by destination");
-    System.out.println("Enter destination: ");
-    String destination = scanner.nextLine();
+    String destination = getValidStringInput("Enter destination: ");
     for (TrainDeparture departure : this.departures) {  // TODO: Implement streams
       if (departure.getDestination().equals(destination)) {
         this.selectedDeparture = departure;  // Update selected departure
@@ -340,10 +354,10 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void changeTime() {
-    System.out.println("Change time");
-    System.out.println("Enter new time in the format {HH, mm}: ");
-    String[] time = scanner.nextLine().split(", ");
-    this.currentTime = new int[]{Integer.parseInt(time[0]), Integer.parseInt(time[1])};
+    System.out.println("Change time of program.");
+    int hour = getValidIntInput("Enter hour: ");
+    int minute = getValidIntInput("Enter minute: ");
+    this.currentTime = new int[]{hour, minute};
     this.state = STATE_MAIN_MENU;
   }
 
@@ -356,5 +370,73 @@ public class DispatchApp {
     System.out.println("Exiting application...");
     this.state = STATE_MAIN_MENU;
     this.running = false;
+  }
+
+  /**
+   * Waits for user input, and halts the program until user enters something.
+   *
+   * @since 1.1.0
+   */
+  private void waitForUserInput() {
+    System.out.println("Press enter to continue...");
+    scanner.nextLine();
+  }
+
+  /**
+   * Returns a valid input from the user.
+   * Continuously asks for user input until a valid input is given.
+   * If the input is not valid, an error message is displayed.
+   * If the input is valid, the input is returned.
+   *
+   * @param inputMessage Message to display before waiting for user input.
+   * @return The user input as a string.
+   * @since 1.1.0
+   */
+  private String getValidStringInput(String inputMessage) {
+    // Variables used in the method
+    boolean validInput = false;
+    String input = "";
+
+    while (!validInput) {
+      System.out.println(inputMessage);
+      // Tries to get user input, catches exceptions if input is invalid
+      try {
+        input = scanner.nextLine();
+        // If no exception is thrown, the input is valid.
+        validInput = true;
+      } catch (NumberFormatException | NoSuchElementException | IllegalStateException e) {
+        System.out.println("Invalid input. Please try again."); // Error message
+      }
+    }
+    return input;
+  }
+
+  /**
+   * Returns a valid input from the user.
+   * Continuously asks for user input until a valid input is given.
+   * If the input is not valid, an error message is displayed.
+   * If the input is valid, the input is returned.
+   *
+   * @param inputMessage Message to display before waiting for user input.
+   * @return The user input as an integer.
+   * @since 1.1.0
+   */
+  private int getValidIntInput(String inputMessage) {
+    // Variables used in the method
+    boolean validInput = false;
+    int input = 0;
+
+    while (!validInput) {
+      System.out.println(inputMessage);
+      // Tries to get user input, catches exceptions if input is invalid
+      try {
+        input = Integer.parseInt(scanner.nextLine());
+        // If no exception is thrown, the input is valid.
+        validInput = true;
+      } catch (NumberFormatException | NoSuchElementException | IllegalStateException e) {
+        System.out.println("Invalid input. Please try again."); // Error message
+      }
+    }
+    return input;
   }
 }
