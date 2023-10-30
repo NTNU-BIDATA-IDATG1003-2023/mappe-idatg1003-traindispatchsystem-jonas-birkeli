@@ -10,7 +10,7 @@ import java.util.Scanner;
  * and runs continuously until the user chooses to exit the program.
  *
  * @author Jonas Birkeli
- * @version 1.1.0
+ * @version 1.2.0
  * @since 1.0.0
  */
 public class DispatchApp {
@@ -125,6 +125,8 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void mainMenu() {
+    clearScreen();
+
     int choice = 0;
     boolean validChoice = false;
 
@@ -176,6 +178,8 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void viewTrainDepartures() {
+    clearScreen();
+
     String currentTimeString = String.format("%02d:%02d", currentTime[0], currentTime[1]);
     // Format of which departures are displayed:
     StringBuilder header;
@@ -203,7 +207,7 @@ public class DispatchApp {
     System.out.println("\n");
 
     state = STATE_MAIN_MENU;
-    // TODO: Implement method to exit when user presses enter
+    waitForUserInput();
   }
 
   /**
@@ -216,6 +220,9 @@ public class DispatchApp {
    * @see TrainDeparture
    */
   private void addTrainDeparture() {
+    clearScreen();
+    System.out.println("Add train departure");
+
     String[] fields = {
         "Departure hour",
         "Departure minute",
@@ -260,6 +267,8 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void assignTrackToTrainDeparture() {
+    clearScreen();
+
     state = STATE_MAIN_MENU;
     // Change state of program to main menu before code in case of early return
 
@@ -285,6 +294,8 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void assignDelayToTrainDeparture() {
+    clearScreen();
+
     state = STATE_MAIN_MENU;
     // Change state of program to main menu before code in case of early return
 
@@ -313,6 +324,7 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void searchTrainDepartureByNumber() {
+    clearScreen();
     System.out.println("Search train departure by number");
     int trainNumber = getValidIntInput("Enter train number: ");
     departures
@@ -331,7 +343,7 @@ public class DispatchApp {
         );
 
     state = STATE_MAIN_MENU;
-    // TODO: Implement method to exit when user presses enter
+    waitForUserInput();
   }
 
   /**
@@ -342,6 +354,7 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void searchTrainDepartureByDestination() {
+    clearScreen();
     System.out.println("Search train departure by destination");
     String destination = getValidStringInput("Enter destination: ");
 
@@ -368,6 +381,7 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void changeTime() {
+    clearScreen();
     System.out.println("Change time of program.");
     int hour = getValidIntInput("Enter hour: ");
     int minute = getValidIntInput("Enter minute: ");
@@ -452,5 +466,29 @@ public class DispatchApp {
       }
     }
     return input;
+  }
+
+  /**
+   * Clears the screen.
+   * <p>
+   *   This method uses ANSI escape codes to clear the screen.
+   *   This method is not supported on all operating systems.
+   *   If the method is not supported, the screen is not cleared.
+   *   <br>
+   *   <a href="https://stackoverflow.com/a/29752985">Source</a>
+   *   <br>
+   *   <a href="https://en.wikipedia.org/wiki/ANSI_escape_code">ANSI escape codes</a>
+   *   <br>
+   *   <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_sequences">CSI sequences</a>
+   *   <br>
+   *   <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#Escape_sequences">Escape sequences</a>
+   *   <br>
+   *
+   * </p>
+   * @since 1.2.0
+   */
+  private void clearScreen() {
+    System.out.print("\033[H\033[2J");
+    System.out.flush();
   }
 }

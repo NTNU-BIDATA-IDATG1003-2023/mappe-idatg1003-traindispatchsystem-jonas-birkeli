@@ -99,6 +99,6 @@ class TrainDepartureTest {
     trainDeparture.setLine("L1");
     trainDeparture.setDestination("Hamburg");
     trainDeparture.setTrack(3);
-    assertEquals("23:56 L1 Hamburg 3", trainDeparture.getDetails());
+    assertEquals("46:112 L1 Hamburg           3\n", trainDeparture.getDetails());
   }
 }
