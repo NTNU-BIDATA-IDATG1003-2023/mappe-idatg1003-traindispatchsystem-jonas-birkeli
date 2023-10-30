@@ -252,15 +252,15 @@ public class TrainDeparture {
     StringBuilder destination = new StringBuilder(whitespacesReversed);
     destination.reverse();
 
+    String departureTime = String.format("%02d:%02d", getDepartureTime()[0], getDepartureTime()[1]);
+
     // Using StringBuilder for efficiency and readability
     StringBuilder objectInfomation;
     objectInfomation = new StringBuilder();
 
     // Appending details of the train departure to StringBuilder
     objectInfomation
-        .append(getDepartureTime()[0] + getDelay()[0])
-        .append(":")
-        .append(getDepartureTime()[1] + getDelay()[1])
+        .append(departureTime)
         .append(" ")
         .append(getLine())
         .append(" ")

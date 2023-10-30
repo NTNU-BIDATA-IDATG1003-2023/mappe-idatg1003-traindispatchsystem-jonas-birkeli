@@ -1,6 +1,7 @@
 package dev.jonas;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -77,9 +78,9 @@ public class DispatchApp {
     currentTime = new int[]{0, 0};
     scanner = new Scanner(System.in);
 
-    TrainDeparture dep1 = new TrainDeparture(new int[]{23, 56}, "L1", "Hamburg", 2, 1);
+    TrainDeparture dep1 = new TrainDeparture(new int[]{13, 56}, "L1", "Hamburg", 2, 1);
     TrainDeparture dep2 = new TrainDeparture(new int[]{23, 57}, "L2", "Hamburg", 4, 2);
-    TrainDeparture dep3 = new TrainDeparture(new int[]{23, 58}, "L3", "Hamburg", 1, 3);
+    TrainDeparture dep3 = new TrainDeparture(new int[]{3, 58}, "L3", "Hamburg", 1, 3);
 
     departures.add(dep1);
     departures.add(dep2);
@@ -193,6 +194,16 @@ public class DispatchApp {
 
     System.out.println(header);
 
+    departures
+        .sort(
+            (o1, o2) -> {
+              // Sorts departures by departure time
+              if (o1.getDepartureTime()[0] == o2.getDepartureTime()[0]) {
+                return Integer.compare(o1.getDepartureTime()[1], o2.getDepartureTime()[1]);
+              }
+              return Integer.compare(o1.getDepartureTime()[0], o2.getDepartureTime()[0]);
+            }
+        );
     departures
         .stream()
         .filter(
