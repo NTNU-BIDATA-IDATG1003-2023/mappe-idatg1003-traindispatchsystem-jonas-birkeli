@@ -98,8 +98,8 @@ public class DispatchApp {
     // Uses a switch statement to determine which method to run,
     // based on the current state of the program
     while (running) {
+      mainMenu();
       switch (state) {
-        case STATE_MAIN_MENU -> mainMenu();
         case STATE_VIEW_DEPARTURES -> viewTrainDepartures();
         case STATE_ADD_DEPARTURE -> addTrainDeparture();
         case STATE_ASSIGN_TRACK -> assignTrackToTrainDeparture();
@@ -224,7 +224,6 @@ public class DispatchApp {
     System.out.println("\n");
 
     // Back to main menu when user presses enter
-    state = STATE_MAIN_MENU;
     waitForUserInput();
   }
 
@@ -301,9 +300,6 @@ public class DispatchApp {
 
     // Add new TrainDeparture object to collection of departures
     departuresMap.put(trainNumber, trainDeparture);
-
-    // Change state of program to main menu
-    state = STATE_MAIN_MENU;
   }
 
   /**
@@ -384,7 +380,6 @@ public class DispatchApp {
       );
     }
 
-    state = STATE_MAIN_MENU;
     waitForUserInput();
   }
 
@@ -413,8 +408,6 @@ public class DispatchApp {
             () -> System.out.println(
                 "No train departure found with destination " + destination + ". Please try again."
             ));
-
-    state = STATE_MAIN_MENU;
   }
 
   /**
@@ -428,7 +421,6 @@ public class DispatchApp {
     int hour = getValidIntInput("Enter hour: ");
     int minute = getValidIntInput("Enter minute: ");
     currentTime = new int[]{hour, minute};
-    state = STATE_MAIN_MENU;
   }
 
   /**
@@ -438,7 +430,6 @@ public class DispatchApp {
    */
   private void exitApplication() {
     System.out.println("Exiting application...");
-    state = STATE_MAIN_MENU;
     running = false;
   }
 
