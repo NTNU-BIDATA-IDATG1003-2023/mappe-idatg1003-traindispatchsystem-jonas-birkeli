@@ -15,7 +15,6 @@ public class TrainDeparture {
   private String line;
   private String destination;
   private int track;
-  private int trainNumber;
 
   /**
    * Constructs a new {@code TrainDeparture} with default values.
@@ -28,7 +27,6 @@ public class TrainDeparture {
     setDestination("");
     setTrack(-1);
     setDelay(new int[]{0, 0});
-    setTrainNumber(-1);
   }
 
   /**
@@ -38,27 +36,23 @@ public class TrainDeparture {
    * @param line Scheduled line of train
    * @param destination End-destination of train.
    * @param track Number of the departure-track.
-   * @param trainNumber Unique number for the {@code TrainDeparture}.
    *
    * @see #setDepartureTime(int[])
    * @see #setLine(String)
    * @see #setDestination(String)
    * @see #setTrack(int)
-   * @see #setTrainNumber(int)
    * @since 1.0.0
    */
   public TrainDeparture(
       int[] departureTime,
       String line,
       String destination,
-      int track,
-      int trainNumber) {
+      int track) {
     setDepartureTime(departureTime);
     setLine(line);
     setDestination(destination);
     setTrack(track);
     setDelay(new int[]{0, 0});
-    setTrainNumber(trainNumber);
   }
 
   /**
@@ -106,7 +100,7 @@ public class TrainDeparture {
   }
 
   /**
-   * Returns the delay of the {@code TrainDeparture}.
+   * Returns the delay of the {@code TrainDeparture} as an integer list in the format {HH, MM}.
    *
    * @return the delay of the {@code TrainDeparture}.
    * @since 1.0.0
@@ -190,30 +184,6 @@ public class TrainDeparture {
     return track;
   }
 
-  /**
-   * Sets a train number for the {@code TrainDeparture}.
-   * If negative, train number is set to -1.
-   * Number must be unique for each {@code TrainDeparture}.
-   *
-   * @since 1.0.0
-   */
-  public void setTrainNumber(int trainNumber) {
-    if (trainNumber < 0) {
-      this.trainNumber = -1;
-      return;
-    }
-    this.trainNumber = trainNumber;
-  }
-
-  /**
-   * Returns the train number of the {@code TrainDeparture}.
-   *
-   * @return the train number of the {@code TrainDeparture}.
-   * @since 1.0.0
-   */
-  public int getTrainNumber() {
-    return trainNumber;
-  }
 
   /**
    * Returns a string representation of the {@code TrainDeparture}.
@@ -249,26 +219,26 @@ public class TrainDeparture {
 
     String whitespacesReversed = String.format("%1$17s", inputReversed);
     // Catting the leading whitespaces to reversed destination
-    StringBuilder destination = new StringBuilder(whitespacesReversed);
-    destination.reverse();
+    StringBuilder formattedDestination = new StringBuilder(whitespacesReversed);
+    formattedDestination.reverse();
 
-    String departureTime = String.format("%02d:%02d", getDepartureTime()[0], getDepartureTime()[1]);
+    String formattedDepartureTime = String.format("%02d:%02d", getDepartureTime()[0], getDepartureTime()[1]);
 
     // Using StringBuilder for efficiency and readability
-    StringBuilder objectInfomation;
-    objectInfomation = new StringBuilder();
+    StringBuilder objectInformation;
+    objectInformation = new StringBuilder();
 
     // Appending details of the train departure to StringBuilder
-    objectInfomation
-        .append(departureTime)
+    objectInformation
+        .append(formattedDepartureTime)
         .append(" ")
         .append(getLine())
         .append(" ")
-        .append(destination)
+        .append(formattedDestination)
         .append(" ")
         .append(getTrack())
         .append("\n");
 
-    return objectInfomation.toString();
+    return objectInformation.toString();
   }
 }

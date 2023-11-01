@@ -1,7 +1,7 @@
 package dev.jonas;
 
-import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -18,10 +18,10 @@ public class DispatchApp {
   // Variables used in the program
   private int state;
   private boolean running;
-  private ArrayList<TrainDeparture> departures;
   private TrainDeparture selectedDeparture;
   private int[] currentTime;
   private Scanner scanner;
+  private HashMap<Integer, TrainDeparture> departuresMap;
 
   // Constants used in the program
   private static final int STATE_MAIN_MENU = 0;
@@ -49,6 +49,22 @@ public class DispatchApp {
     dispatchApp.start();
   }
 
+
+
+  /**
+   * Constructs a new {@code DispatchApp} with default values.
+   *
+   * @since 1.2.0
+   */
+  public DispatchApp() {
+    state = STATE_MAIN_MENU;
+    running = true;
+    selectedDeparture = null;
+    currentTime = new int[]{0, 0};
+    scanner = new Scanner(System.in);
+    departuresMap = new HashMap<>();
+  }
+
   /**
    * Starts the {@code DispatchApp} and runs it
    * continuously until the user chooses to exit the program.
@@ -70,21 +86,13 @@ public class DispatchApp {
    * @since 1.0.0
    */
   public void start() {
-    // Initialize variables
-    state = STATE_MAIN_MENU;
-    departures = new ArrayList<>();
-    selectedDeparture = null;
-    running = true;
-    currentTime = new int[]{0, 0};
-    scanner = new Scanner(System.in);
+    TrainDeparture dep1 = new TrainDeparture(new int[]{13, 56}, "L1", "Hamburg", 2);
+    TrainDeparture dep2 = new TrainDeparture(new int[]{23, 57}, "L2", "Hamburg", 4);
+    TrainDeparture dep3 = new TrainDeparture(new int[]{3, 58}, "L3", "Hamburg", 1);
 
-    TrainDeparture dep1 = new TrainDeparture(new int[]{13, 56}, "L1", "Hamburg", 2, 1);
-    TrainDeparture dep2 = new TrainDeparture(new int[]{23, 57}, "L2", "Hamburg", 4, 2);
-    TrainDeparture dep3 = new TrainDeparture(new int[]{3, 58}, "L3", "Hamburg", 1, 3);
-
-    departures.add(dep1);
-    departures.add(dep2);
-    departures.add(dep3);
+    departuresMap.put(1, dep1);
+    departuresMap.put(2, dep2);
+    departuresMap.put(3, dep3);
 
     // Starts program to run continuously until user chooses to exit
     // Uses a switch statement to determine which method to run,
@@ -194,29 +202,28 @@ public class DispatchApp {
 
     System.out.println(header);
 
-    departures
-        .sort(
-            (o1, o2) -> {
-              // Sorts departures by departure time
-              if (o1.getDepartureTime()[0] == o2.getDepartureTime()[0]) {
-                return Integer.compare(o1.getDepartureTime()[1], o2.getDepartureTime()[1]);
-              }
-              return Integer.compare(o1.getDepartureTime()[0], o2.getDepartureTime()[0]);
-            }
-        );
-    departures
+    departuresMap.entrySet()
         .stream()
         .filter(
-            d -> d.getDepartureTime()[0] >= currentTime[0]
-                && d.getDepartureTime()[1] >= currentTime[1]
-        )  // Filter out departures earlier than current time with same hour
-        .map(TrainDeparture::getDetails)
+            d -> d.getValue().getDepartureTime()[0] >= currentTime[0]
+                && d.getValue().getDepartureTime()[1] >= currentTime[1]
+        )
+        .sorted(
+            Comparator.comparingInt(
+                d -> d.getValue().getDepartureTime()[0]
+            )
+        )
+        .map(
+            d -> d.getValue().getDetails()
+        )
         .forEach(
-            System.out::print  // Newline is included in getDetails()
+            System.out::print
         );
+
 
     System.out.println("\n");
 
+    // Back to main menu when user presses enter
     state = STATE_MAIN_MENU;
     waitForUserInput();
   }
@@ -240,33 +247,61 @@ public class DispatchApp {
         "Line",
         "Destination",
         "Track",
-        "Train number"
     };
     String[] values = new String[fields.length];
     boolean validInput = false;
+    int trainNumber;
 
-    while (!validInput) {
+    do {
+      trainNumber = getValidIntInput("Train number: ");
+      if (departuresMap.containsKey(trainNumber)) {
+        System.out.println("Train number already exists. Please try again.");
+        continue;
+      }
+      validInput = true;
+    } while (!validInput);
+
+
+    // Declare variables in correct scope;
+    int [] departureTime = new int[2];
+    String line = "";
+    String destination = "";
+    int track = -1;
+
+    do {
       // Continuously ask for user input until a valid choice is made
       // Stores user input in values array
       for (int i = 0; i < fields.length; i++) {
         values[i] = getValidStringInput(fields[i] + ": ");
       }
-      // Try to parse user input to correct data types
-      int[] departureTime = new int[]{Integer.parseInt(values[0]), Integer.parseInt(values[1])};
-      String line = values[2];
-      String destination = values[3];
-      int track = Integer.parseInt(values[4]);
-      int trainNumber = Integer.parseInt(values[5]);
 
-      // Create new TrainDeparture object with user input
-      TrainDeparture trainDeparture = new TrainDeparture(
-          departureTime, line, destination, track, trainNumber
-      );
-      departures.add(trainDeparture); // Add departure to list of departures
-
-      // If no exception is thrown, the input is valid.
+      // Expects correct input from user
       validInput = true;
-    }
+
+      try {
+        // Try to parse user input to correct data types
+        departureTime = new int[]{Integer.parseInt(values[0]), Integer.parseInt(values[1])};
+        line = values[2];
+        destination = values[3];
+        track = Integer.parseInt(values[4]);
+      } catch (NumberFormatException e) {
+        // If user input is not parsable to correct data types, an error message is displayed
+        System.out.println("Invalid input. Please try again.");
+
+        // validInput is set to false, so th
+        validInput = false;
+      }
+
+    } while (!validInput);
+
+    // Create new TrainDeparture object with user input
+    TrainDeparture trainDeparture = new TrainDeparture(
+        departureTime, line, destination, track
+    );
+
+    // Add new TrainDeparture object to collection of departures
+    departuresMap.put(trainNumber, trainDeparture);
+
     // Change state of program to main menu
     state = STATE_MAIN_MENU;
   }
@@ -338,20 +373,16 @@ public class DispatchApp {
     clearScreen();
     System.out.println("Search train departure by number");
     int trainNumber = getValidIntInput("Enter train number: ");
-    departures
-        .stream()
-        .filter(d -> d.getTrainNumber() == trainNumber)
-        .findFirst()
-        .ifPresentOrElse(
-            d -> {
-              selectedDeparture = d;
-              System.out.println("Train departure found:");
-              System.out.println(selectedDeparture.getDetails());
-            },
-            () -> System.out.println(
-                "No train departure found with train number " + trainNumber + ". Please try again."
-            )
-        );
+
+    if (departuresMap.containsKey(trainNumber)) {
+      selectedDeparture = departuresMap.get(trainNumber);
+      System.out.println("Train departure found:");
+      System.out.println(selectedDeparture.getDetails());
+    } else {
+      System.out.println(
+          "No train departure found with train number " + trainNumber + ". Please try again."
+      );
+    }
 
     state = STATE_MAIN_MENU;
     waitForUserInput();
@@ -369,20 +400,20 @@ public class DispatchApp {
     System.out.println("Search train departure by destination");
     String destination = getValidStringInput("Enter destination: ");
 
-    departures
+    departuresMap.entrySet()
         .stream()
-        .filter(d -> d.getDestination().equals(destination))
+        .filter(d -> d.getValue().getDestination().equals(destination))
         .findFirst()
         .ifPresentOrElse(
             d -> {
-              selectedDeparture = d;
+              selectedDeparture = d.getValue();
               System.out.println("Train departure found:");
               System.out.println(selectedDeparture.getDetails());
             },
             () -> System.out.println(
                 "No train departure found with destination " + destination + ". Please try again."
-            )
-        );
+            ));
+
     state = STATE_MAIN_MENU;
   }
 
