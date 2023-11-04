@@ -308,15 +308,8 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
       return 1;
     }
 
-    // Adding delay to departure time for both trains
-    int[] thisDepartureTime = new int[]{
-        this.getDepartureTime()[0] + this.getDelay()[0],
-        this.getDepartureTime()[1] + this.getDelay()[1]
-    };
-    int[] otherDepartureTime = new int[]{
-        other.getDepartureTime()[0] + other.getDelay()[0],
-        other.getDepartureTime()[1] + other.getDelay()[1]
-    };
+    int[] thisDepartureTime = getCorrectedDepartureTime();
+    int[] otherDepartureTime = other.getCorrectedDepartureTime();
 
     // Comparing departure times
     if (thisDepartureTime[0] > otherDepartureTime[0]) {
