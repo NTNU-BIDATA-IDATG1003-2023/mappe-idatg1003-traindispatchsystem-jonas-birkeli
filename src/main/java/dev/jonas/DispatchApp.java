@@ -1,9 +1,8 @@
 package dev.jonas;
 
 import static java.util.Map.Entry.comparingByValue;
+
 import java.util.HashMap;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
 
 /**
  * The {@code DispatchApp} class represents the main class of the program.
@@ -11,7 +10,7 @@ import java.util.Scanner;
  * and runs continuously until the user chooses to exit the program.
  *
  * @author Jonas Birkeli
- * @version 1.2.0
+ * @version 1.3.0
  * @since 1.0.0
  */
 public class DispatchApp {
@@ -22,8 +21,8 @@ public class DispatchApp {
   private boolean running;
   private TrainDeparture selectedDeparture;
   private int[] currentTime;
-  private final Scanner scanner;
   private HashMap<Integer, TrainDeparture> departuresMap;
+  private final Terminal terminal;
 
   // Constants used in the program
   private static final int STATE_VIEW_DEPARTURES = 1;
@@ -61,7 +60,7 @@ public class DispatchApp {
    *     <li>running = true</li>
    *     <li>selectedDeparture = null</li>
    *     <li>currentTime = new int[]{0, 0}</li>
-   *     <li>scanner = new Scanner(System.in)</li>
+   *     <li>scanner = new UserIO()</li>
    *     <li>departuresMap = new HashMap<>()</li>
    *   </ul>
    * </p>
@@ -73,8 +72,8 @@ public class DispatchApp {
     running = true;
     selectedDeparture = null;
     currentTime = new int[]{0, 0};
-    scanner = new Scanner(System.in);
     departuresMap = new HashMap<>();
+    terminal = new Terminal();
   }
 
   /**
@@ -147,7 +146,7 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void mainMenu() {
-    clearScreen();
+    terminal.clearScreen();
 
     int choice = 0;
     boolean validChoice = false;
@@ -169,13 +168,13 @@ public class DispatchApp {
 
     // Continuously ask for user input until a valid choice is made
     while (!validChoice) {
-      System.out.println(message);
+      terminal.println(String.valueOf(message));
 
-      choice = getValidIntInput("Enter choice: ");
-      // Any expeption in {@link #getValidIntInput(String)} is caught, no need to try catch block.
+      choice = terminal.getValidIntInput("Enter choice: ");
+      // Any exception in {@link #getValidIntInput(String)} is caught, no need to try catch block.
 
       if (choice < 1 || choice > 8) {
-        System.out.println("Choice must be between 1 and 8. Please try again.");
+        terminal.println("Choice must be between 1 and 8. Please try again.");
         continue;
       }
       // If choice is valid, the loop is broken
@@ -202,7 +201,7 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void viewTrainDepartures() {
-    clearScreen();
+    terminal.clearScreen();
 
     String currentTimeString = String.format("%02d:%02d", currentTime[0], currentTime[1]);
     // Format of which departures are displayed:
@@ -215,7 +214,7 @@ public class DispatchApp {
         .append(" - ")
         .append(currentTimeString);
 
-    System.out.println(header);
+    terminal.println(String.valueOf(header));
 
     // Loops through all departures, and prints them if they are valid
     // Departures are sorted by departure time
@@ -223,21 +222,27 @@ public class DispatchApp {
     departuresMap.entrySet()
         .stream()
         .filter(
-            d -> d.getValue().getDepartureTime()[0] > currentTime[0] ||
-                (d.getValue().getDepartureTime()[0] == currentTime[0]
+            d -> d.getValue().getDepartureTime()[0] > currentTime[0]
+                || (d.getValue().getDepartureTime()[0] == currentTime[0]
                 && d.getValue().getDepartureTime()[1] >= currentTime[1])
-            // Filter out departures with earlier departure time than current time
+              // Filter out departures with earlier departure time than current time
         )
         // Sorts departures by departure time,
         .sorted(comparingByValue(TrainDeparture::compareTo))
         .map(d -> d.getValue().getDetails())
-        .forEach(System.out::print);
+        .forEach(terminal::println);
 
 
-    System.out.println("\n");
+    terminal.println("\n");
+
+    // Prints selected departure if it is not null
+    if (selectedDeparture != null) {
+      terminal.println("Selected train departure:");
+      terminal.println(selectedDeparture.getDetails());
+    }
 
     // Back to main menu when user presses enter
-    waitForUserInput();
+    terminal.waitForUserInput();
   }
 
   /**
@@ -250,8 +255,8 @@ public class DispatchApp {
    * @see TrainDeparture
    */
   private void addTrainDeparture() {
-    clearScreen();
-    System.out.println("Add train departure");
+    terminal.clearScreen();
+    terminal.println("Add train departure");
 
     String[] fields = {
         "Departure hour",
@@ -265,9 +270,9 @@ public class DispatchApp {
     int trainNumber;
 
     do {
-      trainNumber = getValidIntInput("Train number: ");
+      trainNumber = terminal.getValidIntInput("Train number: ");
       if (departuresMap.containsKey(trainNumber)) {
-        System.out.println("Train number already exists. Please try again.");
+        terminal.println("Train number already exists. Please try again.");
         continue;
       }
       validInput = true;
@@ -283,7 +288,7 @@ public class DispatchApp {
       // Continuously ask for user input until a valid choice is made
       // Stores user input in values array
       for (int i = 0; i < fields.length; i++) {
-        values[i] = getValidStringInput(fields[i] + ": ");
+        values[i] = terminal.getValidStringInput(fields[i] + ": ");
       }
 
       // Expects correct input from user
@@ -297,7 +302,7 @@ public class DispatchApp {
         track = Integer.parseInt(values[4]);
       } catch (NumberFormatException e) {
         // If user input is not parsable to correct data types, an error message is displayed
-        System.out.println(INVALID_INPUT_MESSAGE);
+        terminal.println(INVALID_INPUT_MESSAGE);
 
         // validInput is set to false, so th
         validInput = false;
@@ -321,18 +326,18 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void assignTrackToTrainDeparture() {
-    clearScreen();
+    terminal.clearScreen();
 
     if (selectedDeparture == null) {
       // If no departure is selected, the method returns early
-      System.out.println("No train departure selected. Please try again.");
+      terminal.println("No train departure selected. Please try again.");
       return;
     }
 
-    System.out.println("Assign track to train departure");
-    System.out.println(selectedDeparture.getDetails());
+    terminal.println("Assign track to train departure");
+    terminal.println(selectedDeparture.getDetails());
 
-    int track = getValidIntInput("Enter track number: ");
+    int track = terminal.getValidIntInput("Enter track number: ");
 
     selectedDeparture.setTrack(track);
     // Updates track of selected departure
@@ -345,20 +350,20 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void assignDelayToTrainDeparture() {
-    clearScreen();
+    terminal.clearScreen();
 
     if (selectedDeparture == null) {
       // If no departure is selected, the method returns early
-      System.out.println("No train departure selected. Please try again.");
+      terminal.println("No train departure selected. Please try again.");
 
       return;
     }
 
-    System.out.println("Assign delay to train departure");
-    System.out.println(selectedDeparture.getDetails()); // Prints details of selected departure
+    terminal.println("Assign delay to train departure");
+    terminal.println(selectedDeparture.getDetails()); // Prints details of selected departure
 
-    int delayHour = getValidIntInput("Enter delay hour: ");
-    int delayMinute = getValidIntInput("Enter delay minute: ");
+    int delayHour = terminal.getValidIntInput("Enter delay hour: ");
+    int delayMinute = terminal.getValidIntInput("Enter delay minute: ");
 
     selectedDeparture.setDelay(new int[]{delayHour, delayMinute});
     // Updates delay of departure
@@ -372,21 +377,19 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void searchTrainDepartureByNumber() {
-    clearScreen();
-    System.out.println("Search train departure by number");
-    int trainNumber = getValidIntInput("Enter train number: ");
+    terminal.clearScreen();
+    terminal.println("Search train departure by number");
+    int trainNumber = terminal.getValidIntInput("Enter train number: ");
 
     if (departuresMap.containsKey(trainNumber)) {
       selectedDeparture = departuresMap.get(trainNumber);
-      System.out.println("Train departure found:");
-      System.out.println(selectedDeparture.getDetails());
+      terminal.println("Train departure found:");
+      terminal.println(selectedDeparture.getDetails());
     } else {
-      System.out.println(
-          "No train departure found with train number " + trainNumber + ". Please try again."
-      );
+      terminal.println("No train departure found with train number " + trainNumber + ".");
     }
 
-    waitForUserInput();
+    terminal.waitForUserInput();
   }
 
   /**
@@ -397,9 +400,9 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void searchTrainDepartureByDestination() {
-    clearScreen();
-    System.out.println("Search train departure by destination");
-    String destination = getValidStringInput("Enter destination: ");
+    terminal.clearScreen();
+    terminal.println("Search train departure by destination");
+    String destination = terminal.getValidStringInput("Enter destination: ");
 
     departuresMap.entrySet()
         .stream()
@@ -408,14 +411,14 @@ public class DispatchApp {
         .ifPresentOrElse(
             d -> {
               selectedDeparture = d.getValue();
-              System.out.println("Train departure found:");
-              System.out.println(selectedDeparture.getDetails());
+              terminal.println("Train departure found:");
+              terminal.println(selectedDeparture.getDetails());
             },
-            () -> System.out.println(
+            () -> terminal.println(
                 "No train departure found with destination " + destination + ". Please try again."
             ));
 
-    waitForUserInput();
+    terminal.waitForUserInput();
   }
 
   /**
@@ -424,10 +427,11 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void changeTime() {
-    clearScreen();
-    System.out.println("Change time of program.");
-    int hour = getValidIntInput("Enter hour: ");
-    int minute = getValidIntInput("Enter minute: ");
+    terminal.clearScreen();
+    terminal.println("Current time: " + currentTime[0] + ":" + currentTime[1]);
+    terminal.println("Change time of program.");
+    int hour = terminal.getValidIntInput("Enter hour: ");
+    int minute = terminal.getValidIntInput("Enter minute: ");
     currentTime = new int[]{hour, minute};
   }
 
@@ -437,99 +441,11 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void exitApplication() {
-    System.out.println("Exiting application...");
+    terminal.println("Exiting application...");
     running = false;
   }
 
-  /**
-   * Waits for user input, and halts the program until user enters something.
-   *
-   * @since 1.1.0
-   */
-  private void waitForUserInput() {
-    System.out.println("Press enter to continue...");
-    scanner.nextLine(); // Does not store user input, only waits for input
-  }
 
-  /**
-   * Returns a valid input from the user.
-   * Continuously asks for user input until a valid input is given.
-   * If the input is not valid, an error message is displayed.
-   * If the input is valid, the input is returned.
-   *
-   * @param inputMessage Message to display before waiting for user input.
-   * @return The user input as a string.
-   * @since 1.1.0
-   */
-  private String getValidStringInput(String inputMessage) {
-    // Variables used in the method
-    boolean validInput = false;
-    String input = "";
 
-    while (!validInput) {
-      System.out.println(inputMessage);
-      // Tries to get user input, catches exceptions if input is invalid
-      try {
-        input = scanner.nextLine();
-        // If no exception is thrown, the input is valid.
-        validInput = true;
-      } catch (NumberFormatException | NoSuchElementException | IllegalStateException e) {
-        System.out.println("Input must be of non-empty String type. Please try again."); // Error message
-      }
-    }
-    return input;
-  }
 
-  /**
-   * Returns a valid input from the user.
-   * Continuously asks for user input until a valid input is given.
-   * If the input is not valid, an error message is displayed.
-   * If the input is valid, the input is returned.
-   *
-   * @param inputMessage Message to display before waiting for user input.
-   * @return The user input as an integer.
-   * @since 1.1.0
-   */
-  private int getValidIntInput(String inputMessage) {
-    // Variables used in the method
-    boolean validInput = false;
-    int input = 0;
-
-    while (!validInput) {
-      System.out.println(inputMessage);
-      // Tries to get user input, catches exceptions if input is invalid
-      try {
-        input = Integer.parseInt(scanner.nextLine());
-        // If no exception is thrown, the input is valid.
-        validInput = true;
-      } catch (NumberFormatException | NoSuchElementException | IllegalStateException e) {
-        System.out.println("Input must be of Integer type. Please try again."); // Error message
-      }
-    }
-    return input;
-  }
-
-  /**
-   * Clears the screen.
-   * <p>
-   *   This method uses ANSI escape codes to clear the screen.
-   *   This method is not supported on all operating systems.
-   *   If the method is not supported, the screen is not cleared.
-   *   <br>
-   *   <a href="https://stackoverflow.com/a/29752985">Source</a>
-   *   <br>
-   *   <a href="https://en.wikipedia.org/wiki/ANSI_escape_code">ANSI escape codes</a>
-   *   <br>
-   *   <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_sequences">CSI sequences</a>
-   *   <br>
-   *   <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#Escape_sequences">Escape sequences</a>
-   *   <br>
-   *
-   * </p>
-   * @since 1.2.0
-   */
-  private void clearScreen() {
-    System.out.print("\033[H\033[2J");
-    System.out.flush();
-  }
 }

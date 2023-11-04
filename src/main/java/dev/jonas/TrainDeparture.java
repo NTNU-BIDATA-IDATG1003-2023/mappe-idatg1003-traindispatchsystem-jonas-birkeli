@@ -192,6 +192,12 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
    * Departure time includes any set delay.
    * If some values are not set, they return string will be empty.
    * Includes newline at the end if all values are set.
+   * The way the string has been formatted is with the help of StringBuilder.
+   * Input is reversed, whitespaces are added to the reversed input in the beginning,
+   * and then the reversed input is reversed again.
+   * This way, the whitespaces are added to the end of the input.
+   * This is done to make sure the string is always the same length.
+   * This is done for all fields except the track field.
    *
    * @see #getLine()
    * @see #getTrack()
@@ -213,7 +219,9 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
     }
 
     // Formatting the departure time
-    String formattedDepartureTime = String.format("%02d:%02d", getDepartureTime()[0], getDepartureTime()[1]);
+    String formattedDepartureTime = String.format(
+        "%02d:%02d", getDepartureTime()[0], getDepartureTime()[1]
+    );
 
     // Reversing the input
     StringBuilder inputReversed = new StringBuilder();
