@@ -8,15 +8,28 @@ import java.util.HashMap;
  * The {@code DispatchApp} class represents the main class of the program.
  * The {@code DispatchApp} class handles all user input and output,
  * and runs continuously until the user chooses to exit the program.
+ * <p>
+ *   The {@code DispatchApp} class has the following methods:
+ *   <ul>
+ *     <li>{@link #start()}</li>
+ *     <li>{@link #mainMenu()}</li>
+ *     <li>{@link #viewTrainDepartures()}</li>
+ *     <li>{@link #addTrainDeparture()}</li>
+ *     <li>{@link #assignTrackToTrainDeparture()}</li>
+ *     <li>{@link #assignDelayToTrainDeparture()}</li>
+ *     <li>{@link #searchTrainDepartureByNumber()}</li>
+ *     <li>{@link #searchTrainDepartureByDestination()}</li>
+ *     <li>{@link #changeTime()}</li>
+ *     <li>{@link #exitApplication()}</li>
+ *   </ul>
+ * </p>
  *
  * @author Jonas Birkeli
  * @version 1.3.0
  * @since 1.0.0
  */
 public class DispatchApp {
-
-
-  // Variables used in the program
+  // Fields in this class
   private int state;
   private boolean running;
   private TrainDeparture selectedDeparture;
@@ -230,7 +243,7 @@ public class DispatchApp {
         // Sorts departures by departure time,
         .sorted(comparingByValue(TrainDeparture::compareTo))
         .map(d -> d.getValue().getDetails())
-        .forEach(terminal::println);
+        .forEach(terminal::print);
 
 
     terminal.println("\n");
@@ -436,7 +449,7 @@ public class DispatchApp {
   }
 
   /**
-   * Exits the application.
+   * Exits the application by breaking the main loop.
    *
    * @since 1.0.0
    */
@@ -444,8 +457,4 @@ public class DispatchApp {
     terminal.println("Exiting application...");
     running = false;
   }
-
-
-
-
 }

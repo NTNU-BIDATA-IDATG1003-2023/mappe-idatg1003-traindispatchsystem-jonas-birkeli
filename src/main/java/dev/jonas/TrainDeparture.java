@@ -1,5 +1,8 @@
 package dev.jonas;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * The {@code TrainDeparture} class represents a train on a station.
  * All {@code TrainDeparture}s has a departuretime, delay, line, destination and track.
@@ -227,7 +230,7 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
 
     // Formatting the departure time with leading zeros if needed
     String formattedDepartureTime = String.format(
-        "%02d:%02d", getDepartureTime()[0], getDepartureTime()[1]
+        "%02d:%02d", getCorrectedDepartureTime()[0], getCorrectedDepartureTime()[1]
     );
 
     // Reversing the input
@@ -308,6 +311,10 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
       return 1;
     }
 
+    if (this.equals(other)) {
+      return 0;
+    }
+
     int[] thisDepartureTime = getCorrectedDepartureTime();
     int[] otherDepartureTime = other.getCorrectedDepartureTime();
 
@@ -320,5 +327,50 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
     }
     // If departure hours are equal, compare minutes
     return Integer.compare(thisDepartureTime[1], otherDepartureTime[1]);
+  }
+
+  /**
+   * Indicates whether some other object is "equal to" this one.
+   * Two {@code TrainDeparture}s are considered equal if they have the same
+   * departure time, delay, line, destination and track.
+   * If any of these values are not equal, the {@code TrainDeparture}s are not equal.
+   * If the specified object is null, returns false.
+   * If the specified object is not a {@code TrainDeparture}, returns false.
+   * If the specified object is a {@code TrainDeparture} and all values are equal,
+   * returns true.
+   *
+   * @param other the object with which to compare.
+   * @return true if this object is the same as the obj argument; false otherwise.
+   * @since 1.2.0
+   */
+  @Override
+  public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    }
+    if (!(other instanceof TrainDeparture that)) {
+      return false;
+    }
+    return getTrack() == that.getTrack() && Arrays.equals(getDepartureTime(),
+        that.getDepartureTime()) && Arrays.equals(getDelay(), that.getDelay())
+        && Objects.equals(getLine(), that.getLine()) && Objects.equals(
+        getDestination(), that.getDestination());
+  }
+
+  /**
+   * Returns a hash code value for the {@code TrainDeparture}.
+   * The hash code is based upon the departure time, delay, line, destination and track.
+   * If any of these values are not equal, the hash codes will not be equal.
+   * If the hash codes are not equal, the {@code TrainDeparture}s are not equal.
+   *
+   * @return a hash code value for the {@code TrainDeparture}.
+   * @since 1.2.0
+   */
+  @Override
+  public int hashCode() {
+    int result = Objects.hash(getLine(), getDestination(), getTrack());
+    result = 31 * result + Arrays.hashCode(getDepartureTime());
+    result = 31 * result + Arrays.hashCode(getDelay());
+    return result;
   }
 }

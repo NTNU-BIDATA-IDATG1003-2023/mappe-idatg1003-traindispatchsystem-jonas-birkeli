@@ -82,23 +82,12 @@ class TrainDepartureTest {
   }
 
   @org.junit.jupiter.api.Test
-  void setTrainNumber() {
-    trainDeparture.setTrainNumber(1234);
-    assertEquals(1234, trainDeparture.getTrainNumber());
-  }
-
-  @org.junit.jupiter.api.Test
-  void getTrainNumber() {
-    assertEquals(-1, trainDeparture.getTrainNumber());
-  }
-
-  @org.junit.jupiter.api.Test
   void getDetails() {
     trainDeparture.setDepartureTime(new int[]{23, 56});
     trainDeparture.setDelay(new int[]{23, 56});
     trainDeparture.setLine("L1");
     trainDeparture.setDestination("Hamburg");
     trainDeparture.setTrack(3);
-    assertEquals("46:112 L1 Hamburg           3\n", trainDeparture.getDetails());
+    assertEquals("23:52 L1 Hamburg           3\n", trainDeparture.getDetails());
   }
 }
