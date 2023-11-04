@@ -5,7 +5,7 @@ package dev.jonas;
  * All {@code TrainDeparture}s has a departuretime, delay, line, destination and track.
  *
  * @author Jonas Birkeli
- * @version 1.1.0
+ * @version 1.2.0
  * @since 1.0.0
  */
 public class TrainDeparture implements Comparable<TrainDeparture> {
@@ -59,13 +59,17 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
    * Sets the departure time of the {@code TrainDeparture}.
    * Each {@code TrainDeparture} has two departure times,
    * one representing hours, and one representing minutes.
-   * If null, departure time is set to 0.
+   * If null, not two elements or either is negative, departure time is set to 0.
    *
    * @param departureTime the departure time of the {@code TrainDeparture}.
    * @since 1.0.0
    */
   public void setDepartureTime(int[] departureTime) {
-    if (departureTime == null) {
+    if (departureTime == null
+        || departureTime.length != 2
+        || departureTime[0] < 0
+        || departureTime[1] < 0
+    ) {
       this.departureTime = new int[]{0, 0};
       return;
     }
@@ -86,13 +90,17 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
    * Sets the delay of the {@code TrainDeparture}.
    * Each {@code TrainDeparture} has two delays,
    * one representing hours, and one representing minutes.
-   * If null, delay is set to 0.
+   * If null, not two elements or either is negative, delay is set to 0.
    *
    * @param delay the delay of the {@code TrainDeparture}.
    * @since 1.0.0
    */
   public void setDelay(int[] delay) {
-    if (delay == null) {
+    if (delay == null
+        || delay.length != 2
+        || delay[0] < 0
+        || delay[1] < 0
+    ) {
       this.delay = new int[]{0, 0};
       return;
     }
@@ -161,13 +169,13 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
 
   /**
    * Sets the track of the {@code TrainDeparture}.
-   * If negative, track is set to -1.
+   * If negative or zero, track is set to -1.
    *
    * @param track the track of the {@code TrainDeparture}.
    * @since 1.0.0
    */
   public void setTrack(int track) {
-    if (track < 0) {
+    if (track <= 0) {
       this.track = -1;
       return;
     }
@@ -208,17 +216,16 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
    */
   public String getDetails() {
     // If some values are not set, return empty string
-    if (
-        getLine().isEmpty()
-            || getTrack() == -1
-            || getDepartureTime()[0] == 0
-            || getDepartureTime()[1] == 0
-            || getDestination().isEmpty()
+    if (line.isEmpty()
+            || destination.isEmpty()
+            || track == -1
+            || departureTime[0] == 0
+            || departureTime[1] == 0
     ) {
       return "";
     }
 
-    // Formatting the departure time
+    // Formatting the departure time with leading zeros if needed
     String formattedDepartureTime = String.format(
         "%02d:%02d", getDepartureTime()[0], getDepartureTime()[1]
     );
@@ -250,6 +257,36 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
         .append("\n");
 
     return String.valueOf(objectInformation);
+  }
+
+  /**
+   * Returns the departure time of the {@code TrainDeparture} with delay added.
+   * If delay is null, delay is set to 0.
+   * If departure time is null, departure time is set to 0.
+   * In case of overflow, departure time is corrected with use of floor division and modulo.
+   * This is done for both hours and minutes.
+   *
+   * @return the departure time of the {@code TrainDeparture} with delay added.
+   * @since 1.2.0
+   */
+  public int[] getCorrectedDepartureTime() {
+    int departureHour = getDepartureTime()[0] + getDelay()[0];
+    int departureMinute = getDepartureTime()[1] + getDelay()[1];
+
+    // If departure minute is greater than 60,
+    // add the times departure minute is divisible by 60 to departure hour.
+    // This operation is performed on integers, which means floor division is used.
+    departureHour += departureMinute / 60;
+
+    // If departure hour is greater than 24,
+    // add the times departure hour is divisible by 24 to departure hour.
+    departureMinute %= 60;
+
+    // If departure hour is greater than 24,
+    // add the times departure hour is divisible by 24 to departure hour.
+    departureHour %= 24;
+
+    return new int[]{departureHour, departureMinute};
   }
 
   /**
