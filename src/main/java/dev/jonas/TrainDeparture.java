@@ -5,10 +5,10 @@ package dev.jonas;
  * All {@code TrainDeparture}s has a departuretime, delay, line, destination and track.
  *
  * @author Jonas Birkeli
- * @version 1.0.0
+ * @version 1.1.0
  * @since 1.0.0
  */
-public class TrainDeparture {
+public class TrainDeparture implements Comparable<TrainDeparture> {
 
   private int[] departureTime;
   private int[] delay;
@@ -212,17 +212,23 @@ public class TrainDeparture {
       return "";
     }
 
+    // Formatting the departure time
+    String formattedDepartureTime = String.format("%02d:%02d", getDepartureTime()[0], getDepartureTime()[1]);
+
     // Reversing the input
     StringBuilder inputReversed = new StringBuilder();
+    inputReversed.append(formattedDepartureTime);
+    inputReversed.append(" ");
+    inputReversed.append(getLine());
+    inputReversed.append(" ");
     inputReversed.append(getDestination());
     inputReversed.reverse();
 
-    String whitespacesReversed = String.format("%1$17s", inputReversed);
+    String whitespacesReversed = String.format("%1$26s", inputReversed);
     // Catting the leading whitespaces to reversed destination
     StringBuilder formattedDestination = new StringBuilder(whitespacesReversed);
     formattedDestination.reverse();
 
-    String formattedDepartureTime = String.format("%02d:%02d", getDepartureTime()[0], getDepartureTime()[1]);
 
     // Using StringBuilder for efficiency and readability
     StringBuilder objectInformation;
@@ -230,15 +236,51 @@ public class TrainDeparture {
 
     // Appending details of the train departure to StringBuilder
     objectInformation
-        .append(formattedDepartureTime)
-        .append(" ")
-        .append(getLine())
-        .append(" ")
         .append(formattedDestination)
         .append(" ")
         .append(getTrack())
         .append("\n");
 
-    return objectInformation.toString();
+    return String.valueOf(objectInformation);
+  }
+
+  /**
+   * Compares this {@code TrainDeparture} with the specified {@code TrainDeparture} for order.
+   * Returns a negative integer, zero, or a positive integer as this {@code TrainDeparture}
+   * is less than, equal to, or greater than the specified {@code TrainDeparture}.
+   * The comparison is primarily based on the departure time of the {@code TrainDeparture}.
+   *
+   * @param other the {@code TrainDeparture} to be compared.
+   *              If null, returns 1.
+   * @return a negative integer, zero, or a positive integer as this {@code TrainDeparture}
+   *        is less than, equal to, or greater than the specified {@code TrainDeparture}.
+   *        If null, returns 1.
+   * @since 1.1.0
+   */
+  @Override
+  public int compareTo(TrainDeparture other) {
+    if (other == null) {
+      return 1;
+    }
+
+    // Adding delay to departure time for both trains
+    int[] thisDepartureTime = new int[]{
+        this.getDepartureTime()[0] + this.getDelay()[0],
+        this.getDepartureTime()[1] + this.getDelay()[1]
+    };
+    int[] otherDepartureTime = new int[]{
+        other.getDepartureTime()[0] + other.getDelay()[0],
+        other.getDepartureTime()[1] + other.getDelay()[1]
+    };
+
+    // Comparing departure times
+    if (thisDepartureTime[0] > otherDepartureTime[0]) {
+      return 1;
+    }
+    if (thisDepartureTime[0] < otherDepartureTime[0]) {
+      return -1;
+    }
+    // If departure hours are equal, compare minutes
+    return Integer.compare(thisDepartureTime[1], otherDepartureTime[1]);
   }
 }

@@ -1,6 +1,6 @@
 package dev.jonas;
 
-import java.util.Comparator;
+import static java.util.Map.Entry.comparingByValue;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -15,16 +15,17 @@ import java.util.Scanner;
  * @since 1.0.0
  */
 public class DispatchApp {
+
+
   // Variables used in the program
   private int state;
   private boolean running;
   private TrainDeparture selectedDeparture;
   private int[] currentTime;
-  private Scanner scanner;
+  private final Scanner scanner;
   private HashMap<Integer, TrainDeparture> departuresMap;
 
   // Constants used in the program
-  private static final int STATE_MAIN_MENU = 0;
   private static final int STATE_VIEW_DEPARTURES = 1;
   private static final int STATE_ADD_DEPARTURE = 2;
   private static final int STATE_ASSIGN_TRACK = 3;
@@ -33,6 +34,8 @@ public class DispatchApp {
   private static final int STATE_SEARCH_BY_DESTINATION = 6;
   private static final int STATE_CHANGE_TIME = 7;
   private static final int STATE_EXIT = 8;
+
+  public static final String INVALID_INPUT_MESSAGE = "Invalid input. Please try again.";
 
   /**
    * Starts the {@code DispatchApp} and runs it
@@ -49,15 +52,24 @@ public class DispatchApp {
     dispatchApp.start();
   }
 
-
-
   /**
-   * Constructs a new {@code DispatchApp} with default values.
+   * Constructs a new {@code DispatchApp} with its variables initialized as default.
+   * <p>
+   *   The {@code DispatchApp} is initialized with the following states:
+   *   <ul>
+   *     <li>state = 0</li>
+   *     <li>running = true</li>
+   *     <li>selectedDeparture = null</li>
+   *     <li>currentTime = new int[]{0, 0}</li>
+   *     <li>scanner = new Scanner(System.in)</li>
+   *     <li>departuresMap = new HashMap<>()</li>
+   *   </ul>
+   * </p>
    *
    * @since 1.2.0
    */
   public DispatchApp() {
-    state = STATE_MAIN_MENU;
+    state = 0;
     running = true;
     selectedDeparture = null;
     currentTime = new int[]{0, 0};
@@ -68,7 +80,7 @@ public class DispatchApp {
   /**
    * Starts the {@code DispatchApp} and runs it
    * continuously until the user chooses to exit the program.
-   * The program starts in the main menu.
+   * The program starts in the main menu, and will run continuously until the user chooses to exit.
    * <p>
    *   The main menu has the following options:
    *   <ul>
@@ -86,13 +98,14 @@ public class DispatchApp {
    * @since 1.0.0
    */
   public void start() {
-    TrainDeparture dep1 = new TrainDeparture(new int[]{13, 56}, "L1", "Hamburg", 2);
-    TrainDeparture dep2 = new TrainDeparture(new int[]{23, 57}, "L2", "Hamburg", 4);
-    TrainDeparture dep3 = new TrainDeparture(new int[]{3, 58}, "L3", "Hamburg", 1);
+    // Hard-coded departures for not having to add them manually every time the program is started
+    TrainDeparture dep1 = new TrainDeparture(new int[]{13, 56}, "L1", "Lillehammer", 2);
+    TrainDeparture dep2 = new TrainDeparture(new int[]{23, 57}, "F8", "Gjøvik", 2);
+    TrainDeparture dep3 = new TrainDeparture(new int[]{3, 58}, "H3", "Hamar", 1);
 
-    departuresMap.put(1, dep1);
-    departuresMap.put(2, dep2);
-    departuresMap.put(3, dep3);
+    departuresMap.put(60, dep1);
+    departuresMap.put(22, dep2);
+    departuresMap.put(47, dep3);
 
     // Starts program to run continuously until user chooses to exit
     // Uses a switch statement to determine which method to run,
@@ -141,16 +154,18 @@ public class DispatchApp {
 
     StringBuilder message;
     message = new StringBuilder();
+
+    // Using constants to display menu options instead of hard-coded numbers in case of change
     message
         .append("Train Dispatch System\n\n")
-        .append("1. View train departures\n")
-        .append("2. Add train departure\n")
-        .append("3. Assign track to train departure\n")
-        .append("4. Assign delay to train departure\n")
-        .append("5. Search train departure by number\n")
-        .append("6. Search train departure by destination\n")
-        .append("7. Change time\n")
-        .append("8. Exit\n");
+        .append(STATE_VIEW_DEPARTURES).append(". View train departures\n")
+        .append(STATE_ADD_DEPARTURE).append(". Add train departure\n")
+        .append(STATE_ASSIGN_TRACK).append(". Assign track to train departure\n")
+        .append(STATE_ASSIGN_DELAY).append(". Assign delay to train departure\n")
+        .append(STATE_SEARCH_BY_NUMBER).append(". Search train departure by number\n")
+        .append(STATE_SEARCH_BY_DESTINATION).append(". Search train departure by destination\n")
+        .append(STATE_CHANGE_TIME).append(". Change time\n")
+        .append(STATE_EXIT).append(". Exit\n");
 
     // Continuously ask for user input until a valid choice is made
     while (!validChoice) {
@@ -202,23 +217,21 @@ public class DispatchApp {
 
     System.out.println(header);
 
+    // Loops through all departures, and prints them if they are valid
+    // Departures are sorted by departure time
+    // Departures with earlier departure time than current time are not displayed
     departuresMap.entrySet()
         .stream()
         .filter(
-            d -> d.getValue().getDepartureTime()[0] >= currentTime[0]
-                && d.getValue().getDepartureTime()[1] >= currentTime[1]
+            d -> d.getValue().getDepartureTime()[0] > currentTime[0] ||
+                (d.getValue().getDepartureTime()[0] == currentTime[0]
+                && d.getValue().getDepartureTime()[1] >= currentTime[1])
+            // Filter out departures with earlier departure time than current time
         )
-        .sorted(
-            Comparator.comparingInt(
-                d -> d.getValue().getDepartureTime()[0]
-            )
-        )
-        .map(
-            d -> d.getValue().getDetails()
-        )
-        .forEach(
-            System.out::print
-        );
+        // Sorts departures by departure time,
+        .sorted(comparingByValue(TrainDeparture::compareTo))
+        .map(d -> d.getValue().getDetails())
+        .forEach(System.out::print);
 
 
     System.out.println("\n");
@@ -260,8 +273,7 @@ public class DispatchApp {
       validInput = true;
     } while (!validInput);
 
-
-    // Declare variables in correct scope;
+    // Declare variables in correct scope
     int [] departureTime = new int[2];
     String line = "";
     String destination = "";
@@ -285,7 +297,7 @@ public class DispatchApp {
         track = Integer.parseInt(values[4]);
       } catch (NumberFormatException e) {
         // If user input is not parsable to correct data types, an error message is displayed
-        System.out.println("Invalid input. Please try again.");
+        System.out.println(INVALID_INPUT_MESSAGE);
 
         // validInput is set to false, so th
         validInput = false;
@@ -311,9 +323,6 @@ public class DispatchApp {
   private void assignTrackToTrainDeparture() {
     clearScreen();
 
-    state = STATE_MAIN_MENU;
-    // Change state of program to main menu before code in case of early return
-
     if (selectedDeparture == null) {
       // If no departure is selected, the method returns early
       System.out.println("No train departure selected. Please try again.");
@@ -337,9 +346,6 @@ public class DispatchApp {
    */
   private void assignDelayToTrainDeparture() {
     clearScreen();
-
-    state = STATE_MAIN_MENU;
-    // Change state of program to main menu before code in case of early return
 
     if (selectedDeparture == null) {
       // If no departure is selected, the method returns early
@@ -408,6 +414,8 @@ public class DispatchApp {
             () -> System.out.println(
                 "No train departure found with destination " + destination + ". Please try again."
             ));
+
+    waitForUserInput();
   }
 
   /**
@@ -440,7 +448,7 @@ public class DispatchApp {
    */
   private void waitForUserInput() {
     System.out.println("Press enter to continue...");
-    scanner.nextLine();
+    scanner.nextLine(); // Does not store user input, only waits for input
   }
 
   /**
@@ -466,7 +474,7 @@ public class DispatchApp {
         // If no exception is thrown, the input is valid.
         validInput = true;
       } catch (NumberFormatException | NoSuchElementException | IllegalStateException e) {
-        System.out.println("Invalid input. Please try again."); // Error message
+        System.out.println("Input must be of non-empty String type. Please try again."); // Error message
       }
     }
     return input;
@@ -495,7 +503,7 @@ public class DispatchApp {
         // If no exception is thrown, the input is valid.
         validInput = true;
       } catch (NumberFormatException | NoSuchElementException | IllegalStateException e) {
-        System.out.println("Invalid input. Please try again."); // Error message
+        System.out.println("Input must be of Integer type. Please try again."); // Error message
       }
     }
     return input;
