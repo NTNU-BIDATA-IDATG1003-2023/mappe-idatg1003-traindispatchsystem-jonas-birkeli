@@ -1,3 +1,4 @@
+import static config.ConfigurationOptions.*;
 import static java.util.Map.Entry.comparingByValue;
 
 import departurecore.TrainDeparture;
@@ -36,21 +37,9 @@ public class DispatchApp {
   private boolean running;
   private TrainDeparture selectedDeparture;
   private Clock currentTime;
-  private HashMap<Integer, TrainDeparture> departuresMap;
+  private final HashMap<Integer, TrainDeparture> departuresMap;
   private final InputHandler inputHandler;
   private final Printer printer;
-
-  // Constants used in the program
-  private static final int STATE_VIEW_DEPARTURES = 1;
-  private static final int STATE_ADD_DEPARTURE = 2;
-  private static final int STATE_ASSIGN_TRACK = 3;
-  private static final int STATE_ASSIGN_DELAY = 4;
-  private static final int STATE_SEARCH_BY_NUMBER = 5;
-  private static final int STATE_SEARCH_BY_DESTINATION = 6;
-  private static final int STATE_CHANGE_TIME = 7;
-  private static final int STATE_EXIT = 8;
-
-  public static final String INVALID_INPUT_MESSAGE = "Invalid input. Please try again.";
 
   /**
    * Starts the {@code DispatchApp} and runs it

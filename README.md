@@ -14,22 +14,16 @@ Train dispatch system, where the user can add trains, add wagons to trains, and 
 Maven project with the following structure:
 ```
 src
-├── main
-│   ├── java
-│   │   └── dev
-│   │       └── jonas
-│   │           ├── DispatchApp.java
-│   │           ├── Terminal.java
-│   │           └── departurecore.TrainDeparture.java
-│   └── resources
-└── test
-    ├── java
-    │   └── dev
-    │       └── jonas
-    │           ├── DispatchAppTest.java
-    │           ├── TerminalTest.java
-    │           └── TrainDepartureTest.java
-    └── resources
+└── main
+    └── java
+        ├── departurecore
+        │   └── TrainDeparture.java
+        ├── utility
+        │   ├── Clock.java
+        │   ├── InputHandler.java
+        │   ├── InputValidator.java
+        │   └── Printer.java
+        └── DispatchApp.java
 ```
 
 ## Link to repository

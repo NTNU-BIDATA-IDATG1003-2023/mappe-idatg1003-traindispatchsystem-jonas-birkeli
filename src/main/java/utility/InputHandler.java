@@ -1,5 +1,7 @@
 package utility;
 
+import static config.ConfigurationOptions.INVALID_INPUT_MESSAGE;
+
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -48,15 +50,13 @@ public class InputHandler {
         input = scanner.nextLine();
 
         if (!inputValidator.inputIsValid(input)) {
-          printer.println("Input is not valid.");
-          printer.println("Please try again.");
+          printer.println(INVALID_INPUT_MESSAGE);
           continue;
         }
         // If no exception is thrown, the input is valid.
         validInput = true;
       } catch (NoSuchElementException | IllegalStateException e) {
-        printer.println(e.getMessage());
-        printer.println("Please try again.");
+        printer.println(INVALID_INPUT_MESSAGE);
         // Error message
       }
     }
@@ -86,8 +86,7 @@ public class InputHandler {
         input = scanner.nextLine();
 
         if (!inputValidator.inputIsParsable(input)) {
-          printer.println("Input is not parsable to an integer.");
-          printer.println("Please try again.");
+          printer.println(INVALID_INPUT_MESSAGE);
           continue;
         }
 
@@ -96,8 +95,8 @@ public class InputHandler {
         // If no exception is thrown, the input is valid.
         validInput = true;
       } catch (NoSuchElementException | IllegalStateException e) {
-        printer.println(e.getMessage());
-        printer.println("Please try again.");
+        printer.println(INVALID_INPUT_MESSAGE);
+        // Error message
       }
     }
     return inputAsInt;
