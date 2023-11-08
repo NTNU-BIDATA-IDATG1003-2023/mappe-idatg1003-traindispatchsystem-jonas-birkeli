@@ -2,8 +2,9 @@ import static java.util.Map.Entry.comparingByValue;
 
 import departurecore.TrainDeparture;
 import utility.Clock;
-import utility.UserInputOutputHandler;
+import utility.InputHandler;
 import java.util.HashMap;
+import utility.Printer;
 
 /**
  * The {@code DispatchApp} class represents the main class of the program.
@@ -36,7 +37,8 @@ public class DispatchApp {
   private TrainDeparture selectedDeparture;
   private Clock currentTime;
   private HashMap<Integer, TrainDeparture> departuresMap;
-  private final UserInputOutputHandler userInputOutputHandler;
+  private final InputHandler inputHandler;
+  private final Printer printer;
 
   // Constants used in the program
   private static final int STATE_VIEW_DEPARTURES = 1;
@@ -87,7 +89,8 @@ public class DispatchApp {
     selectedDeparture = null;
     currentTime = new Clock();
     departuresMap = new HashMap<>();
-    userInputOutputHandler = new UserInputOutputHandler();
+    inputHandler = new InputHandler();
+    printer = new Printer();
   }
 
   /**
@@ -125,6 +128,7 @@ public class DispatchApp {
     // Uses a switch statement to determine which method to run,
     // based on the current state of the program
     while (running) {
+
       mainMenu();
       switch (state) {
         case STATE_VIEW_DEPARTURES -> viewTrainDepartures();
@@ -136,6 +140,10 @@ public class DispatchApp {
         case STATE_CHANGE_TIME -> changeTime();
         case STATE_EXIT -> exitApplication();
         default -> running = false;
+      }
+      if (state != STATE_EXIT) {
+        inputHandler.waitForUserInput();
+        printer.clearScreen();
       }
     }
   }
@@ -161,8 +169,6 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void mainMenu() {
-    userInputOutputHandler.clearScreen();
-
     int choice = 0;
     boolean validChoice = false;
 
@@ -183,13 +189,13 @@ public class DispatchApp {
 
     // Continuously ask for user input until a valid choice is made
     while (!validChoice) {
-      userInputOutputHandler.println(String.valueOf(message));
+      printer.println(String.valueOf(message));
 
-      choice = userInputOutputHandler.getValidIntInput("Enter choice: ");
-      // Any exception in {@link #getValidIntInput(String)} is caught, no need to try catch block.
+      choice = inputHandler.getValidIntInput("Enter choice: ");
+      // Any exception in getValidIntInput is caught, no need to try catch block.
 
       if (choice < 1 || choice > 8) {
-        userInputOutputHandler.println("Choice must be between 1 and 8. Please try again.");
+        printer.println("Choice must be between 1 and 8. Please try again.");
         continue;
       }
       // If choice is valid, the loop is broken
@@ -216,8 +222,6 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void viewTrainDepartures() {
-    userInputOutputHandler.clearScreen();
-
     String currentTimeString = currentTime.getTimeAsString();
 
     // Format of which departures are displayed:
@@ -230,7 +234,7 @@ public class DispatchApp {
         .append(" - ")
         .append(currentTimeString);
 
-    userInputOutputHandler.println(String.valueOf(header));
+    printer.println(String.valueOf(header));
 
     // Loops through all departures, and prints them if they are valid
     // Departures are sorted by departure time
@@ -246,18 +250,15 @@ public class DispatchApp {
         // Sorts departures by departure time,
         .sorted(comparingByValue(TrainDeparture::compareTo))
         .map(d -> d.getValue().getDetails())
-        .forEach(userInputOutputHandler::print);
+        .forEach(printer::print);
 
-    userInputOutputHandler.println("\n");
+    printer.println("\n");
 
     // Prints selected departure if it is not null
     if (selectedDeparture != null) {
-      userInputOutputHandler.println("Selected train departure:");
-      userInputOutputHandler.println(selectedDeparture.getDetails());
+      printer.println("Selected train departure:");
+      printer.println(selectedDeparture.getDetails());
     }
-
-    // Back to main menu when user presses enter
-    userInputOutputHandler.waitForUserInput();
   }
 
   /**
@@ -270,8 +271,7 @@ public class DispatchApp {
    * @see TrainDeparture
    */
   private void addTrainDeparture() {
-    userInputOutputHandler.clearScreen();
-    userInputOutputHandler.println("Add train departure");
+    printer.println("Add train departure");
 
     String[] fields = {
         "Departure hour",
@@ -285,9 +285,9 @@ public class DispatchApp {
     int trainNumber;
 
     do {
-      trainNumber = userInputOutputHandler.getValidIntInput("Train number: ");
+      trainNumber = inputHandler.getValidIntInput("Train number: ");
       if (departuresMap.containsKey(trainNumber)) {
-        userInputOutputHandler.println("Train number already exists. Please try again.");
+        printer.println("Train number already exists. Please try again.");
         continue;
       }
       validInput = true;
@@ -304,7 +304,7 @@ public class DispatchApp {
       // Continuously ask for user input until a valid choice is made
       // Stores user input in values array
       for (int i = 0; i < fields.length; i++) {
-        values[i] = userInputOutputHandler.getValidStringInput(fields[i] + ": ");
+        values[i] = inputHandler.getValidStringInput(fields[i] + ": ");
       }
 
       // Expects correct input from user
@@ -319,7 +319,7 @@ public class DispatchApp {
         track = Integer.parseInt(values[4]);
       } catch (NumberFormatException e) {
         // If user input is not parsable to correct data types, an error message is displayed
-        userInputOutputHandler.println(INVALID_INPUT_MESSAGE);
+        printer.println(INVALID_INPUT_MESSAGE);
 
         // validInput is set to false, so th
         validInput = false;
@@ -343,18 +343,16 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void assignTrackToTrainDeparture() {
-    userInputOutputHandler.clearScreen();
-
     if (selectedDeparture == null) {
       // If no departure is selected, the method returns early
-      userInputOutputHandler.println("No train departure selected. Please try again.");
+      printer.println("No train departure selected. Please try again.");
       return;
     }
 
-    userInputOutputHandler.println("Assign track to train departure");
-    userInputOutputHandler.println(selectedDeparture.getDetails());
+    printer.println("Assign track to train departure");
+    printer.println(selectedDeparture.getDetails());
 
-    int track = userInputOutputHandler.getValidIntInput("Enter track number: ");
+    int track = inputHandler.getValidIntInput("Enter track number: ");
 
     selectedDeparture.setTrack(track);
     // Updates track of selected departure
@@ -367,20 +365,18 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void assignDelayToTrainDeparture() {
-    userInputOutputHandler.clearScreen();
-
     if (selectedDeparture == null) {
       // If no departure is selected, the method returns early
-      userInputOutputHandler.println("No train departure selected. Please try again.");
+      printer.println("No train departure selected. Please try again.");
 
       return;
     }
 
-    userInputOutputHandler.println("Assign delay to train departure");
-    userInputOutputHandler.println(selectedDeparture.getDetails()); // Prints details of selected departure
+    printer.println("Assign delay to train departure");
+    printer.println(selectedDeparture.getDetails()); // Prints details of selected departure
 
-    int delayHour = userInputOutputHandler.getValidIntInput("Enter delay hour: ");
-    int delayMinute = userInputOutputHandler.getValidIntInput("Enter delay minute: ");
+    int delayHour = inputHandler.getValidIntInput("Enter delay hour: ");
+    int delayMinute = inputHandler.getValidIntInput("Enter delay minute: ");
 
     selectedDeparture.setDelay(new int[]{delayHour, delayMinute});
     // Updates delay of departure
@@ -394,19 +390,16 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void searchTrainDepartureByNumber() {
-    userInputOutputHandler.clearScreen();
-    userInputOutputHandler.println("Search train departure by number");
-    int trainNumber = userInputOutputHandler.getValidIntInput("Enter train number: ");
+    printer.println("Search train departure by number");
+    int trainNumber = inputHandler.getValidIntInput("Enter train number: ");
 
     if (departuresMap.containsKey(trainNumber)) {
       selectedDeparture = departuresMap.get(trainNumber);
-      userInputOutputHandler.println("Train departure found:");
-      userInputOutputHandler.println(selectedDeparture.getDetails());
+      printer.println("Train departure found:");
+      printer.println(selectedDeparture.getDetails());
     } else {
-      userInputOutputHandler.println("No train departure found with train number " + trainNumber + ".");
+      printer.println("No train departure found with train number " + trainNumber + ".");
     }
-
-    userInputOutputHandler.waitForUserInput();
   }
 
   /**
@@ -417,9 +410,8 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void searchTrainDepartureByDestination() {
-    userInputOutputHandler.clearScreen();
-    userInputOutputHandler.println("Search train departure by destination");
-    String destination = userInputOutputHandler.getValidStringInput("Enter destination: ");
+    printer.println("Search train departure by destination");
+    String destination = inputHandler.getValidStringInput("Enter destination: ");
 
     departuresMap.entrySet()
         .stream()
@@ -428,14 +420,12 @@ public class DispatchApp {
         .ifPresentOrElse(
             d -> {
               selectedDeparture = d.getValue();
-              userInputOutputHandler.println("Train departure found:");
-              userInputOutputHandler.println(selectedDeparture.getDetails());
+              printer.println("Train departure found:");
+              printer.println(selectedDeparture.getDetails());
             },
-            () -> userInputOutputHandler.println(
+            () -> printer.println(
                 "No train departure found with destination " + destination + ". Please try again."
             ));
-
-    userInputOutputHandler.waitForUserInput();
   }
 
   /**
@@ -444,11 +434,9 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void changeTime() {
-    userInputOutputHandler.clearScreen();
-    userInputOutputHandler.println("Current time: " + currentTime.getTimeAsString());
-    userInputOutputHandler.println("Change time of program.");
-    int hour = userInputOutputHandler.getValidIntInput("Enter hour: ");
-    int minute = userInputOutputHandler.getValidIntInput("Enter minute: ");
+    printer.println("Change time of program.");
+    int hour = inputHandler.getValidIntInput("Enter hour: ");
+    int minute = inputHandler.getValidIntInput("Enter minute: ");
     currentTime = new Clock(hour, minute);
   }
 
@@ -458,7 +446,7 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void exitApplication() {
-    userInputOutputHandler.println("Exiting application...");
+    printer.println("Exiting application...");
     running = false;
   }
 }
