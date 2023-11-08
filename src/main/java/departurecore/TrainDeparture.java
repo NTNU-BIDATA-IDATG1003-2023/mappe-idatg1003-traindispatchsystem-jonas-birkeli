@@ -28,7 +28,7 @@ import utility.Clock;
  * </p>
  *
  * @author Jonas Birkeli
- * @version 1.3.0
+ * @version 1.4.0
  * @since 1.0.0
  */
 public class TrainDeparture implements Comparable<TrainDeparture> {
@@ -38,6 +38,7 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
   private String line;
   private String destination;
   private int track;
+  private int trainNumber;
 
   /**
    * Constructs a new {@code departurecore.TrainDeparture} with default values.
@@ -50,6 +51,7 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
     setLine("");
     setDestination("");
     setTrack(-1);
+    setTrainNumber(-1);
   }
 
 
@@ -69,12 +71,14 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
       int minute,
       String line,
       String destination,
-      int track) {
+      int track,
+      int trainNumber) {
     departureTime = new Clock(hour, minute);
     delay = new Clock(); // Default 00:00
     setLine(line);
     setDestination(destination);
     setTrack(track);
+    setTrainNumber(trainNumber);
   }
 
 
@@ -219,6 +223,29 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
     return track;
   }
 
+  /**
+   * Sets the train number of the {@code TrainDeparture}.
+   * If negative or zero, train number is set to -1.
+   *
+   * @since 1.4.0
+   */
+  public void setTrainNumber(int trainNumber) {
+    if (trainNumber <= 0) {
+      this.trainNumber = -1;
+      return;
+    }
+    this.trainNumber = trainNumber;
+  }
+
+  /**
+   * Returns the train number of the {@code TrainDeparture}.
+   *
+   * @return the train number of the {@code TrainDeparture}.
+   * @since 1.4.0
+   */
+  public int getTrainNumber() {
+    return trainNumber;
+  }
 
   /**
    * Returns a string representation of the {@code departurecore.TrainDeparture}.

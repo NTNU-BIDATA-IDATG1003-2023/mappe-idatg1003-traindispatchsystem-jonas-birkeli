@@ -11,5 +11,4 @@ public class ConfigurationOptions {
   public static final int STATE_EXIT = 8;
 
   public static final String INVALID_INPUT_MESSAGE = "Invalid input. Please try again.";
-
 }

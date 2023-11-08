@@ -1,6 +1,7 @@
 import static config.ConfigurationOptions.*;
 import static java.util.Map.Entry.comparingByValue;
 
+import departurecore.Station;
 import departurecore.TrainDeparture;
 import utility.Clock;
 import utility.InputHandler;
@@ -37,7 +38,7 @@ public class DispatchApp {
   private boolean running;
   private TrainDeparture selectedDeparture;
   private Clock currentTime;
-  private final HashMap<Integer, TrainDeparture> departuresMap;
+  private final Station station;
   private final InputHandler inputHandler;
   private final Printer printer;
 
@@ -77,7 +78,7 @@ public class DispatchApp {
     running = true;
     selectedDeparture = null;
     currentTime = new Clock();
-    departuresMap = new HashMap<>();
+    station = new Station();
     inputHandler = new InputHandler();
     printer = new Printer();
   }
@@ -104,14 +105,14 @@ public class DispatchApp {
    */
   public void start() {
     // Hard-coded departures for not having to add them manually every time the program is started
-    TrainDeparture dep1 = new TrainDeparture(23, 18, "L1", "Lillehammer", 2);
-    TrainDeparture dep2 = new TrainDeparture(23, 57, "F8", "Gjøvik", 2);
-    TrainDeparture dep3 = new TrainDeparture(3, 59, "H3", "Hamar", 1);
+    TrainDeparture dep1 = new TrainDeparture(23, 18, "L1", "Lillehammer", 2, 60);
+    TrainDeparture dep2 = new TrainDeparture(23, 57, "F8", "Gjøvik", 2, 22);
+    TrainDeparture dep3 = new TrainDeparture(3, 59, "H3", "Hamar", 1, 47);
 
     // Train numbers are used as keys in the HashMap
-    departuresMap.put(60, dep1);
-    departuresMap.put(22, dep2);
-    departuresMap.put(47, dep3);
+    station.addTrainDeparture(dep1);
+    station.addTrainDeparture(dep2);
+    station.addTrainDeparture(dep3);
 
     // Starts program to run continuously until user chooses to exit
     // Uses a switch statement to determine which method to run,
@@ -228,8 +229,7 @@ public class DispatchApp {
     // Loops through all departures, and prints them if they are valid
     // Departures are sorted by departure time
     // Departures with earlier departure time than current time are not displayed
-    departuresMap.entrySet()
-        .stream()
+    station.getTrainDeparturesAsEntrysetStream()
         .filter(
             d -> d.getValue().getDepartureTime().getHour() > currentTime.getHour()
                 || (d.getValue().getDepartureTime().getHour() == currentTime.getHour()
@@ -251,10 +251,10 @@ public class DispatchApp {
   }
 
   /**
-   * Adds a {@code departurecore.TrainDeparture} to the list of departures.
+   * Adds a {@code TrainDeparture} to the list of departures.
    * If some info is not parsable to correct data types,
    * the user is asked to try again.
-   * {@code departurecore.TrainDeparture} is added to the list of departures when all info is valid.
+   * {@code TrainDeparture} is added to the list of departures when all info is valid.
    *
    * @since 1.0.0
    * @see TrainDeparture
@@ -275,7 +275,7 @@ public class DispatchApp {
 
     do {
       trainNumber = inputHandler.getValidIntInput("Train number: ");
-      if (departuresMap.containsKey(trainNumber)) {
+      if (station.hasTrainDeparture(trainNumber)) {
         printer.println("Train number already exists. Please try again.");
         continue;
       }
@@ -316,18 +316,18 @@ public class DispatchApp {
 
     } while (!validInput);
 
-    // Create new departurecore.TrainDeparture object with user input
+    // Create new TrainDeparture object with user input
     TrainDeparture trainDeparture = new TrainDeparture(
-        departureHour, departureMinute, line, destination, track
+        departureHour, departureMinute, line, destination, track, trainNumber
     );
 
-    // Add new departurecore.TrainDeparture object to collection of departures
-    departuresMap.put(trainNumber, trainDeparture);
+    // Add new TrainDeparture object to collection of departures
+    station.addTrainDeparture(trainDeparture);
   }
 
   /**
-   * Assigns a track to a {@code departurecore.TrainDeparture}.
-   * If no {@code departurecore.TrainDeparture} is selected, the method returns early.
+   * Assigns a track to a {@code TrainDeparture}.
+   * If no {@code TrainDeparture} is selected, the method returns early.
    *
    * @since 1.0.0
    */
@@ -348,8 +348,8 @@ public class DispatchApp {
   }
 
   /**
-   * Assigns a delay to a {@code departurecore.TrainDeparture}.
-   * If no {@code departurecore.TrainDeparture} is selected, the method returns early.
+   * Assigns a delay to a {@code TrainDeparture}.
+   * If no {@code TrainDeparture} is selected, the method returns early.
    *
    * @since 1.0.0
    */
@@ -372,8 +372,8 @@ public class DispatchApp {
   }
 
   /**
-   * Searches for a {@code departurecore.TrainDeparture} by train number.
-   * If no {@code departurecore.TrainDeparture} is found, an error message is displayed,
+   * Searches for a {@code TrainDeparture} by train number.
+   * If no {@code TrainDeparture} is found, an error message is displayed,
    * and selected departure is not changed
    *
    * @since 1.0.0
@@ -382,8 +382,8 @@ public class DispatchApp {
     printer.println("Search train departure by number");
     int trainNumber = inputHandler.getValidIntInput("Enter train number: ");
 
-    if (departuresMap.containsKey(trainNumber)) {
-      selectedDeparture = departuresMap.get(trainNumber);
+    if (station.hasTrainDeparture(trainNumber)) {
+      selectedDeparture = station.getTrainDeparture(trainNumber);
       printer.println("Train departure found:");
       printer.println(selectedDeparture.getDetails());
     } else {
@@ -392,18 +392,17 @@ public class DispatchApp {
   }
 
   /**
-   * Searches for a {@code departurecore.TrainDeparture} by destination.
-   * If no {@code departurecore.TrainDeparture} is found, an error message is displayed,
+   * Searches for a {@code TrainDeparture} by destination.
+   * If no {@code TrainDeparture} is found, an error message is displayed,
    * and selected departure is not changed
    *
    * @since 1.0.0
    */
   private void searchTrainDepartureByDestination() {
-    printer.println("Search train departure by destination");
+    printer.println("Search train departure by destination. Not case sensitive.");
     String destination = inputHandler.getValidStringInput("Enter destination: ");
 
-    departuresMap.entrySet()
-        .stream()
+    station.getTrainDeparturesAsEntrysetStream()
         .filter(d -> d.getValue().getDestination().toLowerCase().contains(destination.toLowerCase()))
         .findFirst()
         .ifPresentOrElse(
@@ -415,6 +414,8 @@ public class DispatchApp {
             () -> printer.println(
                 "No train departure found with destination " + destination + ". Please try again."
             ));
+
+    printer.println("You have now selected\n" + selectedDeparture.getDetails());
   }
 
   /**
