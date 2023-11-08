@@ -1,22 +1,19 @@
-package dev.jonas;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import utility.UserInputOutputHandler;
 
-class TerminalTest {
-  Terminal terminal;
+class UserInputOutputHandlerTest {
+  UserInputOutputHandler userInputOutputHandler;
 
   @BeforeEach
   void setUp() {
-    terminal = new Terminal();
+    userInputOutputHandler = new UserInputOutputHandler();
   }
 
   @AfterEach
   void tearDown() {
-    terminal = null;
+    userInputOutputHandler = null;
   }
 
   @Test

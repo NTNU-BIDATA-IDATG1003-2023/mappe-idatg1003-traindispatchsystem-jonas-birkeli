@@ -1,10 +1,16 @@
-package dev.jonas;
 
-import static org.junit.jupiter.api.Assertions.*;
+
+import departurecore.TrainDeparture;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
 
 /**
- * The {@code TrainDepartureTest} class is a test class for {@code TrainDeparture}.
- * It tests all methods in {@code TrainDeparture}.
+ * The {@code TrainDepartureTest} class is a test class for {@code departurecore.TrainDeparture}.
+ * It tests all methods in {@code departurecore.TrainDeparture}.
  *
  * @see TrainDeparture
  * @version 1.0.0

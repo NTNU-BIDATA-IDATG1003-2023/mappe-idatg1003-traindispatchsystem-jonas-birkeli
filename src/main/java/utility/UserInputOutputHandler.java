@@ -1,4 +1,4 @@
-package dev.jonas;
+package utility;
 
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -22,7 +22,7 @@ import java.util.Scanner;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class Terminal {
+public class UserInputOutputHandler {
   private final Scanner scanner;
 
   /**
@@ -30,7 +30,7 @@ public class Terminal {
    *
    * @since 1.0.0
    */
-  public Terminal() {
+  public UserInputOutputHandler() {
     scanner = new Scanner(System.in);
   }
 

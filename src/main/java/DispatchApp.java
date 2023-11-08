@@ -1,7 +1,7 @@
-package dev.jonas;
-
 import static java.util.Map.Entry.comparingByValue;
 
+import departurecore.TrainDeparture;
+import utility.UserInputOutputHandler;
 import java.util.HashMap;
 
 /**
@@ -35,7 +35,7 @@ public class DispatchApp {
   private TrainDeparture selectedDeparture;
   private int[] currentTime;
   private HashMap<Integer, TrainDeparture> departuresMap;
-  private final Terminal terminal;
+  private final UserInputOutputHandler userInputOutputHandler;
 
   // Constants used in the program
   private static final int STATE_VIEW_DEPARTURES = 1;
@@ -86,7 +86,7 @@ public class DispatchApp {
     selectedDeparture = null;
     currentTime = new int[]{0, 0};
     departuresMap = new HashMap<>();
-    terminal = new Terminal();
+    userInputOutputHandler = new UserInputOutputHandler();
   }
 
   /**
@@ -159,7 +159,7 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void mainMenu() {
-    terminal.clearScreen();
+    userInputOutputHandler.clearScreen();
 
     int choice = 0;
     boolean validChoice = false;
@@ -181,13 +181,13 @@ public class DispatchApp {
 
     // Continuously ask for user input until a valid choice is made
     while (!validChoice) {
-      terminal.println(String.valueOf(message));
+      userInputOutputHandler.println(String.valueOf(message));
 
-      choice = terminal.getValidIntInput("Enter choice: ");
+      choice = userInputOutputHandler.getValidIntInput("Enter choice: ");
       // Any exception in {@link #getValidIntInput(String)} is caught, no need to try catch block.
 
       if (choice < 1 || choice > 8) {
-        terminal.println("Choice must be between 1 and 8. Please try again.");
+        userInputOutputHandler.println("Choice must be between 1 and 8. Please try again.");
         continue;
       }
       // If choice is valid, the loop is broken
@@ -214,7 +214,7 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void viewTrainDepartures() {
-    terminal.clearScreen();
+    userInputOutputHandler.clearScreen();
 
     String currentTimeString = String.format("%02d:%02d", currentTime[0], currentTime[1]);
     // Format of which departures are displayed:
@@ -227,7 +227,7 @@ public class DispatchApp {
         .append(" - ")
         .append(currentTimeString);
 
-    terminal.println(String.valueOf(header));
+    userInputOutputHandler.println(String.valueOf(header));
 
     // Loops through all departures, and prints them if they are valid
     // Departures are sorted by departure time
@@ -243,33 +243,33 @@ public class DispatchApp {
         // Sorts departures by departure time,
         .sorted(comparingByValue(TrainDeparture::compareTo))
         .map(d -> d.getValue().getDetails())
-        .forEach(terminal::print);
+        .forEach(userInputOutputHandler::print);
 
 
-    terminal.println("\n");
+    userInputOutputHandler.println("\n");
 
     // Prints selected departure if it is not null
     if (selectedDeparture != null) {
-      terminal.println("Selected train departure:");
-      terminal.println(selectedDeparture.getDetails());
+      userInputOutputHandler.println("Selected train departure:");
+      userInputOutputHandler.println(selectedDeparture.getDetails());
     }
 
     // Back to main menu when user presses enter
-    terminal.waitForUserInput();
+    userInputOutputHandler.waitForUserInput();
   }
 
   /**
-   * Adds a {@code TrainDeparture} to the list of departures.
+   * Adds a {@code departurecore.TrainDeparture} to the list of departures.
    * If some info is not parsable to correct data types,
    * the user is asked to try again.
-   * {@code TrainDeparture} is added to the list of departures when all info is valid.
+   * {@code departurecore.TrainDeparture} is added to the list of departures when all info is valid.
    *
    * @since 1.0.0
    * @see TrainDeparture
    */
   private void addTrainDeparture() {
-    terminal.clearScreen();
-    terminal.println("Add train departure");
+    userInputOutputHandler.clearScreen();
+    userInputOutputHandler.println("Add train departure");
 
     String[] fields = {
         "Departure hour",
@@ -283,9 +283,9 @@ public class DispatchApp {
     int trainNumber;
 
     do {
-      trainNumber = terminal.getValidIntInput("Train number: ");
+      trainNumber = userInputOutputHandler.getValidIntInput("Train number: ");
       if (departuresMap.containsKey(trainNumber)) {
-        terminal.println("Train number already exists. Please try again.");
+        userInputOutputHandler.println("Train number already exists. Please try again.");
         continue;
       }
       validInput = true;
@@ -301,7 +301,7 @@ public class DispatchApp {
       // Continuously ask for user input until a valid choice is made
       // Stores user input in values array
       for (int i = 0; i < fields.length; i++) {
-        values[i] = terminal.getValidStringInput(fields[i] + ": ");
+        values[i] = userInputOutputHandler.getValidStringInput(fields[i] + ": ");
       }
 
       // Expects correct input from user
@@ -315,7 +315,7 @@ public class DispatchApp {
         track = Integer.parseInt(values[4]);
       } catch (NumberFormatException e) {
         // If user input is not parsable to correct data types, an error message is displayed
-        terminal.println(INVALID_INPUT_MESSAGE);
+        userInputOutputHandler.println(INVALID_INPUT_MESSAGE);
 
         // validInput is set to false, so th
         validInput = false;
@@ -323,115 +323,115 @@ public class DispatchApp {
 
     } while (!validInput);
 
-    // Create new TrainDeparture object with user input
+    // Create new departurecore.TrainDeparture object with user input
     TrainDeparture trainDeparture = new TrainDeparture(
         departureTime, line, destination, track
     );
 
-    // Add new TrainDeparture object to collection of departures
+    // Add new departurecore.TrainDeparture object to collection of departures
     departuresMap.put(trainNumber, trainDeparture);
   }
 
   /**
-   * Assigns a track to a {@code TrainDeparture}.
-   * If no {@code TrainDeparture} is selected, the method returns early.
+   * Assigns a track to a {@code departurecore.TrainDeparture}.
+   * If no {@code departurecore.TrainDeparture} is selected, the method returns early.
    *
    * @since 1.0.0
    */
   private void assignTrackToTrainDeparture() {
-    terminal.clearScreen();
+    userInputOutputHandler.clearScreen();
 
     if (selectedDeparture == null) {
       // If no departure is selected, the method returns early
-      terminal.println("No train departure selected. Please try again.");
+      userInputOutputHandler.println("No train departure selected. Please try again.");
       return;
     }
 
-    terminal.println("Assign track to train departure");
-    terminal.println(selectedDeparture.getDetails());
+    userInputOutputHandler.println("Assign track to train departure");
+    userInputOutputHandler.println(selectedDeparture.getDetails());
 
-    int track = terminal.getValidIntInput("Enter track number: ");
+    int track = userInputOutputHandler.getValidIntInput("Enter track number: ");
 
     selectedDeparture.setTrack(track);
     // Updates track of selected departure
   }
 
   /**
-   * Assigns a delay to a {@code TrainDeparture}.
-   * If no {@code TrainDeparture} is selected, the method returns early.
+   * Assigns a delay to a {@code departurecore.TrainDeparture}.
+   * If no {@code departurecore.TrainDeparture} is selected, the method returns early.
    *
    * @since 1.0.0
    */
   private void assignDelayToTrainDeparture() {
-    terminal.clearScreen();
+    userInputOutputHandler.clearScreen();
 
     if (selectedDeparture == null) {
       // If no departure is selected, the method returns early
-      terminal.println("No train departure selected. Please try again.");
+      userInputOutputHandler.println("No train departure selected. Please try again.");
 
       return;
     }
 
-    terminal.println("Assign delay to train departure");
-    terminal.println(selectedDeparture.getDetails()); // Prints details of selected departure
+    userInputOutputHandler.println("Assign delay to train departure");
+    userInputOutputHandler.println(selectedDeparture.getDetails()); // Prints details of selected departure
 
-    int delayHour = terminal.getValidIntInput("Enter delay hour: ");
-    int delayMinute = terminal.getValidIntInput("Enter delay minute: ");
+    int delayHour = userInputOutputHandler.getValidIntInput("Enter delay hour: ");
+    int delayMinute = userInputOutputHandler.getValidIntInput("Enter delay minute: ");
 
     selectedDeparture.setDelay(new int[]{delayHour, delayMinute});
     // Updates delay of departure
   }
 
   /**
-   * Searches for a {@code TrainDeparture} by train number.
-   * If no {@code TrainDeparture} is found, an error message is displayed,
+   * Searches for a {@code departurecore.TrainDeparture} by train number.
+   * If no {@code departurecore.TrainDeparture} is found, an error message is displayed,
    * and selected departure is not changed
    *
    * @since 1.0.0
    */
   private void searchTrainDepartureByNumber() {
-    terminal.clearScreen();
-    terminal.println("Search train departure by number");
-    int trainNumber = terminal.getValidIntInput("Enter train number: ");
+    userInputOutputHandler.clearScreen();
+    userInputOutputHandler.println("Search train departure by number");
+    int trainNumber = userInputOutputHandler.getValidIntInput("Enter train number: ");
 
     if (departuresMap.containsKey(trainNumber)) {
       selectedDeparture = departuresMap.get(trainNumber);
-      terminal.println("Train departure found:");
-      terminal.println(selectedDeparture.getDetails());
+      userInputOutputHandler.println("Train departure found:");
+      userInputOutputHandler.println(selectedDeparture.getDetails());
     } else {
-      terminal.println("No train departure found with train number " + trainNumber + ".");
+      userInputOutputHandler.println("No train departure found with train number " + trainNumber + ".");
     }
 
-    terminal.waitForUserInput();
+    userInputOutputHandler.waitForUserInput();
   }
 
   /**
-   * Searches for a {@code TrainDeparture} by destination.
-   * If no {@code TrainDeparture} is found, an error message is displayed,
+   * Searches for a {@code departurecore.TrainDeparture} by destination.
+   * If no {@code departurecore.TrainDeparture} is found, an error message is displayed,
    * and selected departure is not changed
    *
    * @since 1.0.0
    */
   private void searchTrainDepartureByDestination() {
-    terminal.clearScreen();
-    terminal.println("Search train departure by destination");
-    String destination = terminal.getValidStringInput("Enter destination: ");
+    userInputOutputHandler.clearScreen();
+    userInputOutputHandler.println("Search train departure by destination");
+    String destination = userInputOutputHandler.getValidStringInput("Enter destination: ");
 
     departuresMap.entrySet()
         .stream()
-        .filter(d -> d.getValue().getDestination().equals(destination))
+        .filter(d -> d.getValue().getDestination().toLowerCase().contains(destination.toLowerCase()))
         .findFirst()
         .ifPresentOrElse(
             d -> {
               selectedDeparture = d.getValue();
-              terminal.println("Train departure found:");
-              terminal.println(selectedDeparture.getDetails());
+              userInputOutputHandler.println("Train departure found:");
+              userInputOutputHandler.println(selectedDeparture.getDetails());
             },
-            () -> terminal.println(
+            () -> userInputOutputHandler.println(
                 "No train departure found with destination " + destination + ". Please try again."
             ));
 
-    terminal.waitForUserInput();
+    userInputOutputHandler.waitForUserInput();
   }
 
   /**
@@ -440,11 +440,11 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void changeTime() {
-    terminal.clearScreen();
-    terminal.println("Current time: " + currentTime[0] + ":" + currentTime[1]);
-    terminal.println("Change time of program.");
-    int hour = terminal.getValidIntInput("Enter hour: ");
-    int minute = terminal.getValidIntInput("Enter minute: ");
+    userInputOutputHandler.clearScreen();
+    userInputOutputHandler.println("Current time: " + currentTime[0] + ":" + currentTime[1]);
+    userInputOutputHandler.println("Change time of program.");
+    int hour = userInputOutputHandler.getValidIntInput("Enter hour: ");
+    int minute = userInputOutputHandler.getValidIntInput("Enter minute: ");
     currentTime = new int[]{hour, minute};
   }
 
@@ -454,7 +454,7 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void exitApplication() {
-    terminal.println("Exiting application...");
+    userInputOutputHandler.println("Exiting application...");
     running = false;
   }
 }

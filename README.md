@@ -20,7 +20,7 @@ src
 │   │       └── jonas
 │   │           ├── DispatchApp.java
 │   │           ├── Terminal.java
-│   │           └── TrainDeparture.java
+│   │           └── departurecore.TrainDeparture.java
 │   └── resources
 └── test
     ├── java
