@@ -2,19 +2,39 @@ package departurecore;
 
 import java.util.Arrays;
 import java.util.Objects;
+import utility.Clock;
+
 
 /**
  * The {@code departurecore.TrainDeparture} class represents a train on a station.
- * All {@code departurecore.TrainDeparture}s has a departuretime, delay, line, destination and track.
+ * All {@code departurecore.TrainDeparture}s has a departuretime,
+ * delay, line, destination and track.
+ * <p>
+ *   This class has the following methods:
+ *   <ul>
+ *     <li>{@link #setDepartureTime(int[])}</li>
+ *     <li>{@link #getDepartureTime()}</li>
+ *     <li>{@link #setDelay(int[])}</li>
+ *     <li>{@link #getDelay()}</li>
+ *     <li>{@link #setLine(String)}</li>
+ *     <li>{@link #getLine()}</li>
+ *     <li>{@link #setDestination(String)}</li>
+ *     <li>{@link #getDestination()}</li>
+ *     <li>{@link #setTrack(int)}</li>
+ *     <li>{@link #getTrack()}</li>
+ *     <li>{@link #getDetails()}</li>
+ *     <li>{@link #compareTo(TrainDeparture)}</li>
+ *   </ul>
+ * </p>
  *
  * @author Jonas Birkeli
- * @version 1.2.0
+ * @version 1.3.0
  * @since 1.0.0
  */
 public class TrainDeparture implements Comparable<TrainDeparture> {
 
-  private int[] departureTime;
-  private int[] delay;
+  private Clock departureTime;
+  private Clock delay;
   private String line;
   private String destination;
   private int track;
@@ -25,38 +45,38 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
    * @since 1.0.0
    */
   public TrainDeparture() {
-    setDepartureTime(new int[]{0, 0});
+    departureTime = new Clock(); // Default 00:00
+    delay = new Clock(); // Default 00:00
     setLine("");
     setDestination("");
     setTrack(-1);
-    setDelay(new int[]{0, 0});
   }
 
+
   /**
-   * Constructs a new {@code departurecore.TrainDeparture} with the given parameters.
+   * Constructs a new {@code departurecore.TrainDeparture} with the given parameters,
+   * where minute and hour has their own parameters.
    *
-   * @param departureTime  Scheduled time for departure of train.
-   * @param line Scheduled line of train
+   * @param hour Scheduled hour for departure of train.
+   * @param minute Scheduled minute for departure of train.
+   * @param line Scheduled line of train.
    * @param destination End-destination of train.
    * @param track Number of the departure-track.
-   *
-   * @see #setDepartureTime(int[])
-   * @see #setLine(String)
-   * @see #setDestination(String)
-   * @see #setTrack(int)
-   * @since 1.0.0
+   * @since 1.3.0
    */
   public TrainDeparture(
-      int[] departureTime,
+      int hour,
+      int minute,
       String line,
       String destination,
       int track) {
-    setDepartureTime(departureTime);
+    departureTime = new Clock(hour, minute);
+    delay = new Clock(); // Default 00:00
     setLine(line);
     setDestination(destination);
     setTrack(track);
-    setDelay(new int[]{0, 0});
   }
+
 
   /**
    * Sets the departure time of the {@code departurecore.TrainDeparture}.
@@ -73,19 +93,22 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
         || departureTime[0] < 0
         || departureTime[1] < 0
     ) {
-      this.departureTime = new int[]{0, 0};
+      // If any of the conditions above is false, departuretime is set to default.
+      this.departureTime.setTime(0, 0);
       return;
     }
-    this.departureTime = departureTime;
+    this.departureTime.setTime(departureTime);
   }
 
+
   /**
-   * Returns the departure time of the {@code departurecore.TrainDeparture}.
+   * Returns the departure time of the {@code departurecore.TrainDeparture}
+   * as an integer list in the format {HH, MM}.
    *
    * @return the departure time of the {@code departurecore.TrainDeparture}.
-   * @since 1.0.0
+   * @since 1.3.0
    */
-  public int[] getDepartureTime() {
+  public Clock getDepartureTime() {
     return departureTime;
   }
 
@@ -104,20 +127,21 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
         || delay[0] < 0
         || delay[1] < 0
     ) {
-      this.delay = new int[]{0, 0};
+      this.delay.setTime(0, 0);
       return;
     }
-    this.delay = delay;
+    this.delay.setTime(delay);
   }
 
   /**
-   * Returns the delay of the {@code departurecore.TrainDeparture} as an integer list in the format {HH, MM}.
+   * Returns the delay of the {@code departurecore.TrainDeparture}
+   * as an integer list in the format {HH, MM}.
    *
    * @return the delay of the {@code departurecore.TrainDeparture}.
    * @since 1.0.0
    */
   public int[] getDelay() {
-    return delay;
+    return delay.getTime();
   }
 
   /**
@@ -222,16 +246,14 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
     if (line.isEmpty()
             || destination.isEmpty()
             || track == -1
-            || departureTime[0] == 0
-            || departureTime[1] == 0
     ) {
       return "";
     }
 
     // Formatting the departure time with leading zeros if needed
-    String formattedDepartureTime = String.format(
-        "%02d:%02d", getCorrectedDepartureTime()[0], getCorrectedDepartureTime()[1]
-    );
+    String formattedDepartureTime = departureTime
+        .combineTime(delay.getTime())
+        .getTimeAsString();
 
     // Reversing the input
     StringBuilder inputReversed = new StringBuilder();
@@ -263,69 +285,43 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
   }
 
   /**
-   * Returns the departure time of the {@code departurecore.TrainDeparture} with delay added.
-   * If delay is null, delay is set to 0.
-   * If departure time is null, departure time is set to 0.
-   * In case of overflow, departure time is corrected with use of floor division and modulo.
-   * This is done for both hours and minutes.
+   * Compares this {@code TrainDeparture} with the specified {@code TrainDeparture} for order.
+   * Returns a negative integer, zero, or a positive integer as this {@code TrainDeparture}
+   * is less than, equal to, or greater than the specified {@code TrainDeparture}.
+   * The comparison is primarily based on the departure time of the {@code TrainDeparture}.
    *
-   * @return the departure time of the {@code departurecore.TrainDeparture} with delay added.
-   * @since 1.2.0
-   */
-  public int[] getCorrectedDepartureTime() {
-    int departureHour = getDepartureTime()[0] + getDelay()[0];
-    int departureMinute = getDepartureTime()[1] + getDelay()[1];
-
-    // If departure minute is greater than 60,
-    // add the times departure minute is divisible by 60 to departure hour.
-    // This operation is performed on integers, which means floor division is used.
-    departureHour += departureMinute / 60;
-
-    // If departure hour is greater than 24,
-    // add the times departure hour is divisible by 24 to departure hour.
-    departureMinute %= 60;
-
-    // If departure hour is greater than 24,
-    // add the times departure hour is divisible by 24 to departure hour.
-    departureHour %= 24;
-
-    return new int[]{departureHour, departureMinute};
-  }
-
-  /**
-   * Compares this {@code departurecore.TrainDeparture} with the specified {@code departurecore.TrainDeparture} for order.
-   * Returns a negative integer, zero, or a positive integer as this {@code departurecore.TrainDeparture}
-   * is less than, equal to, or greater than the specified {@code departurecore.TrainDeparture}.
-   * The comparison is primarily based on the departure time of the {@code departurecore.TrainDeparture}.
-   *
-   * @param other the {@code departurecore.TrainDeparture} to be compared.
+   * @param other the {@code TrainDeparture} to be compared.
    *              If null, returns 1.
-   * @return a negative integer, zero, or a positive integer as this {@code departurecore.TrainDeparture}
-   *        is less than, equal to, or greater than the specified {@code departurecore.TrainDeparture}.
+   * @return a negative integer, zero, or a positive integer as this {@code TrainDeparture}
+   *        is less than, equal to, or greater than the specified {@code TrainDeparture}.
    *        If null, returns 1.
    * @since 1.1.0
    */
   @Override
   public int compareTo(TrainDeparture other) {
+    // If other is null, this is bigger, return 1 meaning bigger
     if (other == null) {
       return 1;
     }
 
+    // If this and other are equal, return 0 meaning equal
     if (this.equals(other)) {
       return 0;
     }
 
-    int[] thisDepartureTime = getCorrectedDepartureTime();
-    int[] otherDepartureTime = other.getCorrectedDepartureTime();
+    // Combining departure time and delay for each departure, stored as a new clock object.
+    int[] thisDepartureTime = departureTime.combineTime(delay.getTime()).getTime();
+    int[] otherDepartureTime = other.departureTime.combineTime(other.delay.getTime()).getTime();
 
     // Comparing departure times
     if (thisDepartureTime[0] > otherDepartureTime[0]) {
       return 1;
     }
     if (thisDepartureTime[0] < otherDepartureTime[0]) {
-      return -1;
+      return -1;  // If this is smaller, return -1 meaning smaller
     }
     // If departure hours are equal, compare minutes
+    // Using builtin comparator for integers to compare minutes
     return Integer.compare(thisDepartureTime[1], otherDepartureTime[1]);
   }
 
@@ -351,8 +347,8 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
     if (!(other instanceof TrainDeparture that)) {
       return false;
     }
-    return getTrack() == that.getTrack() && Arrays.equals(getDepartureTime(),
-        that.getDepartureTime()) && Arrays.equals(getDelay(), that.getDelay())
+    return getTrack() == that.getTrack() && Arrays.equals(getDepartureTime().getTime(),
+        that.getDepartureTime().getTime()) && Arrays.equals(getDelay(), that.getDelay())
         && Objects.equals(getLine(), that.getLine()) && Objects.equals(
         getDestination(), that.getDestination());
   }
@@ -369,7 +365,7 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
   @Override
   public int hashCode() {
     int result = Objects.hash(getLine(), getDestination(), getTrack());
-    result = 31 * result + Arrays.hashCode(getDepartureTime());
+    result = 31 * result + Arrays.hashCode(getDepartureTime().getTime());
     result = 31 * result + Arrays.hashCode(getDelay());
     return result;
   }

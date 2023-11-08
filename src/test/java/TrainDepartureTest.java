@@ -31,14 +31,14 @@ class TrainDepartureTest {
   @org.junit.jupiter.api.Test
   void setDepartureTime() {
     trainDeparture.setDepartureTime(new int[]{23, 56});
-    assertEquals(23, trainDeparture.getDepartureTime()[0]);
-    assertEquals(56, trainDeparture.getDepartureTime()[1]);
+    assertEquals(23, trainDeparture.getDepartureTime().getHour());
+    assertEquals(56, trainDeparture.getDepartureTime().getMinute());
   }
 
   @org.junit.jupiter.api.Test
   void getDepartureTime() {
-    assertEquals(0, trainDeparture.getDepartureTime()[0]);
-    assertEquals(0, trainDeparture.getDepartureTime()[1]);
+    assertEquals(0, trainDeparture.getDepartureTime().getHour());
+    assertEquals(0, trainDeparture.getDepartureTime().getMinute());
   }
 
   @org.junit.jupiter.api.Test

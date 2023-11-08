@@ -1,6 +1,7 @@
 import static java.util.Map.Entry.comparingByValue;
 
 import departurecore.TrainDeparture;
+import utility.Clock;
 import utility.UserInputOutputHandler;
 import java.util.HashMap;
 
@@ -33,7 +34,7 @@ public class DispatchApp {
   private int state;
   private boolean running;
   private TrainDeparture selectedDeparture;
-  private int[] currentTime;
+  private Clock currentTime;
   private HashMap<Integer, TrainDeparture> departuresMap;
   private final UserInputOutputHandler userInputOutputHandler;
 
@@ -84,7 +85,7 @@ public class DispatchApp {
     state = 0;
     running = true;
     selectedDeparture = null;
-    currentTime = new int[]{0, 0};
+    currentTime = new Clock();
     departuresMap = new HashMap<>();
     userInputOutputHandler = new UserInputOutputHandler();
   }
@@ -111,10 +112,11 @@ public class DispatchApp {
    */
   public void start() {
     // Hard-coded departures for not having to add them manually every time the program is started
-    TrainDeparture dep1 = new TrainDeparture(new int[]{13, 56}, "L1", "Lillehammer", 2);
-    TrainDeparture dep2 = new TrainDeparture(new int[]{23, 57}, "F8", "Gjøvik", 2);
-    TrainDeparture dep3 = new TrainDeparture(new int[]{3, 58}, "H3", "Hamar", 1);
+    TrainDeparture dep1 = new TrainDeparture(23, 18, "L1", "Lillehammer", 2);
+    TrainDeparture dep2 = new TrainDeparture(23, 57, "F8", "Gjøvik", 2);
+    TrainDeparture dep3 = new TrainDeparture(3, 59, "H3", "Hamar", 1);
 
+    // Train numbers are used as keys in the HashMap
     departuresMap.put(60, dep1);
     departuresMap.put(22, dep2);
     departuresMap.put(47, dep3);
@@ -216,7 +218,8 @@ public class DispatchApp {
   private void viewTrainDepartures() {
     userInputOutputHandler.clearScreen();
 
-    String currentTimeString = String.format("%02d:%02d", currentTime[0], currentTime[1]);
+    String currentTimeString = currentTime.getTimeAsString();
+
     // Format of which departures are displayed:
     StringBuilder header;
     header = new StringBuilder();
@@ -235,16 +238,15 @@ public class DispatchApp {
     departuresMap.entrySet()
         .stream()
         .filter(
-            d -> d.getValue().getDepartureTime()[0] > currentTime[0]
-                || (d.getValue().getDepartureTime()[0] == currentTime[0]
-                && d.getValue().getDepartureTime()[1] >= currentTime[1])
+            d -> d.getValue().getDepartureTime().getHour() > currentTime.getHour()
+                || (d.getValue().getDepartureTime().getHour() == currentTime.getHour()
+                && d.getValue().getDepartureTime().getMinute() >= currentTime.getMinute())
               // Filter out departures with earlier departure time than current time
         )
         // Sorts departures by departure time,
         .sorted(comparingByValue(TrainDeparture::compareTo))
         .map(d -> d.getValue().getDetails())
         .forEach(userInputOutputHandler::print);
-
 
     userInputOutputHandler.println("\n");
 
@@ -292,7 +294,8 @@ public class DispatchApp {
     } while (!validInput);
 
     // Declare variables in correct scope
-    int [] departureTime = new int[2];
+    int departureHour = 0;
+    int departureMinute = 0;
     String line = "";
     String destination = "";
     int track = -1;
@@ -309,7 +312,8 @@ public class DispatchApp {
 
       try {
         // Try to parse user input to correct data types
-        departureTime = new int[]{Integer.parseInt(values[0]), Integer.parseInt(values[1])};
+        departureHour = Integer.parseInt(values[0]);
+        departureMinute = Integer.parseInt(values[1]);
         line = values[2];
         destination = values[3];
         track = Integer.parseInt(values[4]);
@@ -325,7 +329,7 @@ public class DispatchApp {
 
     // Create new departurecore.TrainDeparture object with user input
     TrainDeparture trainDeparture = new TrainDeparture(
-        departureTime, line, destination, track
+        departureHour, departureMinute, line, destination, track
     );
 
     // Add new departurecore.TrainDeparture object to collection of departures
@@ -441,11 +445,11 @@ public class DispatchApp {
    */
   private void changeTime() {
     userInputOutputHandler.clearScreen();
-    userInputOutputHandler.println("Current time: " + currentTime[0] + ":" + currentTime[1]);
+    userInputOutputHandler.println("Current time: " + currentTime.getTimeAsString());
     userInputOutputHandler.println("Change time of program.");
     int hour = userInputOutputHandler.getValidIntInput("Enter hour: ");
     int minute = userInputOutputHandler.getValidIntInput("Enter minute: ");
-    currentTime = new int[]{hour, minute};
+    currentTime = new Clock(hour, minute);
   }
 
   /**
