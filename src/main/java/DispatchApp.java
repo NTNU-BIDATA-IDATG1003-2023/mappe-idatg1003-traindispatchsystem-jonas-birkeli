@@ -1,11 +1,18 @@
-import static config.ConfigurationOptions.*;
-import static java.util.Map.Entry.comparingByValue;
+import static config.ConfigurationOptions.INVALID_INPUT_MESSAGE;
+import static config.ConfigurationOptions.STATE_ADD_DEPARTURE;
+import static config.ConfigurationOptions.STATE_ASSIGN_DELAY;
+import static config.ConfigurationOptions.STATE_ASSIGN_TRACK;
+import static config.ConfigurationOptions.STATE_CHANGE_TIME;
+import static config.ConfigurationOptions.STATE_EXIT;
+import static config.ConfigurationOptions.STATE_SEARCH_BY_DESTINATION;
+import static config.ConfigurationOptions.STATE_SEARCH_BY_NUMBER;
+import static config.ConfigurationOptions.STATE_VIEW_DEPARTURES;
+import static config.ConfigurationOptions.STATION_DEPARTURE_SCREEN_TITLE;
 
 import departurecore.Station;
 import departurecore.TrainDeparture;
 import utility.Clock;
 import utility.InputHandler;
-import java.util.HashMap;
 import utility.Printer;
 
 /**
@@ -212,33 +219,14 @@ public class DispatchApp {
    * @since 1.0.0
    */
   private void viewTrainDepartures() {
-    String currentTimeString = currentTime.getTimeAsString();
-
     // Format of which departures are displayed:
-    StringBuilder header;
-    header = new StringBuilder();
-    header
-        .append("AVGANGER Departures")
-        .append("        ")
-        .append("SPOR Track")
-        .append(" - ")
-        .append(currentTimeString);
-
-    printer.println(String.valueOf(header));
+    printer.print(STATION_DEPARTURE_SCREEN_TITLE);
+    printer.println(station.getStationTime().getTimeAsString());
 
     // Loops through all departures, and prints them if they are valid
     // Departures are sorted by departure time
     // Departures with earlier departure time than current time are not displayed
-    station.getTrainDeparturesAsEntrysetStream()
-        .filter(
-            d -> d.getValue().getDepartureTime().getHour() > currentTime.getHour()
-                || (d.getValue().getDepartureTime().getHour() == currentTime.getHour()
-                && d.getValue().getDepartureTime().getMinute() >= currentTime.getMinute())
-              // Filter out departures with earlier departure time than current time
-        )
-        // Sorts departures by departure time,
-        .sorted(comparingByValue(TrainDeparture::compareTo))
-        .map(d -> d.getValue().getDetails())
+    station.getStreamOfDepartureDetails()
         .forEach(printer::print);
 
     printer.println("\n");
@@ -402,8 +390,11 @@ public class DispatchApp {
     printer.println("Search train departure by destination. Not case sensitive.");
     String destination = inputHandler.getValidStringInput("Enter destination: ");
 
+    /*
     station.getTrainDeparturesAsEntrysetStream()
-        .filter(d -> d.getValue().getDestination().toLowerCase().contains(destination.toLowerCase()))
+        .filter(d -> d.getValue()
+            .getDestination().toLowerCase()
+            .contains(destination.toLowerCase()))
         .findFirst()
         .ifPresentOrElse(
             d -> {
@@ -414,8 +405,16 @@ public class DispatchApp {
             () -> printer.println(
                 "No train departure found with destination " + destination + ". Please try again."
             ));
+     */
 
-    printer.println("You have now selected\n" + selectedDeparture.getDetails());
+    TrainDeparture trainDeparture = station.getTrainDepartureByPartialDestination(destination);
+
+    if (trainDeparture == null) {
+      printer.println("No train departure found with destination " + destination + ". Please try again.");
+    } else {
+      selectedDeparture = trainDeparture;
+      printer.println("You have now selected\n" + selectedDeparture.getDetails());
+    }
   }
 
   /**
@@ -427,7 +426,7 @@ public class DispatchApp {
     printer.println("Change time of program.");
     int hour = inputHandler.getValidIntInput("Enter hour: ");
     int minute = inputHandler.getValidIntInput("Enter minute: ");
-    currentTime = new Clock(hour, minute);
+    currentTime.setTime(hour, minute);
   }
 
   /**

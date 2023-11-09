@@ -7,7 +7,7 @@ STUDENT ID = "107006"
 
 ## Project description
 
-Train dispatch system, where the user can add trains, add wagons to trains, and remove wagons from trains. The user can also print out the trains and wagons in the system.
+Train dispatch system, where the user can view traindepartures, add traindepartures, search for and select traindepartures, and perform certain actions on the selected traindeparture.
 
 ## Project structure
 

@@ -55,6 +55,7 @@ public class Printer {
    *   <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#Escape_sequences">Escape sequences</a>
    *   <br>
    * </p>
+   * This method has been created using CoPilot. <br>
    *
    * @since 1.0.0
    */

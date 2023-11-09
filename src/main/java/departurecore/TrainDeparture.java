@@ -54,7 +54,6 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
     setTrainNumber(-1);
   }
 
-
   /**
    * Constructs a new {@code departurecore.TrainDeparture} with the given parameters,
    * where minute and hour has their own parameters.
@@ -252,6 +251,7 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
    * Similar to what you see at an actual train station.
    * Format is always the same length with whitespaces appended to the destination field.
    * Departure time includes any set delay.
+   * The Delay field will be a separate field at the end of the String.
    * If some values are not set, they return string will be empty.
    * Includes newline at the end if all values are set.
    * The way the string has been formatted is with the help of StringBuilder.
@@ -269,12 +269,13 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
    * @since 1.0.0
    */
   public String getDetails() {
+    boolean departureIsValid = true;
     // If some values are not set, return empty string
     if (line.isEmpty()
             || destination.isEmpty()
             || track == -1
     ) {
-      return "";
+      departureIsValid = false;
     }
 
     // Formatting the departure time with leading zeros if needed
@@ -291,9 +292,14 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
     inputReversed.append(getDestination());
     inputReversed.reverse();
 
-    String whitespacesReversed = String.format("%1$26s", inputReversed);
+
     // Catting the leading whitespaces to reversed destination
-    StringBuilder formattedDestination = new StringBuilder(whitespacesReversed);
+    StringBuilder formattedDestination = new StringBuilder();
+
+    // This line has been taken from Baeldung. It is used to add whitespaces to the reversed
+    // Source: https://www.baeldung.com/java-pad-string
+    // input. The input is reversed again after this line.
+    formattedDestination.append(String.format("%1$26s", inputReversed));
     formattedDestination.reverse();
 
 
@@ -306,9 +312,22 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
         .append(formattedDestination)
         .append(" ")
         .append(getTrack())
-        .append("\n");
+        .append("            ");
 
-    return String.valueOf(objectInformation);
+    if (delay.getHour() == 0 && delay.getMinute() == 0) {
+      objectInformation.append("On time");
+    } else {
+      objectInformation.append(delay.getTimeAsString());
+    }
+
+    objectInformation.append("\n");  //
+
+    // If some values are not set, return empty string insead of objectInformation
+    if (!departureIsValid) {
+      return "";
+    } else {
+      return String.valueOf(objectInformation);
+    }
   }
 
   /**

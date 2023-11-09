@@ -46,16 +46,15 @@ public class InputValidator {
   public boolean inputIsValid(String input) {
     // Expects the input to be valid
     boolean isValid = true;
-
     // Going through multiple checks to see if the input is valid.
     if (input == null) {
-      return false;
+      isValid = false;
     }
     if (input.isEmpty()) {
-      return false;
+      isValid = false;
     }
     if (input.isBlank()) {
-      return false;
+      isValid = false;
     }
 
     // If the input has been invalid for any of the above, the input is invalid.
