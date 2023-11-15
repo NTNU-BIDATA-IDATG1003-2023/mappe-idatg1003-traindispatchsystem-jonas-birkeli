@@ -12,6 +12,7 @@ import static config.ConfigurationOptions.STATION_DEPARTURE_SCREEN_TITLE;
 
 import departurecore.Station;
 import departurecore.TrainDeparture;
+import java.util.stream.Stream;
 import utility.InputHandler;
 import utility.Printer;
 
@@ -49,18 +50,8 @@ public class DispatchSystem {
   private final Printer printer;
 
   /**
-   * Constructs a new {@code DispatchApp} with its variables initialized as default.
-   * <p>
-   *   The {@code DispatchApp} is initialized with the following states:
-   *   <ul>
-   *     <li>state = 0</li>
-   *     <li>running = true</li>
-   *     <li>selectedDeparture = null</li>
-   *     <li>currentTime = new int[]{0, 0}</li>
-   *     <li>scanner = new UserIO()</li>
-   *     <li>departuresMap = new HashMap<>()</li>
-   *   </ul>
-   * </p>
+   * Constructs a new {@code DispatchApp}.The program does not start until the {@link #start()}
+   * method is called.
    *
    * @since 1.2.0
    */
@@ -172,19 +163,9 @@ public class DispatchSystem {
         .append(STATE_HELP).append(". Help\n");
 
     // Continuously ask for user input until a valid choice is made
-    while (!validChoice) {
-      printer.println(String.valueOf(message));
+    printer.println(String.valueOf(message));
 
-      choice = inputHandler.getValidIntInput("Enter choice: ");
-      // Any exception in getValidIntInput is caught, no need to try catch block.
-
-      if (choice < 1 || choice > 9) {
-        printer.println("Choice must be between 1 and 8. Please try again.");
-        continue;
-      }
-      // If choice is valid, the loop is broken
-      validChoice = true;
-    }
+    choice = inputHandler.getValidIntInput("Enter choice: ", 1, 9);
     state = choice;  // Change state of program to corresponding user input
   }
 
@@ -213,7 +194,8 @@ public class DispatchSystem {
     // Loops through all departures, and prints them if they are valid
     // Departures are sorted by departure time
     // Departures with earlier departure time than current time are not displayed
-    station.getStreamOfDepartureDetails()
+    station.getStreamOfTimeFilteredTrainDepartures()
+        .map(TrainDeparture::getDetails) // Gets details of each departure
         .forEach(printer::print);
 
     printer.println("\n");
@@ -235,8 +217,8 @@ public class DispatchSystem {
    * @see TrainDeparture
    */
   private void addTrainDeparture() {
+    // TODO Implement error message for each field if input, especially for integers is invalid
     printer.println("Add train departure");
-
 
     String[] fields = {
         "Departure hour",
@@ -246,9 +228,8 @@ public class DispatchSystem {
         "Track",
     };
     String[] values = new String[fields.length];
-    boolean validInput = false;
-    int trainNumber;
 
+    int trainNumber;
     trainNumber = checkAndGetValidTrainNumber();
 
     // Declare variables in correct scope
@@ -258,13 +239,13 @@ public class DispatchSystem {
     String destination = "";
     int track = -1;
 
+    boolean validInput;  // Used to break the loop if input is valid
     do {
       // Continuously ask for user input until a valid choice is made
       // Stores user input in values array
       for (int i = 0; i < fields.length; i++) {
         values[i] = inputHandler.getValidStringInput(fields[i] + ": ");
       }
-
       // Expects correct input from user
       validInput = true;
 
@@ -300,14 +281,14 @@ public class DispatchSystem {
    * If the user does not want to override it,
    * the loop continues until a valid train number is entered.
    *
-   * @return A valid train number.
+   * @return A valid train number for new {@code TrainDeparture}s.
    * @since 1.4.0
    */
   private int checkAndGetValidTrainNumber() {
     boolean validInput = false;
     int trainNumber;
     do {
-      trainNumber = inputHandler.getValidIntInput("Train number: ");
+      trainNumber = inputHandler.getValidIntInput("Train number: ", 1, Integer.MAX_VALUE);
 
       if (station.hasTrainDepartureWithTrainNumber(trainNumber)) {
         // If train number already exists, the user is asked if they want to override it
@@ -320,7 +301,7 @@ public class DispatchSystem {
         } else {
           // If the user does not want to override, an error message is displayed
           // and the loop continues.
-          printer.println("Please try again.");
+          printer.printError("Please try again.");
         }
       } else {
         // If train number does not exist,
@@ -334,48 +315,50 @@ public class DispatchSystem {
 
   /**
    * Assigns a track to a {@code TrainDeparture}.
-   * If no {@code TrainDeparture} is selected, the method returns early.
+   * If no {@code TrainDeparture} is selected, user is prompted an error message.
    *
    * @since 1.0.0
    */
   private void assignTrackToTrainDeparture() {
-    if (selectedDeparture == null) {
+    if (selectedDeparture != null) {
+      printer.println("Assign track to train departure");
+      printer.println(selectedDeparture.getDetails());
+
+      int track = inputHandler.getValidIntInput("Enter track number: ", 1, 68);
+
+      selectedDeparture.setTrack(track);
+      // Updates track of selected departure
+
+    } else {
       // If no departure is selected, the method returns early
-      printer.println("No train departure selected. Please try again.");
-      return;
+      printer.printError(
+          "No train departure selected. Please search for a train departure using its train-number."
+      );
     }
-
-    printer.println("Assign track to train departure");
-    printer.println(selectedDeparture.getDetails());
-
-    int track = inputHandler.getValidIntInput("Enter track number: ");
-
-    selectedDeparture.setTrack(track);
-    // Updates track of selected departure
   }
 
   /**
    * Assigns a delay to a {@code TrainDeparture}.
-   * If no {@code TrainDeparture} is selected, the method returns early.
+   * If no {@code TrainDeparture} is selected, user is prompted an error message.
    *
    * @since 1.0.0
    */
   private void assignDelayToTrainDeparture() {
-    if (selectedDeparture == null) {
+    if (selectedDeparture != null) {
+      printer.println("Assign delay to train departure");
+      printer.println(selectedDeparture.getDetails()); // Prints details of selected departure
+
+      int delayHour = inputHandler.getValidIntInput("Enter delay hour: ", 0, 23);
+      int delayMinute = inputHandler.getValidIntInput("Enter delay minute: ", 0, 59);
+
+      selectedDeparture.setDelay(new int[]{delayHour, delayMinute});
+      // Updates delay of departure
+    } else {
       // If no departure is selected, the method returns early
-      printer.println("No train departure selected. Please try again.");
-
-      return;
+      printer.printError(
+          "No train departure selected. Please search for a train departure using its train-number."
+      );
     }
-
-    printer.println("Assign delay to train departure");
-    printer.println(selectedDeparture.getDetails()); // Prints details of selected departure
-
-    int delayHour = inputHandler.getValidIntInput("Enter delay hour: ");
-    int delayMinute = inputHandler.getValidIntInput("Enter delay minute: ");
-
-    selectedDeparture.setDelay(new int[]{delayHour, delayMinute});
-    // Updates delay of departure
   }
 
   /**
@@ -387,21 +370,20 @@ public class DispatchSystem {
    */
   private void searchTrainDepartureByNumber() {
     printer.println("Search train departure by number");
-    int trainNumber = inputHandler.getValidIntInput("Enter train number: ");
+    int trainNumber = inputHandler.getValidIntInput("Enter train number: ", 1, Integer.MAX_VALUE);
 
     if (station.hasTrainDepartureWithTrainNumber(trainNumber)) {
-      selectedDeparture = station.getTrainDeparture(trainNumber);
+      selectedDeparture = station.getTrainDepartureByTrainNumber(trainNumber);
       printer.println("Train departure found:");
       printer.println(selectedDeparture.getDetails());
     } else {
-      printer.println("No train departure found with train number " + trainNumber + ".");
+      printer.printError("No train departure found with train number " + trainNumber + ".");
     }
   }
 
   /**
    * Searches for a {@code TrainDeparture} by destination.
    * If no {@code TrainDeparture} is found, an error message is displayed,
-   * and selected departure is not changed
    *
    * @since 1.0.0
    */
@@ -409,32 +391,40 @@ public class DispatchSystem {
     printer.println("Search train departure by destination. Not case sensitive.");
     String destination = inputHandler.getValidStringInput("Enter destination: ");
 
-    TrainDeparture trainDeparture = station.getTrainDepartureByPartialDestination(destination);
+    // Making a temporary stream to check if any train departures are found.
+    // Is made into a stream of details of each train departure.
+    Stream<String> trainDepartureDetails =
+        station.getAllTrainDeparturesByPartialDestination(destination)
+        .map(TrainDeparture::getDetailsWithTrainNumber);
 
-    if (trainDeparture == null) {
-      printer.println(
-          "No train departure found with destination " + destination + ". Please try again."
-      );
+    if (trainDepartureDetails.findAny().isEmpty()) {
+      //
+      printer.printError("No train departure found with destination " + destination + ".");
     } else {
-      selectedDeparture = trainDeparture;
-      printer.println("You have now selected\n" + selectedDeparture.getDetails());
+      printer.println("Train departure found:");
+      station.getAllTrainDeparturesByPartialDestination(destination)
+          .map(TrainDeparture::getDetailsWithTrainNumber)
+          .forEach(printer::print);
     }
   }
 
   /**
-   * Changes the time of the program.
+   * Changes the time of the station.
+   * The user is asked to enter a new hour and minute.
+   * The entered time is checked for overflow and set to a 24-hour format.
+   * The time of the station is then changed to the new time.
    *
    * @since 1.0.0
    */
   private void changeTime() {
     printer.println("Changing time of station. ");
-    int hour = inputHandler.getValidIntInput("Enter hour: ");
-    int minute = inputHandler.getValidIntInput("Enter minute: ");
+    int hour = inputHandler.getValidIntInput("Enter hour: ", 0, 23);
+    int minute = inputHandler.getValidIntInput("Enter minute: ", 0, 59);
     station.getStationClock().setTime(hour, minute);
   }
 
   /**
-   * Exits the application by breaking the main loop.
+   * Exits the application by breaking the main loop, and printing a status message to the user.
    *
    * @since 1.0.0
    */
@@ -455,7 +445,7 @@ public class DispatchSystem {
 
     StringBuilder message;
     message = new StringBuilder();
-    // Building the message in a StringBuilder to avoid long lines and improve readability.
+    // Building the message in a StringBuilder to avoid long lines and improve readability
 
     message.append("In this program, you can:\n")
         .append("View train departures\n")
@@ -469,7 +459,7 @@ public class DispatchSystem {
         .append("Help\n\n");
 
     message.append("To modify a train departure, you must first search for it.\n")
-        .append("You can search for a train departure by its unique train-number or destination.\n")
+        .append("You can search for a train departure by its unique train-number.\n")
         .append("When you have found the train departure you want to modify, you can modify it.\n")
         .append("The selected train departure will be displayed at the bottom when viewing ")
         .append("train departures.\n")

@@ -26,11 +26,7 @@ public class Printer {
 
   /**
    * Prints a message to the standard output, excluding the newline character.
-   * <p>
-   *   This method is equivalent to {@code System.out.print(message)}.
-   *   <br>
-   *   <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/System.html#out">System.out</a>
-   * </p>
+   * This method is equivalent to {@code System.out.print(message)}.
    *
    * @param message The message to print.
    * @since 1.0.0
@@ -64,4 +60,13 @@ public class Printer {
     System.out.flush();
   }
 
+  /**
+   * Prints an error message to the standard error stream, including the newline character.
+   * This method is equivalent to {@code System.err.println(message)}.
+   *
+   * @param message
+   */
+  public void printError(String message) {
+    System.err.println(message);
+  }
 }

@@ -50,13 +50,13 @@ public class InputHandler {
         input = scanner.nextLine();
 
         if (!inputValidator.inputIsValid(input)) {
-          printer.println(INVALID_INPUT_MESSAGE);
+          printer.printError(INVALID_INPUT_MESSAGE);
           continue;
         }
         // If no exception is thrown, the input is valid.
         validInput = true;
       } catch (NoSuchElementException | IllegalStateException e) {
-        printer.println(INVALID_INPUT_MESSAGE);
+        printer.printError(INVALID_INPUT_MESSAGE);
         // Error message
       }
     }
@@ -70,34 +70,32 @@ public class InputHandler {
    * If the input is valid, the input is returned.
    *
    * @param inputMessage Message to display before waiting for user input.
+   * @param min The minimum value the input can be.
+   * @param max The maximum value the input can be.
    * @return The user input as an integer.
    * @since 1.0.0
    */
-  public int getValidIntInput(String inputMessage) {
+  public int getValidIntInput(String inputMessage, int min, int max) {
     // Variables used in the method
     boolean validInput = false;
-    String input = "";
+    String input;
     int inputAsInt = 0;
 
     while (!validInput) {
-      System.out.println(inputMessage);
       // Tries to get user input, catches exceptions if input is invalid
-      try {
-        input = scanner.nextLine();
+      input = getValidStringInput(inputMessage);
 
-        if (!inputValidator.isAcceptableInt(input)) {
-          printer.println(INVALID_INPUT_MESSAGE);
-          continue;
-        }
-
-        inputAsInt = Integer.parseInt(input);
-
-        // If no exception is thrown, the input is valid.
-        validInput = true;
-      } catch (NoSuchElementException | IllegalStateException e) {
-        printer.println(INVALID_INPUT_MESSAGE);
-        // Error message
+      if (!inputValidator.isAcceptableInt(input, min, max)) {
+        printer.printError(
+            "Input does not match the requirements. Must be between " + min + " and " + max + "."
+        );
+        continue;
       }
+
+      inputAsInt = Integer.parseInt(input);
+
+      // If no exception is thrown, the input is valid.
+      validInput = true;
     }
     return inputAsInt;
   }

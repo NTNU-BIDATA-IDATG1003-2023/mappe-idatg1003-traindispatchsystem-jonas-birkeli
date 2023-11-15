@@ -339,6 +339,25 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
     }
   }
 
+  public String getDetailsWithTrainNumber() {
+    String details = getDetails();
+    // If input is not empty, append train number to the end of the string
+    // Empty string means not all values are set, therefore no train number
+
+    if (!details.isEmpty()) {
+      StringBuilder objectInformation;
+      objectInformation = new StringBuilder();
+
+      objectInformation.append(details.trim())
+          .append("   Unique number: ")
+          .append(getTrainNumber())
+          .append("\n");
+
+      details = String.valueOf(objectInformation);
+    }
+    return details;
+  }
+
   /**
    * Compares this {@code TrainDeparture} with the specified {@code TrainDeparture} for order.
    * Returns a negative integer, zero, or a positive integer as this {@code TrainDeparture}

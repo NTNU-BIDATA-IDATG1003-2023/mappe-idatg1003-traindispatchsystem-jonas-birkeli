@@ -3,6 +3,7 @@ package departurecore;
 import static java.util.Map.Entry.comparingByValue;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.stream.Stream;
 import utility.Clock;
 
@@ -12,7 +13,7 @@ import utility.Clock;
  * searching and sorting the train departures for later printing or other use-cases.
  *
  * @author Jonas Birkeli
- * @version 1.1.0
+ * @version 1.2.0
  * @since 1.0.0
  */
 public class Station {
@@ -51,32 +52,25 @@ public class Station {
    * @return The {@code TrainDeparture} with the given train-number.
    * @since 1.0.0
    */
-  public TrainDeparture getTrainDeparture(int trainNumber) {
+  public TrainDeparture getTrainDepartureByTrainNumber(int trainNumber) {
     return trainDepartures.get(trainNumber);
   }
 
   /**
-   * Returns a stream of {@code TrainDepartures} details of the station.
-   * Will send a stream of every value in the hashmap.
-   * Every value is sorted by time of departure.
-   * Departures before the {@code Clock} time of the station will not be included in the stream.
+   * Returns a stream of {@code TrainDepartures} details of the station. Will send a stream of every
+   * value in the hashmap. Every value is sorted by time of departure. Departures before the
+   * {@code Clock} time of the station will not be included in the stream.
    *
    * @return Details of traindeparture of the station as a stream, sorted and filtered.
    * @since 1.1.0
    */
-  public Stream<String> getStreamOfDepartureDetails() {
-    return trainDepartures.entrySet()
-        .stream()
+  public Stream<TrainDeparture> getStreamOfTimeFilteredTrainDepartures() {
+    return getSortedStreamOfTrainDepartures()
         .filter(
-            d -> d.getValue().getDepartureTime().getHour() > stationTime.getHour()
-                || (d.getValue().getDepartureTime().getHour() == stationTime.getHour()
-                && d.getValue().getDepartureTime().getMinute() >= stationTime.getMinute())
-        // Filter out departures with earlier departure time than current time
-        )
-        // Sorts departures by departure time
-        // Checks for hour difference, then minute difference if the hours are equal
-        .sorted(comparingByValue(TrainDeparture::compareTo))
-        .map(d -> d.getValue().getDetails());
+            d -> d.getDepartureTime().getHour() > stationTime.getHour()
+                || (d.getDepartureTime().getHour() == stationTime.getHour()
+                && d.getDepartureTime().getMinute() >= stationTime.getMinute())
+        );
   }
 
   /**
@@ -88,12 +82,28 @@ public class Station {
    * @param partialDestination The partial complete destination to filter for.
    * @since 1.1.0
    */
-  public TrainDeparture getTrainDepartureByPartialDestination(String partialDestination) {
-    return trainDepartures.values().stream()
-        // Filters out the destinations that does
-        .filter(d -> d.getDestination().toLowerCase().contains(partialDestination.toLowerCase()))
+  public TrainDeparture getFirstTrainDepartureByPartialDestination(String partialDestination) {
+    return getAllTrainDeparturesByPartialDestination(partialDestination)
         .findFirst()
         .orElse(null);
+  }
+
+  /**
+   * Filters out the destinations that does not contain the given partial complete destination, and
+   * returns a stream of the trains that passes the filter.
+   * If no {@code TrainDeparture} has this destination, an empty stream is returned.
+   * If there are multiple {@code TrainDepartures} with this destination, all of them are returned.
+   * The stream is sorted by departure time.
+   *
+   * @param partialDestination The partial complete destination to filter for.
+   * @return A stream of {@code TrainDepartures} that has the given partial complete destination.
+   * @since 1.2.0
+   */
+  public Stream<TrainDeparture> getAllTrainDeparturesByPartialDestination(
+      String partialDestination
+  ) {
+    return getSortedStreamOfTrainDepartures()
+        .filter(d -> d.getDestination().toLowerCase().contains(partialDestination.toLowerCase()));
   }
 
   /**
@@ -118,5 +128,19 @@ public class Station {
    */
   public Clock getStationClock() {
     return stationTime;
+  }
+
+  /**
+   * Sorts the {@code TrainDepartures} by departure time,
+   * and returns a stream of the {@code TrainDepartures}.
+   * The stream is sorted by departure time.
+   *
+   * @return A stream of {@code TrainDepartures} sorted by departure time.
+   * @since 1.2.0
+   */
+  private Stream<TrainDeparture> getSortedStreamOfTrainDepartures() {
+    return trainDepartures.entrySet().stream()
+        .sorted(comparingByValue(TrainDeparture::compareTo))
+        .map(Entry::getValue);
   }
 }
