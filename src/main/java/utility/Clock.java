@@ -17,6 +17,8 @@ public class Clock {
 
   /**
    * Constructs a new {@code clock} with the given parameters.
+   * The time is checked for overflow using {@link #setTime(int, int)}.
+   * If the time is invalid, the time will be set to 00:00.
    *
    * @param hour The hour of the clock.
    * @param minute The minute of the clock.
@@ -28,7 +30,7 @@ public class Clock {
   }
 
   /**
-   * Default constructor.
+   * Sets default
    * Sets the time to 00:00.
    *
    * @since 1.1.0
@@ -87,9 +89,9 @@ public class Clock {
   private void setHour(int hour) {
     if (0 > hour || hour > 23) {
       this.hour = 0;
-      return;
+    } else {
+      this.hour = hour;
     }
-    this.hour = hour;
   }
 
   /**
@@ -104,9 +106,9 @@ public class Clock {
   private void setMinute(int minute) {
     if (0 > minute || minute > 59) {
       this.minute = 0;
-      return;
+    } else {
+      this.minute = minute;
     }
-    this.minute = minute;
   }
 
   /**

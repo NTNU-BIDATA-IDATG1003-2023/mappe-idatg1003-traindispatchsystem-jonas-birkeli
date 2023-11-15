@@ -85,7 +85,7 @@ public class InputHandler {
       try {
         input = scanner.nextLine();
 
-        if (!inputValidator.inputIsParsable(input)) {
+        if (!inputValidator.isAcceptableInt(input)) {
           printer.println(INVALID_INPUT_MESSAGE);
           continue;
         }

@@ -17,8 +17,14 @@ public class ConfigurationOptions {
   public static final int STATE_SEARCH_BY_DESTINATION = 6;
   public static final int STATE_CHANGE_TIME = 7;
   public static final int STATE_EXIT = 8;
+  public static final int STATE_HELP = 9;
 
   public static final String INVALID_INPUT_MESSAGE = "Invalid input. Please try again.";
 
-  public static final String STATION_DEPARTURE_SCREEN_TITLE = "AVGANGER Departures        SPOR Track   FORSINKELSE Delay   ";
+  public static final String STATION_DEPARTURE_SCREEN_TITLE =
+      "AVGANGER Departures        SPOR Track   FORSINKELSE Delay   ";
+
+  private ConfigurationOptions() {
+    // Empty constructor to hide the implicit public one.
+  }
 }

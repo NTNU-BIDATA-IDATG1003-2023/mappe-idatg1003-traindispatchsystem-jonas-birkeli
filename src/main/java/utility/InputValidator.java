@@ -21,13 +21,21 @@ public class InputValidator {
    * @return {@code true} if the input is parsable to an integer, {@code false} otherwise.
    * @since 1.0.0
    */
-  public boolean inputIsParsable(String input) {
+  public boolean isAcceptableInt(String input) {
+    // Expects input to be valid
     boolean isValid = true;
+
     try {
-      Integer.parseInt(input);
+      int testInt = Integer.parseInt(input);
+
+      // Input must be positive
+      if (testInt < 0) {
+        isValid = false;
+      }
     } catch (NumberFormatException e) {
       isValid = false;
     }
+
     return isValid;
   }
 
@@ -44,19 +52,22 @@ public class InputValidator {
    * @since 1.0.0
    */
   public boolean inputIsValid(String input) {
-    // Expects the input to be valid
+    // Expects the input to be invalid
     boolean isValid = true;
-    // Going through multiple checks to see if the input is valid.
+
     if (input == null) {
       isValid = false;
-    }
-    if (input.isEmpty()) {
-      isValid = false;
-    }
-    if (input.isBlank()) {
-      isValid = false;
-    }
+    } else {
+      // If the input is not null, empty or blank, the input is valid.
 
+      // Going through multiple checks to see if the input is valid.
+      if (input.isEmpty()) {
+        isValid = false;
+      }
+      if (input.isBlank()) {
+        isValid = false;
+      }
+    }
     // If the input has been invalid for any of the above, the input is invalid.
     return isValid;
   }

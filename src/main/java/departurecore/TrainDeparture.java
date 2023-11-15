@@ -32,9 +32,8 @@ import utility.Clock;
  * @since 1.0.0
  */
 public class TrainDeparture implements Comparable<TrainDeparture> {
-
-  private Clock departureTime;
-  private Clock delay;
+  private final Clock departureTime;
+  private final Clock delay;
   private String line;
   private String destination;
   private int track;
@@ -42,6 +41,15 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
 
   /**
    * Constructs a new {@code departurecore.TrainDeparture} with default values.
+   * Default values are:
+   * <ul>
+   *   <li>Departure time: 00:00</li>
+   *   <li>Delay: 00:00</li>
+   *   <li>Line: empty</li>
+   *   <li>Destination: empty</li>
+   *   <li>Track: -1</li>
+   *   <li>Train number: -1</li>
+   * </ul>
    *
    * @since 1.0.0
    */
@@ -57,6 +65,7 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
   /**
    * Constructs a new {@code departurecore.TrainDeparture} with the given parameters,
    * where minute and hour has their own parameters.
+   * All parameters are tested for validity.
    *
    * @param hour Scheduled hour for departure of train.
    * @param minute Scheduled minute for departure of train.
@@ -80,9 +89,8 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
     setTrainNumber(trainNumber);
   }
 
-
   /**
-   * Sets the departure time of the {@code departurecore.TrainDeparture}.
+   * Adjusts the departure-time of the {@code TrainDeparture} to the
    * Each {@code departurecore.TrainDeparture} has two departure times,
    * one representing hours, and one representing minutes.
    * If null, not two elements or either is negative, departure time is set to 0.
@@ -98,9 +106,10 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
     ) {
       // If any of the conditions above is false, departuretime is set to default.
       this.departureTime.setTime(0, 0);
-      return;
+    } else {
+      // Method overload for setting departure time using an array.
+      this.departureTime.setTime(departureTime);
     }
-    this.departureTime.setTime(departureTime);
   }
 
 
@@ -131,9 +140,9 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
         || delay[1] < 0
     ) {
       this.delay.setTime(0, 0);
-      return;
+    } else {
+      this.delay.setTime(delay);
     }
-    this.delay.setTime(delay);
   }
 
   /**
@@ -157,9 +166,9 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
   public void setLine(String line) {
     if (line == null) {
       this.line = "";
-      return;
+    } else {
+      this.line = line;
     }
-    this.line = line;
   }
 
   /**
@@ -346,29 +355,38 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
   @Override
   public int compareTo(TrainDeparture other) {
     // If other is null, this is bigger, return 1 meaning bigger
+    // Starting at -5 to make sure the state is changed
+    int state = -5;
+
     if (other == null) {
-      return 1;
-    }
+      state = 1;
+    } else {  // Checking for null to avoid NullPointerException in the following code block
 
-    // If this and other are equal, return 0 meaning equal
-    if (this.equals(other)) {
-      return 0;
-    }
+      // If this and other are equal, return 0 meaning equal
+      if (this.equals(other)) {
+        state = 0;
+      }
 
-    // Combining departure time and delay for each departure, stored as a new clock object.
-    int[] thisDepartureTime = departureTime.combineTime(delay.getTime()).getTime();
-    int[] otherDepartureTime = other.departureTime.combineTime(other.delay.getTime()).getTime();
+      // Combining departure time and delay for each departure, stored as a new clock object.
+      int[] thisDepartureTime = departureTime.combineTime(delay.getTime()).getTime();
+      int[] otherDepartureTime = other.departureTime.combineTime(other.delay.getTime()).getTime();
 
-    // Comparing departure times
-    if (thisDepartureTime[0] > otherDepartureTime[0]) {
-      return 1;
+      // Comparing departure times
+      if (thisDepartureTime[0] > otherDepartureTime[0]) {
+        state = 1;
+      }
+      if (thisDepartureTime[0] < otherDepartureTime[0]) {
+        state = -1;  // If this is smaller, return -1 meaning smaller
+      }
+      // If departure hours are equal, compare minutes
+      // Using builtin comparator for integers to compare minutes
+
+      if (state == -5) {
+        // If state is still -5, departure hours are equal
+        state =  Integer.compare(thisDepartureTime[1], otherDepartureTime[1]);
+      }
     }
-    if (thisDepartureTime[0] < otherDepartureTime[0]) {
-      return -1;  // If this is smaller, return -1 meaning smaller
-    }
-    // If departure hours are equal, compare minutes
-    // Using builtin comparator for integers to compare minutes
-    return Integer.compare(thisDepartureTime[1], otherDepartureTime[1]);
+    return state;
   }
 
   /**
