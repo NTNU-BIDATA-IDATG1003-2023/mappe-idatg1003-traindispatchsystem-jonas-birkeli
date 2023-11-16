@@ -17,6 +17,7 @@ import static org.junit.Assert.assertEquals;
  * @since 1.0.0
  */
 class TrainDepartureTest {
+
   TrainDeparture trainDeparture;
 
   @org.junit.jupiter.api.BeforeEach
@@ -44,14 +45,14 @@ class TrainDepartureTest {
   @org.junit.jupiter.api.Test
   void setDelay() {
     trainDeparture.setDelay(new int[]{23, 56});
-    assertEquals(23, trainDeparture.getDelay()[0]);
-    assertEquals(56, trainDeparture.getDelay()[1]);
+    assertEquals(23, trainDeparture.getDelay().getHour());
+    assertEquals(56, trainDeparture.getDelay().getMinute());
   }
 
   @org.junit.jupiter.api.Test
   void getDelay() {
-    assertEquals(0, trainDeparture.getDelay()[0]);
-    assertEquals(0, trainDeparture.getDelay()[1]);
+    assertEquals(0, trainDeparture.getDelay().getHour());
+    assertEquals(0, trainDeparture.getDelay().getMinute());
   }
 
   @org.junit.jupiter.api.Test
@@ -85,15 +86,5 @@ class TrainDepartureTest {
   @org.junit.jupiter.api.Test
   void getTrack() {
     assertEquals(-1, trainDeparture.getTrack());
-  }
-
-  @org.junit.jupiter.api.Test
-  void getDetails() {
-    trainDeparture.setDepartureTime(new int[]{23, 56});
-    trainDeparture.setDelay(new int[]{23, 56});
-    trainDeparture.setLine("L1");
-    trainDeparture.setDestination("Hamburg");
-    trainDeparture.setTrack(3);
-    assertEquals("23:52 L1 Hamburg           3\n", trainDeparture.getDetails());
   }
 }

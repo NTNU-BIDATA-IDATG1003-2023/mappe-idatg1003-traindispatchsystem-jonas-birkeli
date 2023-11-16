@@ -6,12 +6,13 @@ import static config.ConfigurationOptions.STATE_CHANGE_TIME;
 import static config.ConfigurationOptions.STATE_EXIT;
 import static config.ConfigurationOptions.STATE_HELP;
 import static config.ConfigurationOptions.STATE_SEARCH_BY_DESTINATION;
-import static config.ConfigurationOptions.STATE_SEARCH_BY_NUMBER;
+import static config.ConfigurationOptions.STATE_SELECT_TRAIN_BY_NUMBER;
 import static config.ConfigurationOptions.STATE_VIEW_DEPARTURES;
 import static config.ConfigurationOptions.STATION_DEPARTURE_SCREEN_TITLE;
 
 import departurecore.Station;
 import departurecore.TrainDeparture;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import utility.InputHandler;
 import utility.Printer;
@@ -29,7 +30,7 @@ import utility.Printer;
  *     <li>{@link #addTrainDeparture()}</li>
  *     <li>{@link #assignTrackToTrainDeparture()}</li>
  *     <li>{@link #assignDelayToTrainDeparture()}</li>
- *     <li>{@link #searchTrainDepartureByNumber()}</li>
+ *     <li>{@link #selectTrainDepartureByTrainNumber()}</li>
  *     <li>{@link #searchTrainDepartureByDestination()}</li>
  *     <li>{@link #changeTime()}</li>
  *     <li>{@link #exitApplication()}</li>
@@ -106,7 +107,7 @@ public class DispatchSystem {
         case STATE_ADD_DEPARTURE -> addTrainDeparture();
         case STATE_ASSIGN_TRACK -> assignTrackToTrainDeparture();
         case STATE_ASSIGN_DELAY -> assignDelayToTrainDeparture();
-        case STATE_SEARCH_BY_NUMBER -> searchTrainDepartureByNumber();
+        case STATE_SELECT_TRAIN_BY_NUMBER -> selectTrainDepartureByTrainNumber();
         case STATE_SEARCH_BY_DESTINATION -> searchTrainDepartureByDestination();
         case STATE_CHANGE_TIME -> changeTime();
         case STATE_EXIT -> exitApplication();
@@ -143,9 +144,6 @@ public class DispatchSystem {
    * @since 1.0.0
    */
   private void mainMenu() {
-    int choice = 0;
-    boolean validChoice = false;
-
     StringBuilder message;
     message = new StringBuilder();
 
@@ -156,7 +154,7 @@ public class DispatchSystem {
         .append(STATE_ADD_DEPARTURE).append(". Add train departure\n")
         .append(STATE_ASSIGN_TRACK).append(". Assign track to train departure\n")
         .append(STATE_ASSIGN_DELAY).append(". Assign delay to train departure\n")
-        .append(STATE_SEARCH_BY_NUMBER).append(". Search train departure by number\n")
+        .append(STATE_SELECT_TRAIN_BY_NUMBER).append(". Search train departure by number\n")
         .append(STATE_SEARCH_BY_DESTINATION).append(". Search train departure by destination\n")
         .append(STATE_CHANGE_TIME).append(". Change time\n")
         .append(STATE_EXIT).append(". Exit\n")
@@ -165,8 +163,7 @@ public class DispatchSystem {
     // Continuously ask for user input until a valid choice is made
     printer.println(String.valueOf(message));
 
-    choice = inputHandler.getValidIntInput("Enter choice: ", 1, 9);
-    state = choice;  // Change state of program to corresponding user input
+    state = inputHandler.getValidIntInput("Enter choice: ", 1, 9);
   }
 
   /**
@@ -195,7 +192,7 @@ public class DispatchSystem {
     // Departures are sorted by departure time
     // Departures with earlier departure time than current time are not displayed
     station.getStreamOfTimeFilteredTrainDepartures()
-        .map(TrainDeparture::getDetails) // Gets details of each departure
+        .map(this::buildTrainDepartureDetails) // Gets details of each departure
         .forEach(printer::print);
 
     printer.println("\n");
@@ -203,7 +200,7 @@ public class DispatchSystem {
     // Prints selected departure if it is not null
     if (selectedDeparture != null) {
       printer.println("Selected train departure:");
-      printer.println(selectedDeparture.getDetails());
+      printer.println(buildTrainDepartureDetails(selectedDeparture));
     }
   }
 
@@ -321,8 +318,8 @@ public class DispatchSystem {
    */
   private void assignTrackToTrainDeparture() {
     if (selectedDeparture != null) {
-      printer.println("Assign track to train departure");
-      printer.println(selectedDeparture.getDetails());
+      printer.println("Assign track to train departure:");
+      printer.println(buildTrainDepartureDetails(selectedDeparture));
 
       int track = inputHandler.getValidIntInput("Enter track number: ", 1, 68);
 
@@ -346,7 +343,7 @@ public class DispatchSystem {
   private void assignDelayToTrainDeparture() {
     if (selectedDeparture != null) {
       printer.println("Assign delay to train departure");
-      printer.println(selectedDeparture.getDetails()); // Prints details of selected departure
+      printer.println(buildTrainDepartureDetails(selectedDeparture)); // Prints details of selected departure
 
       int delayHour = inputHandler.getValidIntInput("Enter delay hour: ", 0, 23);
       int delayMinute = inputHandler.getValidIntInput("Enter delay minute: ", 0, 59);
@@ -368,14 +365,14 @@ public class DispatchSystem {
    *
    * @since 1.0.0
    */
-  private void searchTrainDepartureByNumber() {
-    printer.println("Search train departure by number");
+  private void selectTrainDepartureByTrainNumber() {
+    printer.println("Select train departure by number");
     int trainNumber = inputHandler.getValidIntInput("Enter train number: ", 1, Integer.MAX_VALUE);
 
     if (station.hasTrainDepartureWithTrainNumber(trainNumber)) {
       selectedDeparture = station.getTrainDepartureByTrainNumber(trainNumber);
       printer.println("Train departure found:");
-      printer.println(selectedDeparture.getDetails());
+      printer.println(buildTrainDepartureDetails(selectedDeparture));
     } else {
       printer.printError("No train departure found with train number " + trainNumber + ".");
     }
@@ -395,7 +392,7 @@ public class DispatchSystem {
     // Is made into a stream of details of each train departure.
     Stream<String> trainDepartureDetails =
         station.getAllTrainDeparturesByPartialDestination(destination)
-        .map(TrainDeparture::getDetailsWithTrainNumber);
+        .map(this::buildTrainDepartureDetails);
 
     if (trainDepartureDetails.findAny().isEmpty()) {
       //
@@ -403,7 +400,7 @@ public class DispatchSystem {
     } else {
       printer.println("Train departure found:");
       station.getAllTrainDeparturesByPartialDestination(destination)
-          .map(TrainDeparture::getDetailsWithTrainNumber)
+          .map(this::buildTrainDepartureDetails)
           .forEach(printer::print);
     }
   }
@@ -420,7 +417,13 @@ public class DispatchSystem {
     printer.println("Changing time of station. ");
     int hour = inputHandler.getValidIntInput("Enter hour: ", 0, 23);
     int minute = inputHandler.getValidIntInput("Enter minute: ", 0, 59);
-    station.getStationClock().setTime(hour, minute);
+    boolean timeIsValid = station.setStationTime(hour, minute);
+
+    if (timeIsValid) {
+      printer.println("Time changed to " + station.getStationClock().getTimeAsString());
+    } else {
+      printer.printError("Time must be later than current time.");
+    }
   }
 
   /**
@@ -466,5 +469,74 @@ public class DispatchSystem {
         .append("You can modify the track and delay of a train departure.\n\n");
 
     printer.print(String.valueOf(message));
+  }
+
+  private String buildTrainDepartureDetails(TrainDeparture trainDeparture) {
+    // If some values are not set, the required fields are not set and therefore the departure
+    // is not valid.
+    boolean departureIsValid =
+        !trainDeparture.getLine().isEmpty() && !trainDeparture.getDestination().isEmpty();
+
+    StringBuilder objectInformation = new StringBuilder();
+
+   if (trainDeparture.getDelay().getHour() == 0 && trainDeparture.getDelay().getMinute() == 0) {
+     // There is no delay, so we only need to display the departure time
+     objectInformation.append(trainDeparture.getDepartureTime().getTimeAsString())
+         .append("     "
+             + " ");
+   } else {
+     // We want to display the departure time with a strikethrough, and the delay after it.
+     String strikedDepartureTime =
+         strikeThrough(trainDeparture.getDepartureTime().getTimeAsString());
+
+      objectInformation
+          .append(strikedDepartureTime)
+          .append(" ")
+          .append(trainDeparture
+              .getDepartureTime()
+              .combineDelay(trainDeparture.getDelay())
+              .getTimeAsString()
+              // Combining the departure-time with delay to get the actual departure time
+          );
+    }
+
+   objectInformation.append(" ")
+       .append(trainDeparture.getLine())
+        .append(" ")
+        .append(trainDeparture.getDestination())
+        .append(" ");
+
+   if (trainDeparture.getTrack() == -1) {
+     // If the track is not set, we display "TBA" instead of the track number
+     objectInformation.append("TBA");
+    } else {
+      objectInformation.append(trainDeparture.getTrack());
+    }
+
+    objectInformation.append(" ")
+        .append(trainDeparture.getTrainNumber())
+        .append("\n");
+
+    // If some values are not set, return empty string insead of objectInformation
+    if (!departureIsValid) {
+      return "";
+    } else {
+      return String.valueOf(objectInformation);
+    }
+  }
+
+  /**
+   * Adds a strike-through to each character in a string to make it look like it is crossed out.
+   * Can be used to display a departure time that is delayed.
+   * Example: 12:00 becomes 1̶2̶:̶0̶0̶
+   * This method has been made by a class-mate, and is not my own work.
+   *
+   * @param str The string to add a strike-through to.
+   * @return The string with a strike-through added to each character.
+   */
+  private String strikeThrough(String str) {
+    return str.chars()
+        .mapToObj(c -> (char) c + "̶")
+        .collect(Collectors.joining());
   }
 }

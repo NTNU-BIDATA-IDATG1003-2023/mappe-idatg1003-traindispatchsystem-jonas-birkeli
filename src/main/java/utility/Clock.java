@@ -22,7 +22,6 @@ public class Clock {
    *
    * @param hour The hour of the clock.
    * @param minute The minute of the clock.
-   *
    * @since 1.0.0
    */
   public Clock(int hour, int minute) {
@@ -180,20 +179,19 @@ public class Clock {
    * The two times are added together and the result is returned as an object
    * Overflow is considered and checked when updating time.
    *
-   * @param time The other time to combine.
+   * @param delay The delay to be added to the time.
    * @return The combined time as a string in the format of {@link #getTimeAsString()}.
    * @since 1.2.0
    */
-  public Clock combineTime(int[] time) {
-    int[] combinedTime = new int[2];
+  public Clock combineDelay(Clock delay) {
 
-    combinedTime[0] = this.hour + time[0];
-    combinedTime[1] = this.minute + time[1];
+    int newHour = this.hour + delay.getHour();
+    int newMinute = this.minute + delay.getMinute();
 
-    combinedTime[0] += combinedTime[1] / 60;  // How many times minute fits within 60
-    combinedTime[0] %= 24;  // Overflow check
-    combinedTime[1] %= 60;  // Overflow check
+    newHour += newMinute / 60;  // How many times minute fits within 60
+    newHour %= 24;  // Overflow check
+    newMinute %= 60;  // Overflow check
 
-    return new Clock(combinedTime[0], combinedTime[1]);
+    return new Clock(newHour, newMinute);
   }
 }

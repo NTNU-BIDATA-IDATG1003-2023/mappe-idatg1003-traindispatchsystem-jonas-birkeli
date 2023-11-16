@@ -146,14 +146,14 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
   }
 
   /**
-   * Returns the delay of the {@code departurecore.TrainDeparture}
+   * Returns the delay of the {@code TrainDeparture}
    * as an integer list in the format {HH, MM}.
    *
-   * @return the delay of the {@code departurecore.TrainDeparture}.
+   * @return the delay of the {@code TrainDeparture}.
    * @since 1.0.0
    */
-  public int[] getDelay() {
-    return delay.getTime();
+  public Clock getDelay() {
+    return delay;
   }
 
   /**
@@ -216,9 +216,9 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
   public void setTrack(int track) {
     if (track <= 0) {
       this.track = -1;
-      return;
+    } else {
+      this.track = track;
     }
-    this.track = track;
   }
 
   /**
@@ -278,91 +278,14 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
    * @since 1.0.0
    */
   public String getDetails() {
-    boolean departureIsValid = true;
-    // If some values are not set, return empty string
-    if (line.isEmpty()
-            || destination.isEmpty()
-            || track == -1
-    ) {
-      departureIsValid = false;
-    }
-
-    // Formatting the departure time with leading zeros if needed
-    String formattedDepartureTime = departureTime
-        .combineTime(delay.getTime())
-        .getTimeAsString();
-
-    // Reversing the input
-    StringBuilder inputReversed = new StringBuilder();
-    inputReversed.append(formattedDepartureTime);
-    inputReversed.append(" ");
-    inputReversed.append(getLine());
-    inputReversed.append(" ");
-    inputReversed.append(getDestination());
-    inputReversed.reverse();
-
-
-    // Catting the leading whitespaces to reversed destination
-    StringBuilder formattedDestination = new StringBuilder();
-
-    // This line has been taken from Baeldung. It is used to add whitespaces to the reversed
-    // Source: https://www.baeldung.com/java-pad-string
-    // input. The input is reversed again after this line.
-    formattedDestination.append(String.format("%1$26s", inputReversed));
-    formattedDestination.reverse();
-
-
-    // Using StringBuilder for efficiency and readability
-    StringBuilder objectInformation;
-    objectInformation = new StringBuilder();
-
-    // Appending details of the train departure to StringBuilder
-    objectInformation
-        .append(formattedDestination)
-        .append(" ")
-        .append(getTrack())
-        .append("            ");
-
-    if (delay.getHour() == 0 && delay.getMinute() == 0) {
-      objectInformation.append("On time");
-    } else {
-      objectInformation.append(delay.getTimeAsString());
-    }
-
-    objectInformation.append("\n");  //
-
-    // If some values are not set, return empty string insead of objectInformation
-    if (!departureIsValid) {
-      return "";
-    } else {
-      return String.valueOf(objectInformation);
-    }
-  }
-
-  public String getDetailsWithTrainNumber() {
-    String details = getDetails();
-    // If input is not empty, append train number to the end of the string
-    // Empty string means not all values are set, therefore no train number
-
-    if (!details.isEmpty()) {
-      StringBuilder objectInformation;
-      objectInformation = new StringBuilder();
-
-      objectInformation.append(details.trim())
-          .append("   Unique number: ")
-          .append(getTrainNumber())
-          .append("\n");
-
-      details = String.valueOf(objectInformation);
-    }
-    return details;
+    return "";
   }
 
   /**
    * Compares this {@code TrainDeparture} with the specified {@code TrainDeparture} for order.
    * Returns a negative integer, zero, or a positive integer as this {@code TrainDeparture}
    * is less than, equal to, or greater than the specified {@code TrainDeparture}.
-   * The comparison is primarily based on the departure time of the {@code TrainDeparture}.
+   * The comparison is based on the departure time of the {@code TrainDeparture}.
    *
    * @param other the {@code TrainDeparture} to be compared.
    *              If null, returns 1.
@@ -386,23 +309,22 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
         state = 0;
       }
 
-      // Combining departure time and delay for each departure, stored as a new clock object.
-      int[] thisDepartureTime = departureTime.combineTime(delay.getTime()).getTime();
-      int[] otherDepartureTime = other.departureTime.combineTime(other.delay.getTime()).getTime();
-
       // Comparing departure times
-      if (thisDepartureTime[0] > otherDepartureTime[0]) {
+      if (getDepartureTime().getHour() > other.getDepartureTime().getHour()) {
         state = 1;
       }
-      if (thisDepartureTime[0] < otherDepartureTime[0]) {
+      if (getDepartureTime().getHour() < other.getDepartureTime().getHour()) {
         state = -1;  // If this is smaller, return -1 meaning smaller
       }
+
       // If departure hours are equal, compare minutes
       // Using builtin comparator for integers to compare minutes
-
       if (state == -5) {
         // If state is still -5, departure hours are equal
-        state =  Integer.compare(thisDepartureTime[1], otherDepartureTime[1]);
+        state =  Integer.compare(
+            getDepartureTime().getMinute(),
+            other.getDepartureTime().getMinute()
+        );
       }
     }
     return state;
@@ -430,8 +352,9 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
     if (!(other instanceof TrainDeparture that)) {
       return false;
     }
-    return getTrack() == that.getTrack() && Arrays.equals(getDepartureTime().getTime(),
-        that.getDepartureTime().getTime()) && Arrays.equals(getDelay(), that.getDelay())
+    return getTrack() == that.getTrack()
+        && Arrays.equals(getDepartureTime().getTime(), that.getDepartureTime().getTime())
+        && Arrays.equals(getDelay().getTime(), that.getDelay().getTime())
         && Objects.equals(getLine(), that.getLine()) && Objects.equals(
         getDestination(), that.getDestination());
   }
@@ -449,7 +372,7 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
   public int hashCode() {
     int result = Objects.hash(getLine(), getDestination(), getTrack());
     result = 31 * result + Arrays.hashCode(getDepartureTime().getTime());
-    result = 31 * result + Arrays.hashCode(getDelay());
+    result = 31 * result + Arrays.hashCode(getDelay().getTime());
     return result;
   }
 }

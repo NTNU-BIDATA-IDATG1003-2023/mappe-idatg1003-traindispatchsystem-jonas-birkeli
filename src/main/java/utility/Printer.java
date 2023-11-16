@@ -64,7 +64,7 @@ public class Printer {
    * Prints an error message to the standard error stream, including the newline character.
    * This method is equivalent to {@code System.err.println(message)}.
    *
-   * @param message
+   * @param message The error message to be printed to user.
    */
   public void printError(String message) {
     System.err.println(message);

@@ -49,8 +49,8 @@ class ClockTest {
   }
 
   @Test
-  void combineTime() {
-    Clock newClock = clock.combineTime(new int[]{4, 18});
+  void combineDelay() {
+    Clock newClock = clock.combineDelay(new Clock(4, 18));
     assertEquals("18:48", newClock.getTimeAsString());
   }
 }

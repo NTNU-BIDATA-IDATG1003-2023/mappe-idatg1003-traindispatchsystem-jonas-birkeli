@@ -44,7 +44,7 @@ public class InputHandler {
     String input = "";
 
     while (!validInput) {
-      System.out.println(inputMessage);
+      printer.println(inputMessage);
       // Tries to get user input, catches exceptions if input is invalid
       try {
         input = scanner.nextLine();
