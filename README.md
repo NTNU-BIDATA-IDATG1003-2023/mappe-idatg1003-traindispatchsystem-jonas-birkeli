@@ -59,16 +59,16 @@ The options are as following:
 6. Search train-departure by destination
 7. Update time of station
 8. Quit application
+9. Help
 
 The user can choose an option by typing the corresponding number, and the program will then execute the corresponding method.
 The user can quit the application by typing 8.
 
 ## How to run the tests
 
-The tests can be run by running the DispatchAppTest.java, TerminalTest.java, and TrainDepartureTest.java files.
+The tests can be run by running the DispatchAppTest.java, departurecore.StationTest.java, departurecore.TrainDepartureTest.java, utility.ClockTest.java, utility.InputHandlerTest.java, utility.InputValidatorTest.java, and utility.PrinterTest.java files.
 The tests can be run by right-clicking the file and choosing "Run 'DispatchAppTest'".
 The tests can also be run by clicking the green play button in the top right corner of the file.
 
 ## References
-
-None
+https://www.w3schools.blog/ansi-colors-java
