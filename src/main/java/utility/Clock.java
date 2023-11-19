@@ -52,6 +52,15 @@ public class Clock {
    * @since 1.0.0
    */
   public void setTime(int hour, int minute) {
+    if (0 > hour) {
+      // If hour is invalid, set hour to 0
+      hour = 0;
+    }
+    if (0 > minute) {
+      // If minute is invalid, set minute to 0
+      minute = 0;
+    }
+
     hour += minute / 60;  // Adds how many times minute fits within 60 minutes to hour.
     // Floor division
 

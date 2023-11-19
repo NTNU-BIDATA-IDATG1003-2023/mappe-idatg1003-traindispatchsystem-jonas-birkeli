@@ -12,9 +12,8 @@ import utility.Clock;
  * <p>
  *   This class has the following methods:
  *   <ul>
- *     <li>{@link #setDepartureTime(int[])}</li>
  *     <li>{@link #getDepartureTime()}</li>
- *     <li>{@link #setDelay(int[])}</li>
+ *     <li>{@link #setDelay(int, int)}</li>
  *     <li>{@link #getDelay()}</li>
  *     <li>{@link #setLine(String)}</li>
  *     <li>{@link #getLine()}</li>
@@ -22,7 +21,6 @@ import utility.Clock;
  *     <li>{@link #getDestination()}</li>
  *     <li>{@link #setTrack(int)}</li>
  *     <li>{@link #getTrack()}</li>
- *     <li>{@link #getDetails()}</li>
  *     <li>{@link #compareTo(TrainDeparture)}</li>
  *   </ul>
  * </p>
@@ -90,34 +88,10 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
   }
 
   /**
-   * Adjusts the departure-time of the {@code TrainDeparture} to the
-   * Each {@code departurecore.TrainDeparture} has two departure times,
-   * one representing hours, and one representing minutes.
-   * If null, not two elements or either is negative, departure time is set to 0.
-   *
-   * @param departureTime the departure time of the {@code departurecore.TrainDeparture}.
-   * @since 1.0.0
-   */
-  public void setDepartureTime(int[] departureTime) {
-    if (departureTime == null
-        || departureTime.length != 2
-        || departureTime[0] < 0
-        || departureTime[1] < 0
-    ) {
-      // If any of the conditions above is false, departuretime is set to default.
-      this.departureTime.setTime(0, 0);
-    } else {
-      // Method overload for setting departure time using an array.
-      this.departureTime.setTime(departureTime);
-    }
-  }
-
-
-  /**
-   * Returns the departure time of the {@code departurecore.TrainDeparture}
+   * Returns the departure time of the {@code TrainDeparture}
    * as an integer list in the format {HH, MM}.
    *
-   * @return the departure time of the {@code departurecore.TrainDeparture}.
+   * @return the departure time of the {@code TrainDeparture}.
    * @since 1.3.0
    */
   public Clock getDepartureTime() {
@@ -125,29 +99,28 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
   }
 
   /**
-   * Sets the delay of the {@code departurecore.TrainDeparture}.
-   * Each {@code departurecore.TrainDeparture} has two delays,
+   * Sets the delay of the {@code TrainDeparture}.
+   * Each {@code TrainDeparture} has two delays,
    * one representing hours, and one representing minutes.
    * If null, not two elements or either is negative, delay is set to 0.
    *
-   * @param delay the delay of the {@code departurecore.TrainDeparture}.
+   * @param hour The hour of the delay for the {@code TrainDeparture}.
    * @since 1.0.0
    */
-  public void setDelay(int[] delay) {
-    if (delay == null
-        || delay.length != 2
-        || delay[0] < 0
-        || delay[1] < 0
-    ) {
-      this.delay.setTime(0, 0);
+  public void setDelay(int hour, int minute) {
+    if (hour < 0 || minute < 0) {
+      // If either is negative, set delay to 0
+      // Overflow is accounted for, so no need to check for that
+      delay.setTime(0, 0);
     } else {
-      this.delay.setTime(delay);
+      delay.setTime(hour, minute);
     }
   }
 
   /**
    * Returns the delay of the {@code TrainDeparture}
-   * as an integer list in the format {HH, MM}.
+   * as a referance to a {@code Clock} object.
+   * To check for the delay, use {@link Clock#getTime()}.
    *
    * @return the delay of the {@code TrainDeparture}.
    * @since 1.0.0
@@ -163,12 +136,8 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
    * @param line the line of the {@code departurecore.TrainDeparture}.
    * @since 1.0.0
    */
-  public void setLine(String line) {
-    if (line == null) {
-      this.line = "";
-    } else {
-      this.line = line;
-    }
+  private void setLine(String line) {
+    this.line = Objects.requireNonNullElse(line, "");
   }
 
   /**
@@ -184,16 +153,13 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
   /**
    * Sets the destination of the {@code departurecore.TrainDeparture}.
    * If null, destination is set to empty.
+   * The method is set to private to hinder users from tampering with the destination.
    *
    * @param destination the destination of the {@code departurecore.TrainDeparture}.
    * @since 1.0.0
    */
-  public void setDestination(String destination) {
-    if (destination == null) {
-      this.destination = "";
-      return;
-    }
-    this.destination = destination;
+  private void setDestination(String destination) {
+    this.destination = Objects.requireNonNullElse(destination, "");
   }
 
   /**
@@ -234,15 +200,16 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
   /**
    * Sets the train number of the {@code TrainDeparture}.
    * If negative or zero, train number is set to -1.
+   * Method is private to hinder users from tampering with the train number.
    *
    * @since 1.4.0
    */
-  public void setTrainNumber(int trainNumber) {
+  private void setTrainNumber(int trainNumber) {
     if (trainNumber <= 0) {
       this.trainNumber = -1;
-      return;
+    } else {
+      this.trainNumber = trainNumber;
     }
-    this.trainNumber = trainNumber;
   }
 
   /**
@@ -253,32 +220,6 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
    */
   public int getTrainNumber() {
     return trainNumber;
-  }
-
-  /**
-   * Returns a string representation of the {@code departurecore.TrainDeparture}.
-   * Similar to what you see at an actual train station.
-   * Format is always the same length with whitespaces appended to the destination field.
-   * Departure time includes any set delay.
-   * The Delay field will be a separate field at the end of the String.
-   * If some values are not set, they return string will be empty.
-   * Includes newline at the end if all values are set.
-   * The way the string has been formatted is with the help of StringBuilder.
-   * Input is reversed, whitespaces are added to the reversed input in the beginning,
-   * and then the reversed input is reversed again.
-   * This way, the whitespaces are added to the end of the input.
-   * This is done to make sure the string is always the same length.
-   * This is done for all fields except the track field.
-   *
-   * @see #getLine()
-   * @see #getTrack()
-   * @see #getDepartureTime()
-   * @see #getDestination()
-   * @return a string representation of the {@code departurecore.TrainDeparture}.
-   * @since 1.0.0
-   */
-  public String getDetails() {
-    return "";
   }
 
   /**

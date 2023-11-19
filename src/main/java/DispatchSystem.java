@@ -38,7 +38,7 @@ import utility.Printer;
  * </p>
  *
  * @author Jonas Birkeli
- * @version 1.4.0
+ * @version 1.5.0
  * @since 1.0.0
  */
 public class DispatchSystem {
@@ -205,71 +205,40 @@ public class DispatchSystem {
   }
 
   /**
-   * Adds a {@code TrainDeparture} to the list of departures.
-   * If some info is not parsable to correct data types,
-   * the user is asked to try again.
-   * {@code TrainDeparture} is added to the list of departures when all info is valid.
+   * Adds a {@code TrainDeparture} to the station.
+   * The user is asked to enter an unique train number.
+   * If the train number already exists, the user is asked if they want to override it.
+   * If the user does not want to override it,
+   * the loop continues until a valid train number is entered.
    *
-   * @since 1.0.0
+   *
+   * @since 1.5.0
    * @see TrainDeparture
    */
   private void addTrainDeparture() {
-    // TODO Implement error message for each field if input, especially for integers is invalid
     printer.println("Add train departure");
 
-    String[] fields = {
-        "Departure hour",
-        "Departure minute",
-        "Line",
-        "Destination",
-        "Track",
-    };
-    String[] values = new String[fields.length];
+    // Getting an unique train number from user
+    // Train number is unique, so we need to check if it already exists with a robust method
+    int trainNumber = checkAndGetValidTrainNumber();
 
-    int trainNumber;
-    trainNumber = checkAndGetValidTrainNumber();
+    // In case the user does not know what train-number is valid,
+    // the user can enter -1 to exit the method.
+    if (trainNumber != -1) {
+      // Getting input from user for every field of the train departure
+      int departureHour = inputHandler.getValidIntInput("Departure hour: ", 0, 23);
+      int departureMinute = inputHandler.getValidIntInput("Departure minute: ", 0, 59);
+      String line = inputHandler.getValidStringInput("Line: ");
+      String destination = inputHandler.getValidStringInput("Destination: ");
+      int track = inputHandler.getValidIntInput("Track: \n(-1 for unset)", -1, 68);
 
-    // Declare variables in correct scope
-    int departureHour = 0;
-    int departureMinute = 0;
-    String line = "";
-    String destination = "";
-    int track = -1;
+      TrainDeparture trainDeparture = new TrainDeparture(
+          departureHour, departureMinute, line, destination, track, trainNumber
+      );
 
-    boolean validInput;  // Used to break the loop if input is valid
-    do {
-      // Continuously ask for user input until a valid choice is made
-      // Stores user input in values array
-      for (int i = 0; i < fields.length; i++) {
-        values[i] = inputHandler.getValidStringInput(fields[i] + ": ");
-      }
-      // Expects correct input from user
-      validInput = true;
-
-      try {
-        // Try to parse user input to correct data types
-        departureHour = Integer.parseInt(values[0]);
-        departureMinute = Integer.parseInt(values[1]);
-        line = values[2];
-        destination = values[3];
-        track = Integer.parseInt(values[4]);
-      } catch (NumberFormatException e) {
-        // If user input is not parsable to correct data types, an error message is displayed
-        printer.println(INVALID_INPUT_MESSAGE);
-
-        // validInput is set to false, so th
-        validInput = false;
-      }
-
-    } while (!validInput);
-
-    // Create new TrainDeparture object with user input
-    TrainDeparture trainDeparture = new TrainDeparture(
-        departureHour, departureMinute, line, destination, track, trainNumber
-    );
-
-    // Add new TrainDeparture object to collection of departures
-    station.addTrainDeparture(trainDeparture);
+      // Inserting the train departure into the station
+      station.addTrainDeparture(trainDeparture);
+    }
   }
 
   /**
@@ -277,6 +246,8 @@ public class DispatchSystem {
    * If the train number already exists, the user is asked if they want to override it.
    * If the user does not want to override it,
    * the loop continues until a valid train number is entered.
+   * In case the user does not know what train-number is valid,
+   * the user can enter -1 to exit the method.
    *
    * @return A valid train number for new {@code TrainDeparture}s.
    * @since 1.4.0
@@ -289,12 +260,14 @@ public class DispatchSystem {
 
       if (station.hasTrainDepartureWithTrainNumber(trainNumber)) {
         // If train number already exists, the user is asked if they want to override it
-        printer.println("Train number already exists. Do you want to override it? (Y/n)");
+        printer.println("Train number already exists. Do you want to override it? (Y/n)\n(-1 to exit)");
         String answer = inputHandler.getValidStringInput("Enter choice: ");
 
         // If user wants to override, the loop exits
         if (answer.equalsIgnoreCase("y")) {
           validInput = true;
+        } else if (answer.equals("-1")) {
+          trainNumber = -1;
         } else {
           // If the user does not want to override, an error message is displayed
           // and the loop continues.
@@ -348,7 +321,7 @@ public class DispatchSystem {
       int delayHour = inputHandler.getValidIntInput("Enter delay hour: ", 0, 23);
       int delayMinute = inputHandler.getValidIntInput("Enter delay minute: ", 0, 59);
 
-      selectedDeparture.setDelay(new int[]{delayHour, delayMinute});
+      selectedDeparture.setDelay(delayHour, delayMinute);
       // Updates delay of departure
     } else {
       // If no departure is selected, the method returns early
