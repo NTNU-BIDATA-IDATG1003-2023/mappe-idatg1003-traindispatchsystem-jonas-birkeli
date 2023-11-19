@@ -1,5 +1,8 @@
 package utility;
 
+import static config.Colors.RED_BRIGHT;
+import static config.Colors.RESET;
+
 /**
  * Class for handling user output.
  *
@@ -61,12 +64,12 @@ public class Printer {
   }
 
   /**
-   * Prints an error message to the standard error stream, including the newline character.
+   * Prints an error message to the standard error stream colored in red, including the newline character.
    * This method is equivalent to {@code System.err.println(message)}.
    *
    * @param message The error message to be printed to user.
    */
   public void printError(String message) {
-    System.err.println(message);
+    System.err.println(RED_BRIGHT + message + RESET);
   }
 }
