@@ -14,16 +14,31 @@ Train dispatch system, where the user can view traindepartures, add traindepartu
 Maven project with the following structure:
 ```
 src
-└── main
+├── main
+│   └── java
+│       ├── config
+│       │   ├── Colors.java
+│       │   └── ConfigurationOptions.java
+│       ├── departurecore
+│       │   ├── Station.java
+│       │   └── TrainDeparture.java
+│       └── utility
+│           ├── Clock.java
+│           ├── InputHandler.java
+│           ├── InputValidator.java
+│           └── Printer.java
+└── test
     └── java
         ├── departurecore
-        │   └── TrainDeparture.java
+        │   ├── StationTest.java
+        │   └── TrainDepartureTest.java
         ├── utility
-        │   ├── Clock.java
-        │   ├── InputHandler.java
-        │   ├── InputValidator.java
-        │   └── Printer.java
-        └── DispatchApp.java
+        │   ├── ClockTest.java
+        │   ├── InputHandlerTest.java
+        │   ├── InputValidatorTest.java
+        │   └── PrinterTest.java
+        └ DispatchSystem.java
+
 ```
 
 ## Link to repository
