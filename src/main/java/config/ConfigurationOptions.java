@@ -22,7 +22,7 @@ public class ConfigurationOptions {
   public static final String INVALID_INPUT_MESSAGE = "Invalid input. Please try again.";
 
   public static final String STATION_DEPARTURE_SCREEN_TITLE =
-      "AVGANGER Departures        SPOR Track   FORSINKELSE Delay   ";
+      "AVGANGER Departures        SPOR Track   ";  // Spaces at end to account for station
 
   private ConfigurationOptions() {
     // Empty constructor to hide the implicit public one.

@@ -6,8 +6,8 @@ import utility.Clock;
 
 
 /**
- * The {@code departurecore.TrainDeparture} class represents a train on a station.
- * All {@code departurecore.TrainDeparture}s has a departuretime,
+ * The {@code TrainDeparture} class represents a train on a station.
+ * All {@code TrainDeparture}s has a departuretime,
  * delay, line, destination and track.
  * <p>
  *   This class has the following methods:

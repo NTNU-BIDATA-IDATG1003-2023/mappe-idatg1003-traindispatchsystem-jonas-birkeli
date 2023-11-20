@@ -11,13 +11,27 @@ import utility.Clock;
  * Class for representing a station.
  * The station has a collection of every train departure, and has the responsibility of adding,
  * searching and sorting the train departures for later printing or other use-cases.
+ * <p>
+ *   This class has the following methods:
+ *   <ul>
+ *     <li>{@link #addTrainDeparture(TrainDeparture)}</li>
+ *     <li>{@link #getTrainDepartureByTrainNumber(int)}</li>
+ *     <li>{@link #getStreamOfTimeFilteredTrainDepartures()}</li>
+ *     <li>{@link #getAllTrainDeparturesByPartialDestination(String)}</li>
+ *     <li>{@link #hasTrainDepartureWithTrainNumber(int)}</li>
+ *     <li>{@link #getStationClock()}</li>
+ *     <li>{@link #setStationTime(int, int)}</li>
+ *     <li>{@link #getSortedStreamOfTrainDepartures()}</li>
+ *   </ul>
+ * </p>
  *
  * @author Jonas Birkeli
- * @version 1.3.0
+ * @version 1.4.0
  * @since 1.0.0
  */
 public class Station {
   private HashMap<Integer, TrainDeparture> trainDepartures;
+  private TrainDeparture selectedTrainDeparture;
   private final Clock stationTime;
 
   /**
@@ -28,6 +42,7 @@ public class Station {
    */
   public Station() {
     trainDepartures = new HashMap<>();
+    selectedTrainDeparture = null;
     stationTime = new Clock();
   }
 
@@ -73,20 +88,7 @@ public class Station {
         );
   }
 
-  /**
-   * Filters out the destinations that does not contain the given partial complete destination, and
-   * returns the first train that passes the filter.
-   * If no {@code TrainDeparture} has this destination, {@code null} is returned.
-   * If there are multiple {@code TrainDepartures} with this destination, the first one is returned.
-   *
-   * @param partialDestination The partial complete destination to filter for.
-   * @since 1.1.0
-   */
-  public TrainDeparture getFirstTrainDepartureByPartialDestination(String partialDestination) {
-    return getAllTrainDeparturesByPartialDestination(partialDestination)
-        .findFirst()
-        .orElse(null);
-  }
+
 
   /**
    * Filters out the destinations that does not contain the given partial complete destination, and
@@ -174,5 +176,35 @@ public class Station {
     return trainDepartures.entrySet().stream()
         .sorted(comparingByValue(TrainDeparture::compareTo))
         .map(Entry::getValue);
+  }
+
+  /**
+   * Selects a {@code TrainDeparture} by the given trainNumber.
+   * If the station has a {@code TrainDeparture} with the given trainNumber, the
+   * {@code TrainDeparture} is selected.
+   *
+   * @return 0 if the {@code TrainDeparture} was found and successfully selected, -1 if the
+   *        {@code TrainDeparture} was not found.
+   * @since 1.4.0
+   */
+  public int selectTrainDeparture(int trainNumber) {
+    int returnCode = 0;
+    if (hasTrainDepartureWithTrainNumber(trainNumber)) {
+      selectedTrainDeparture = getTrainDepartureByTrainNumber(trainNumber);
+      // Successfully selected trainDeparture
+    } else {
+      // TrainDeparture not found
+      returnCode = -1;
+    }
+    return returnCode;
+  }
+
+  /**
+   * Returns the selected {@code TrainDeparture}.
+   *
+   * @since 1.4.0
+   */
+  public TrainDeparture getSelectedTrainDeparture() {
+    return selectedTrainDeparture;
   }
 }

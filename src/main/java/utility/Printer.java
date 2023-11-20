@@ -40,20 +40,9 @@ public class Printer {
 
   /**
    * Clears the screen.
-   * <p>
-   *   This method uses ANSI escape codes to clear the screen.
-   *   This method is not supported on all operating systems.
-   *   If the method is not supported, the screen is not cleared.
-   *   <br>
-   *   <a href="https://stackoverflow.com/a/29752985">Source</a>
-   *   <br>
-   *   <a href="https://en.wikipedia.org/wiki/ANSI_escape_code">ANSI escape codes</a>
-   *   <br>
-   *   <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_sequences">CSI sequences</a>
-   *   <br>
-   *   <a href="https://en.wikipedia.org/wiki/ANSI_escape_code#Escape_sequences">Escape sequences</a>
-   *   <br>
-   * </p>
+   * This method uses ANSI escape codes to clear the screen.
+   * This method is not supported on all operating systems.
+   * If the method is not supported, the screen is not cleared.
    * This method has been created using CoPilot. <br>
    *
    * @since 1.0.0
@@ -64,7 +53,8 @@ public class Printer {
   }
 
   /**
-   * Prints an error message to the standard error stream colored in red, including the newline character.
+   * Prints an error message to the standard error stream colored in red,
+   * including the newline character.
    * This method is equivalent to {@code System.err.println(message)}.
    *
    * @param message The error message to be printed to user.

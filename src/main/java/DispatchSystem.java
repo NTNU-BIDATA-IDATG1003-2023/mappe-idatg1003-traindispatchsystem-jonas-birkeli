@@ -1,12 +1,9 @@
-import static config.Colors.BLACK_BACKGROUND_BRIGHT;
 import static config.Colors.GREEN_BRIGHT;
 import static config.Colors.RED;
-import static config.Colors.RED_BOLD_BRIGHT;
 import static config.Colors.RED_BRIGHT;
 import static config.Colors.RED_UNDERLINED;
 import static config.Colors.RESET;
 import static config.Colors.STRIKETHROUGH;
-import static config.Colors.WHITE_BOLD;
 import static config.Colors.WHITE_BOLD_BRIGHT;
 import static config.Colors.WHITE_BRIGHT;
 import static config.ConfigurationOptions.STATE_ADD_DEPARTURE;
@@ -29,7 +26,7 @@ import utility.Printer;
 /**
  * The {@code DispatchApp} class represents the main class of the program.
  * The {@code DispatchApp} class handles all user input and output,
- * and runs continuously until the user chooses to exit the program.
+ * and connects the {@code Station} to the user with a text-based interface.
  * <p>
  *   The {@code DispatchApp} class has the following methods:
  *   <ul>
@@ -54,7 +51,6 @@ public class DispatchSystem {
   // Fields in this class
   private int state;
   private boolean running;
-  private TrainDeparture selectedDeparture;
   private final Station station;
   private final InputHandler inputHandler;
   private final Printer printer;
@@ -68,7 +64,6 @@ public class DispatchSystem {
   public DispatchSystem() {
     state = 0;
     running = true;
-    selectedDeparture = null;
     station = new Station();
     inputHandler = new InputHandler();
     printer = new Printer();
@@ -168,7 +163,7 @@ public class DispatchSystem {
         .append(STATE_ASSIGN_DELAY)
         .append(". " + WHITE_BRIGHT + "Assign delay to train departure\n" + RESET)
         .append(STATE_SELECT_TRAIN_BY_NUMBER)
-        .append(". "+ WHITE_BRIGHT + "Search train departure by number\n" + RESET)
+        .append(". " + WHITE_BRIGHT + "Search train departure by number\n" + RESET)
         .append(STATE_SEARCH_BY_DESTINATION)
         .append(". " + WHITE_BRIGHT + "Search train departure by destination\n" + RESET)
         .append(STATE_CHANGE_TIME)
@@ -220,9 +215,9 @@ public class DispatchSystem {
 
 
     // Prints selected departure if it is not null
-    if (selectedDeparture != null) {
+    if (station.getSelectedTrainDeparture() != null) {
       printer.println("Selected train departure:");
-      printer.println(buildTrainDepartureDetails(selectedDeparture));
+      printer.println(buildTrainDepartureDetails(station.getSelectedTrainDeparture()));
     }
   }
 
@@ -332,13 +327,13 @@ public class DispatchSystem {
    * @since 1.0.0
    */
   private void assignTrackToTrainDeparture() {
-    if (selectedDeparture != null) {
+    if (station.getSelectedTrainDeparture() != null) {
       printer.println(WHITE_BRIGHT + "Assign track to train departure:" + RESET);
-      printer.println(buildTrainDepartureDetails(selectedDeparture));
+      printer.println(buildTrainDepartureDetails(station.getSelectedTrainDeparture()));
 
       int track = inputHandler.getValidIntInput("Enter track number: ", 1, 68);
 
-      selectedDeparture.setTrack(track);
+      station.getSelectedTrainDeparture().setTrack(track);
       // Updates track of selected departure
 
       printer.println(GREEN_BRIGHT + "Track successfully assigned to train departure." + RESET);
@@ -358,15 +353,15 @@ public class DispatchSystem {
    * @since 1.0.0
    */
   private void assignDelayToTrainDeparture() {
-    if (selectedDeparture != null) {
+    if (station.getSelectedTrainDeparture() != null) {
       printer.println(WHITE_BRIGHT + "Assign delay to train departure" + RESET);
-      printer.println(buildTrainDepartureDetails(selectedDeparture));
+      printer.println(buildTrainDepartureDetails(station.getSelectedTrainDeparture()));
       // Prints details of selected departure
 
       int delayHour = inputHandler.getValidIntInput("Enter delay hour: ", 0, 23);
       int delayMinute = inputHandler.getValidIntInput("Enter delay minute: ", 0, 59);
 
-      selectedDeparture.setDelay(delayHour, delayMinute);
+      station.getSelectedTrainDeparture().setDelay(delayHour, delayMinute);
       // Updates delay of departure
     } else {
       // If no departure is selected, an error message is displayed
@@ -387,10 +382,10 @@ public class DispatchSystem {
     printer.println(WHITE_BRIGHT + "Select train departure by number" + RESET);
     int trainNumber = inputHandler.getValidIntInput("Enter train number: ", 1, Integer.MAX_VALUE);
 
-    if (station.hasTrainDepartureWithTrainNumber(trainNumber)) {
-      selectedDeparture = station.getTrainDepartureByTrainNumber(trainNumber);
+    if (station.selectTrainDeparture(trainNumber) == 0) {
+      // Method above returns 0 if train departure is found and successfully selected
       printer.println(GREEN_BRIGHT + "Train departure found:" + RESET);
-      printer.println(buildTrainDepartureDetails(selectedDeparture));
+      printer.println(buildTrainDepartureDetails(station.getSelectedTrainDeparture()));
     } else {
       printer.printError("No train departure found with train number " + trainNumber + ".");
     }
@@ -438,7 +433,9 @@ public class DispatchSystem {
     boolean timeIsValid = station.setStationTime(hour, minute);
 
     if (timeIsValid) {
-      printer.println(GREEN_BRIGHT + "Time changed to " + RESET + station.getStationClock().getTimeAsString());
+      printer.println(
+          GREEN_BRIGHT + "Time changed to " + RESET + station.getStationClock().getTimeAsString()
+      );
     } else {
       printer.printError("Time must be later than current time.");
     }
