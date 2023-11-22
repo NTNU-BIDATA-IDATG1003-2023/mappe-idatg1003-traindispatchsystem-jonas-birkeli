@@ -21,7 +21,7 @@ public class InputValidator {
    * @return {@code true} if the input is parsable to an integer, {@code false} otherwise.
    * @since 1.0.0
    */
-  public boolean isAcceptableInt(String input, int min, int max) {
+  public boolean validateIntInput(String input, int min, int max) {
     // Expects input to be valid
     boolean isValid = true;
 
@@ -54,7 +54,7 @@ public class InputValidator {
    * @return {@code true} if the input is valid, {@code false} otherwise.
    * @since 1.0.0
    */
-  public boolean inputIsValid(String input) {
+  public boolean validateStringInput(String input) {
     // Expects the input to be invalid
     boolean isValid = true;
 

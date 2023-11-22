@@ -12,6 +12,7 @@ import static config.ConfigurationOptions.STATE_ASSIGN_TRACK;
 import static config.ConfigurationOptions.STATE_CHANGE_TIME;
 import static config.ConfigurationOptions.STATE_EXIT;
 import static config.ConfigurationOptions.STATE_HELP;
+import static config.ConfigurationOptions.STATE_REMOVE_DEPARTURE;
 import static config.ConfigurationOptions.STATE_SEARCH_BY_DESTINATION;
 import static config.ConfigurationOptions.STATE_SELECT_TRAIN_BY_NUMBER;
 import static config.ConfigurationOptions.STATE_VIEW_DEPARTURES;
@@ -44,7 +45,7 @@ import utility.Printer;
  * </p>
  *
  * @author Jonas Birkeli
- * @version 1.5.0
+ * @version 1.6.0
  * @since 1.0.0
  */
 public class DispatchSystem {
@@ -109,6 +110,7 @@ public class DispatchSystem {
       switch (state) {
         case STATE_VIEW_DEPARTURES -> viewTrainDepartures();
         case STATE_ADD_DEPARTURE -> addTrainDeparture();
+        case STATE_REMOVE_DEPARTURE -> removeTrainDeparture();
         case STATE_ASSIGN_TRACK -> assignTrackToTrainDeparture();
         case STATE_ASSIGN_DELAY -> assignDelayToTrainDeparture();
         case STATE_SELECT_TRAIN_BY_NUMBER -> selectTrainDepartureByTrainNumber();
@@ -158,6 +160,8 @@ public class DispatchSystem {
         .append(". " + WHITE_BRIGHT + "View train departures\n" + RESET)
         .append(STATE_ADD_DEPARTURE)
         .append(". " + WHITE_BRIGHT + "Add train departure\n" + RESET)
+        .append(STATE_REMOVE_DEPARTURE)
+        .append(". " + WHITE_BRIGHT + "Remove train departure\n" + RESET)
         .append(STATE_ASSIGN_TRACK)
         .append(". " + WHITE_BRIGHT + "Assign track to train departure\n" + RESET)
         .append(STATE_ASSIGN_DELAY)
@@ -177,7 +181,7 @@ public class DispatchSystem {
     printer.println(String.valueOf(message));
 
     // User input, must be between 1 and 9, incorrect input is not accepted
-    state = inputHandler.getValidIntInput("Enter choice: ", 1, 9);
+    state = inputHandler.getValidIntInput("Enter choice: ", 1, 10);
   }
 
   /**
@@ -235,12 +239,14 @@ public class DispatchSystem {
   private void addTrainDeparture() {
     printer.println("Add train departure");
 
-    // Getting an unique train number from user
+    // Getting a unique train number from user
     // Train number is unique, so we need to check if it already exists with a robust method
     int trainNumber = checkAndGetValidTrainNumber();
 
     // In case the user does not know what train-number is valid,
     // the user can enter -1 to exit the method.
+    TrainDeparture trainDeparture = null;
+
     if (trainNumber != -1) {
       // Getting input from user for every field of the train departure
       printer.print(WHITE_BRIGHT);
@@ -249,9 +255,9 @@ public class DispatchSystem {
       String line = inputHandler.getValidStringInput("Line: ");
       String destination = inputHandler.getValidStringInput("Destination: ");
       int track = inputHandler.getValidIntInput("Track: \n(-1 for unset)", -1, 68);
-      printer.print(RESET);
 
-      TrainDeparture trainDeparture = new TrainDeparture(
+
+      trainDeparture = new TrainDeparture(
           departureHour, departureMinute, line, destination, track, trainNumber
       );
 
@@ -270,6 +276,33 @@ public class DispatchSystem {
           + GREEN_BRIGHT
           + " added."
           + RESET);
+    }
+    printer.print(RESET);
+  }
+
+  /**
+   * Removes a {@code TrainDeparture} from the station.
+   * If no {@code TrainDeparture} is selected, user is prompted an error message.
+   * If a {@code TrainDeparture} is selected, the user is asked if they want to remove it.
+   *
+   * @since 1.6.0
+   */
+  private void removeTrainDeparture() {
+    if (station.getSelectedTrainDeparture() != null) {
+      printer.println(WHITE_BRIGHT + "Remove train departure:" + RESET);
+      printer.println(buildTrainDepartureDetails(station.getSelectedTrainDeparture()));
+
+      String answer = inputHandler.getValidStringInput("Do you want to remove this train departure? (Y/n)");
+
+      if (answer.equalsIgnoreCase("y")) {
+        station.removeTrainDeparture();
+        printer.println(GREEN_BRIGHT + "Train departure successfully removed." + RESET);
+      } else {
+        printer.println("Not removing train departure.");
+      }
+    } else {
+      printer.printError("No train departure selected."
+          + "Please search for a train departure using its train-number.");
     }
   }
 
@@ -499,13 +532,13 @@ public class DispatchSystem {
       objectInformation.append(trainDeparture.getDepartureTime().getTimeAsString())
           .append("      ");
     } else {
-      objectInformation.append(STRIKETHROUGH + RED_BRIGHT)
+      objectInformation.append(RED_BRIGHT + STRIKETHROUGH)
             .append(trainDeparture.getDepartureTime().getTimeAsString())
-            .append(RESET)
+            .append(RESET + WHITE_BRIGHT)
             .append(" ")
             .append(trainDeparture
                 .getDepartureTime()
-                .combineDelay(trainDeparture.getDelay())
+                .combine(trainDeparture.getDelay())
                 .getTimeAsString()
           // Combining the departure-time with delay to get the actual departure time
           );

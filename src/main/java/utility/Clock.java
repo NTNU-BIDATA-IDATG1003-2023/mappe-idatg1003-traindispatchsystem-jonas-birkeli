@@ -184,16 +184,15 @@ public class Clock {
   }
 
   /**
-   * Combines two times and returns the result as a {@code Clock} object representing the time.
+   * Combines a {@code Clock} object with current {@code Clock}s current  and returns the result as a {@code Clock} object representing the time.
    * The two times are added together and the result is returned as an object
    * Overflow is considered and checked when updating time.
    *
-   * @param delay The delay to be added to the time.
-   * @return The combined time as a string in the format of {@link #getTimeAsString()}.
+   * @param delay The second {@code Clock} time to be added to the current {@code Clock} time.
+   * @return The combined time as {@code Clock} object.
    * @since 1.2.0
    */
-  public Clock combineDelay(Clock delay) {
-
+  public Clock combine(Clock delay) {
     int newHour = this.hour + delay.getHour();
     int newMinute = this.minute + delay.getMinute();
 

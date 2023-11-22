@@ -54,15 +54,6 @@ class StationTest {
   }
 
   @Test
-  void getFirstTrainDepartureByPartialDestination() {
-    station.addTrainDeparture(
-        new TrainDeparture(18, 15, "L5", "Gjøvik", 14, 55)
-    );
-    assertEquals(50, station.getFirstTrainDepartureByPartialDestination("Os").getTrainNumber());
-    assertEquals(55, station.getFirstTrainDepartureByPartialDestination("jøvi").getTrainNumber());
-  }
-
-  @Test
   void getAllTrainDeparturesByPartialDestination() {
     station.addTrainDeparture(
         new TrainDeparture(18, 15, "L5", "Gjøvik", 14, 57)

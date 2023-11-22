@@ -23,20 +23,20 @@ class InputValidatorTest {
   void isAcceptableInt() {
     // Testing for positive and negative integers
     // by using the same min and max values
-    assertTrue(inputValidator.isAcceptableInt("1", 1, 1));
-    assertTrue(inputValidator.isAcceptableInt("1", 0, 2));
-    assertTrue(inputValidator.isAcceptableInt("1", 1, 1));
-    assertFalse(inputValidator.isAcceptableInt("0", 1, 1));
-    assertFalse(inputValidator.isAcceptableInt("-1", 1, 1));
-    assertFalse(inputValidator.isAcceptableInt("", 1, 1));
+    assertTrue(inputValidator.validateIntInput("1", 1, 1));
+    assertTrue(inputValidator.validateIntInput("1", 0, 2));
+    assertTrue(inputValidator.validateIntInput("1", 1, 1));
+    assertFalse(inputValidator.validateIntInput("0", 1, 1));
+    assertFalse(inputValidator.validateIntInput("-1", 1, 1));
+    assertFalse(inputValidator.validateIntInput("", 1, 1));
   }
 
   @Test
   void inputIsValid() {
     // Testing for full string, emtpy, blank and null
-    assertTrue(inputValidator.inputIsValid("1"));
-    assertFalse(inputValidator.inputIsValid(""));
-    assertFalse(inputValidator.inputIsValid(" "));
-    assertFalse(inputValidator.inputIsValid(null));
+    assertTrue(inputValidator.validateStringInput("1"));
+    assertFalse(inputValidator.validateStringInput(""));
+    assertFalse(inputValidator.validateStringInput(" "));
+    assertFalse(inputValidator.validateStringInput(null));
   }
 }

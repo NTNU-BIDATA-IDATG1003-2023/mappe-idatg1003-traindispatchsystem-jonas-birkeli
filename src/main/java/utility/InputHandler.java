@@ -49,7 +49,7 @@ public class InputHandler {
       try {
         input = scanner.nextLine();
 
-        if (!inputValidator.inputIsValid(input)) {
+        if (!inputValidator.validateStringInput(input)) {
           printer.printError(INVALID_INPUT_MESSAGE);
           continue;
         }
@@ -85,7 +85,7 @@ public class InputHandler {
       // Tries to get user input, catches exceptions if input is invalid
       input = getValidStringInput(inputMessage);
 
-      if (!inputValidator.isAcceptableInt(input, min, max)) {
+      if (!inputValidator.validateIntInput(input, min, max)) {
         printer.printError(
             "Input does not match the requirements. Must be between " + min + " and " + max + "."
         );
