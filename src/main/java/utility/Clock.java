@@ -184,7 +184,8 @@ public class Clock {
   }
 
   /**
-   * Combines a {@code Clock} object with current {@code Clock}s current  and returns the result as a {@code Clock} object representing the time.
+   * Combines a {@code Clock} object with current {@code Clock}s time
+   * and returns the result as a {@code Clock} object representing the time.
    * The two times are added together and the result is returned as an object
    * Overflow is considered and checked when updating time.
    *

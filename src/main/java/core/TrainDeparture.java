@@ -1,4 +1,4 @@
-package departurecore;
+package core;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -26,7 +26,7 @@ import utility.Clock;
  * </p>
  *
  * @author Jonas Birkeli
- * @version 1.4.0
+ * @version 1.5.0
  * @since 1.0.0
  */
 public class TrainDeparture implements Comparable<TrainDeparture> {
@@ -38,7 +38,7 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
   private int trainNumber;
 
   /**
-   * Constructs a new {@code departurecore.TrainDeparture} with default values.
+   * Constructs a new {@code TrainDeparture} with default values.
    * Default values are:
    * <ul>
    *   <li>Departure time: 00:00</li>
@@ -61,7 +61,7 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
   }
 
   /**
-   * Constructs a new {@code departurecore.TrainDeparture} with the given parameters,
+   * Constructs a new {@code TrainDeparture} with the given parameters,
    * where minute and hour has their own parameters.
    * All parameters are tested for validity.
    *
@@ -130,10 +130,10 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
   }
 
   /**
-   * Sets the line of the {@code departurecore.TrainDeparture}.
+   * Sets the line of the {@code TrainDeparture}.
    * If null, line is set to empty.
    *
-   * @param line the line of the {@code departurecore.TrainDeparture}.
+   * @param line the line of the {@code TrainDeparture}.
    * @since 1.0.0
    */
   private void setLine(String line) {
@@ -141,9 +141,9 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
   }
 
   /**
-   * Returns the line of the {@code departurecore.TrainDeparture}.
+   * Returns the line of the {@code TrainDeparture}.
    *
-   * @return the line of the {@code departurecore.TrainDeparture}.
+   * @return the line of the {@code TrainDeparture}.
    * @since 1.0.0
    */
   public String getLine() {
@@ -151,11 +151,11 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
   }
 
   /**
-   * Sets the destination of the {@code departurecore.TrainDeparture}.
+   * Sets the destination of the {@code TrainDeparture}.
    * If null, destination is set to empty.
    * The method is set to private to hinder users from tampering with the destination.
    *
-   * @param destination the destination of the {@code departurecore.TrainDeparture}.
+   * @param destination the destination of the {@code TrainDeparture}.
    * @since 1.0.0
    */
   private void setDestination(String destination) {
@@ -163,9 +163,9 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
   }
 
   /**
-   * Returns the destination of the {@code departurecore.TrainDeparture}.
+   * Returns the destination of the {@code TrainDeparture}.
    *
-   * @return the destination of the {@code departurecore.TrainDeparture}.
+   * @return the destination of the {@code TrainDeparture}.
    * @since 1.0.0
    */
   public String getDestination() {
@@ -173,10 +173,10 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
   }
 
   /**
-   * Sets the track of the {@code departurecore.TrainDeparture}.
+   * Sets the track of the {@code TrainDeparture}.
    * If negative or zero, track is set to -1.
    *
-   * @param track the track of the {@code departurecore.TrainDeparture}.
+   * @param track the track of the {@code TrainDeparture}.
    * @since 1.0.0
    */
   public void setTrack(int track) {
@@ -188,9 +188,9 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
   }
 
   /**
-   * Returns the track of the {@code departurecore.TrainDeparture}.
+   * Returns the track of the {@code TrainDeparture}.
    *
-   * @return the track of the {@code departurecore.TrainDeparture}.
+   * @return the track of the {@code TrainDeparture}.
    * @since 1.0.0
    */
   public int getTrack() {
@@ -268,13 +268,25 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
   }
 
   /**
+   * Checker for if the {@code TrainDeparture} is a valid departure, by checking the destination
+   * and line of the {@code TrainDeparture}.
+   * The {@code TrainDeparture} is valid if the destination AND line is not empty.
+   *
+   * @return true if the {@code TrainDeparture} is valid, false if not.
+   * @since 1.5.0
+   */
+  public boolean isValidDeparture() {
+    return !getDestination().isEmpty() && !getLine().isEmpty();
+  }
+
+  /**
    * Indicates whether some other object is "equal to" this one.
-   * Two {@code departurecore.TrainDeparture}s are considered equal if they have the same
+   * Two {@code TrainDeparture}s are considered equal if they have the same
    * departure time, delay, line, destination and track.
-   * If any of these values are not equal, the {@code departurecore.TrainDeparture}s are not equal.
+   * If any of these values are not equal, the {@code TrainDeparture}s are not equal.
    * If the specified object is null, returns false.
-   * If the specified object is not a {@code departurecore.TrainDeparture}, returns false.
-   * If the specified object is a {@code departurecore.TrainDeparture} and all values are equal,
+   * If the specified object is not a {@code TrainDeparture}, returns false.
+   * If the specified object is a {@code TrainDeparture} and all values are equal,
    * returns true.
    *
    * @param other the object with which to compare.
@@ -297,12 +309,12 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
   }
 
   /**
-   * Returns a hash code value for the {@code departurecore.TrainDeparture}.
+   * Returns a hash code value for the {@code TrainDeparture}.
    * The hash code is based upon the departure time, delay, line, destination and track.
    * If any of these values are not equal, the hash codes will not be equal.
-   * If the hash codes are not equal, the {@code departurecore.TrainDeparture}s are not equal.
+   * If the hash codes are not equal, the {@code TrainDeparture}s are not equal.
    *
-   * @return a hash code value for the {@code departurecore.TrainDeparture}.
+   * @return a hash code value for the {@code TrainDeparture}.
    * @since 1.2.0
    */
   @Override

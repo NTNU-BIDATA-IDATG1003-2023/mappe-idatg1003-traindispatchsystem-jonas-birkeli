@@ -51,10 +51,10 @@ public class InputHandler {
 
         if (!inputValidator.validateStringInput(input)) {
           printer.printError(INVALID_INPUT_MESSAGE);
-          continue;
+        } else {
+          // Input has been validated and is valid
+          validInput = true;
         }
-        // If no exception is thrown, the input is valid.
-        validInput = true;
       } catch (NoSuchElementException | IllegalStateException e) {
         printer.printError(INVALID_INPUT_MESSAGE);
         // Error message

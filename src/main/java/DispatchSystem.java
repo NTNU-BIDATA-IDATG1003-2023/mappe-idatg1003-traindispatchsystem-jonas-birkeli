@@ -1,3 +1,4 @@
+import static config.Colors.GREEN;
 import static config.Colors.GREEN_BRIGHT;
 import static config.Colors.RED;
 import static config.Colors.RED_BRIGHT;
@@ -18,8 +19,8 @@ import static config.ConfigurationOptions.STATE_SELECT_TRAIN_BY_NUMBER;
 import static config.ConfigurationOptions.STATE_VIEW_DEPARTURES;
 import static config.ConfigurationOptions.STATION_DEPARTURE_SCREEN_TITLE;
 
-import departurecore.Station;
-import departurecore.TrainDeparture;
+import core.Station;
+import core.TrainDeparture;
 import java.util.stream.Stream;
 import utility.InputHandler;
 import utility.Printer;
@@ -45,7 +46,7 @@ import utility.Printer;
  * </p>
  *
  * @author Jonas Birkeli
- * @version 1.6.0
+ * @version 1.7.0
  * @since 1.0.0
  */
 public class DispatchSystem {
@@ -68,6 +69,10 @@ public class DispatchSystem {
     station = new Station();
     inputHandler = new InputHandler();
     printer = new Printer();
+
+    // Adding some filler train departures to make the station look more realistic,
+    // instead of forcing the user to add departures just to use and test the program.
+    station.addFillerTrainDepartures();
   }
 
   /**
@@ -91,15 +96,9 @@ public class DispatchSystem {
    * @since 1.0.0
    */
   public void start() {
-    // Hard-coded departures for not having to add them manually every time the program is started
-    TrainDeparture dep1 = new TrainDeparture(23, 18, "L1", "Lillehammer", 2, 60);
-    TrainDeparture dep2 = new TrainDeparture(23, 57, "F8", "Gjøvik", 2, 22);
-    TrainDeparture dep3 = new TrainDeparture(3, 59, "H3", "Hamar", 1, 47);
-
-    // Train numbers are used as keys in the HashMap
-    station.addTrainDeparture(dep1);
-    station.addTrainDeparture(dep2);
-    station.addTrainDeparture(dep3);
+    // Clears the screen before starting the program.
+    // This method does not work in all terminals or operating systems.
+    printer.clearScreen();
 
     // Starts program to run continuously until user chooses to exit
     // Uses a switch statement to determine which method to run,
@@ -150,6 +149,24 @@ public class DispatchSystem {
    * @since 1.0.0
    */
   private void mainMenu() {
+    StringBuilder selectedTrainDepartureDetails;
+    selectedTrainDepartureDetails = new StringBuilder();
+
+    selectedTrainDepartureDetails
+        .append(WHITE_BOLD_BRIGHT + "Selected train departure:\n" + RESET);
+
+    if (station.getSelectedTrainDeparture() != null) {
+      selectedTrainDepartureDetails
+          .append(GREEN)
+          .append(buildTrainDepartureDetails(station.getSelectedTrainDeparture()))
+          .append(RESET);
+    } else {
+      selectedTrainDepartureDetails
+          .append(RED + "No train departure selected.\n" + RESET);
+    }
+
+    // Second message to be printed.
+    // Includes what options the user has.
     StringBuilder message;
     message = new StringBuilder();
 
@@ -157,27 +174,28 @@ public class DispatchSystem {
     message
         .append(WHITE_BOLD_BRIGHT + "Train Dispatch System\n\n" + RESET)
         .append(STATE_VIEW_DEPARTURES)
-        .append(". " + WHITE_BRIGHT + "View train departures\n" + RESET)
+        .append(". View train departures\n")
         .append(STATE_ADD_DEPARTURE)
-        .append(". " + WHITE_BRIGHT + "Add train departure\n" + RESET)
+        .append(". Add train departure\n")
         .append(STATE_REMOVE_DEPARTURE)
-        .append(". " + WHITE_BRIGHT + "Remove train departure\n" + RESET)
+        .append(". Remove train departure\n")
         .append(STATE_ASSIGN_TRACK)
-        .append(". " + WHITE_BRIGHT + "Assign track to train departure\n" + RESET)
+        .append(". Assign track to selected train departure\n")
         .append(STATE_ASSIGN_DELAY)
-        .append(". " + WHITE_BRIGHT + "Assign delay to train departure\n" + RESET)
+        .append(". Assign delay to selected train departure\n")
         .append(STATE_SELECT_TRAIN_BY_NUMBER)
-        .append(". " + WHITE_BRIGHT + "Search train departure by number\n" + RESET)
+        .append(". Select train departure by number\n")
         .append(STATE_SEARCH_BY_DESTINATION)
-        .append(". " + WHITE_BRIGHT + "Search train departure by destination\n" + RESET)
+        .append(". Search train departure by destination\n")
         .append(STATE_CHANGE_TIME)
-        .append(". " + WHITE_BRIGHT + "Change time\n" + RESET)
+        .append(". Change time\n")
         .append(STATE_EXIT)
-        .append(". " + RED_BRIGHT + "Exit\n" + RESET)
+        .append(". Exit\n")
         .append(STATE_HELP)
-        .append(". " + WHITE_BRIGHT + "Help\n" + RESET);
+        .append(". Help\n");
 
     // Continuously ask for user input until a valid choice is made
+    printer.println(String.valueOf(selectedTrainDepartureDetails));
     printer.println(String.valueOf(message));
 
     // User input, must be between 1 and 9, incorrect input is not accepted
@@ -216,13 +234,6 @@ public class DispatchSystem {
         .forEach(printer::print);
 
     printer.println(RESET + "\n");
-
-
-    // Prints selected departure if it is not null
-    if (station.getSelectedTrainDeparture() != null) {
-      printer.println("Selected train departure:");
-      printer.println(buildTrainDepartureDetails(station.getSelectedTrainDeparture()));
-    }
   }
 
   /**
@@ -292,7 +303,9 @@ public class DispatchSystem {
       printer.println(WHITE_BRIGHT + "Remove train departure:" + RESET);
       printer.println(buildTrainDepartureDetails(station.getSelectedTrainDeparture()));
 
-      String answer = inputHandler.getValidStringInput("Do you want to remove this train departure? (Y/n)");
+      String answer = inputHandler.getValidStringInput(
+          "Do you want to remove this train departure? (Y/n)"
+      );
 
       if (answer.equalsIgnoreCase("y")) {
         station.removeTrainDeparture();
@@ -522,15 +535,30 @@ public class DispatchSystem {
     printer.print(String.valueOf(message));
   }
 
+  /**
+   * Creates a String representation of every valuable field for an end-user to read.
+   * If {@code TrainDeparture.line} or {@code TrainDeparture.destination} is not set,
+   * the method returns an empty string.
+   * If {@code TrainDeparture.track} is not set,
+   * the method returns "TBA" instead of the track number.
+   * If {@code TrainDeparture.delay} is not set,
+   * the method returns the departure time without delay.
+   * If {@code TrainDeparture.delay} is set, the method returns the departure time with delay.
+   * If all values are present, the method returns a string with all values.
+   *
+   * @param trainDeparture The {@code TrainDeparture} to build a string representation of.
+   * @return A string representation of the {@code TrainDeparture}.
+   * @since 1.7.0
+   */
   private String buildTrainDepartureDetails(TrainDeparture trainDeparture) {
-
-
+    // Using StringBuilder to avoid long lines and improve readability
     StringBuilder objectInformation = new StringBuilder();
 
     if (trainDeparture.getDelay().getHour() == 0 && trainDeparture.getDelay().getMinute() == 0) {
       // There is no delay, so we only need to display the departure time
       objectInformation.append(trainDeparture.getDepartureTime().getTimeAsString())
-          .append("      ");
+          .append("      ");  // Spaces representing the allocated space for the departure time,
+      // including delay
     } else {
       objectInformation.append(RED_BRIGHT + STRIKETHROUGH)
             .append(trainDeparture.getDepartureTime().getTimeAsString())
@@ -566,8 +594,7 @@ public class DispatchSystem {
 
     // If some values are not set, the required fields are not set and therefore the departure
     // is not valid.
-    if (!trainDeparture.getLine().isEmpty() && !trainDeparture.getDestination().isEmpty()) {
-      // If some values are not set, return empty string insead of objectInformation
+    if (trainDeparture.isValidDeparture()) {
       returnString = String.valueOf(objectInformation);
     }
 

@@ -19,7 +19,7 @@ src
 │       ├── config
 │       │   ├── Colors.java
 │       │   └── ConfigurationOptions.java
-│       ├── departurecore
+│       ├── core
 │       │   ├── Station.java
 │       │   └── TrainDeparture.java
 │       └── utility
@@ -29,7 +29,7 @@ src
 │           └── Printer.java
 └── test
     └── java
-        ├── departurecore
+        ├── core
         │   ├── StationTest.java
         │   └── TrainDepartureTest.java
         ├── utility
@@ -66,7 +66,7 @@ The user can quit the application by typing 8.
 
 ## How to run the tests
 
-The tests can be run by running the DispatchAppTest.java, departurecore.StationTest.java, departurecore.TrainDepartureTest.java, utility.ClockTest.java, utility.InputHandlerTest.java, utility.InputValidatorTest.java, and utility.PrinterTest.java files.
+The tests can be run by running the DispatchAppTest.java, core.StationTest.java, core.TrainDepartureTest.java, utility.ClockTest.java, utility.InputHandlerTest.java, utility.InputValidatorTest.java, and utility.PrinterTest.java files.
 The tests can be run by right-clicking the file and choosing "Run 'DispatchAppTest'".
 The tests can also be run by clicking the green play button in the top right corner of the file.
 
