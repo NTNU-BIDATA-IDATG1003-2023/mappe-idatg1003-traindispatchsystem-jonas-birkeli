@@ -72,6 +72,7 @@ public class Station {
       selectedTrainDeparture = null;
     }
   }
+
   /**
    * Returns the {@code TrainDeparture} with the given trainNumber.
    *
@@ -166,11 +167,12 @@ public class Station {
       // Filters out the trains that depart before the new time
       filterTrainDeparturesByTime();
 
-      if (selectedTrainDeparture != null && (selectTrainDeparture(selectedTrainDeparture.getTrainNumber()) == -1)) {
-          // Method retuns -1 if the selected train is filtered out
-          // Since the selecteTrainDeparture doesn't hold a reference, but a hard copy of the
-          // TrainDeparture, we need to check if the train still exists in the hashmap.
-          selectedTrainDeparture = null; // If the selected train is filtered out, remove it
+      if (selectedTrainDeparture != null
+          && (selectTrainDeparture(selectedTrainDeparture.getTrainNumber()) == -1)) {
+        // Method retuns -1 if the selected train is filtered out
+        // Since the selecteTrainDeparture doesn't hold a reference, but a hard copy of the
+        // TrainDeparture, we need to check if the train still exists in the hashmap.
+        selectedTrainDeparture = null; // If the selected train is filtered out, remove it
       }
     }
     return validTime;

@@ -137,7 +137,7 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
    * @since 1.0.0
    */
   private void setLine(String line) {
-    this.line = Objects.requireNonNullElse(line, "");
+    this.line = Objects.requireNonNullElse(line, "NVALID");
   }
 
   /**
@@ -159,7 +159,7 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
    * @since 1.0.0
    */
   private void setDestination(String destination) {
-    this.destination = Objects.requireNonNullElse(destination, "");
+    this.destination = Objects.requireNonNullElse(destination, "INVALID");
   }
 
   /**
@@ -248,13 +248,9 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
       // If this and other are equal, return 0 meaning equal
       if (this.equals(other)) {
         state = 0;
-      }
-
-      // Comparing departure times
-      if (getDepartureTime().getHour() > other.getDepartureTime().getHour()) {
-        state = 1;
-      }
-      if (getDepartureTime().getHour() < other.getDepartureTime().getHour()) {
+      } else if (getDepartureTime().getHour() > other.getDepartureTime().getHour()) {
+        state = 1;  // Comparing departure times
+      } else if (getDepartureTime().getHour() < other.getDepartureTime().getHour()) {
         state = -1;  // If this is smaller, return -1 meaning smaller
       }
 
