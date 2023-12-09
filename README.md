@@ -22,11 +22,12 @@ src
 │       ├── core
 │       │   ├── Station.java
 │       │   └── TrainDeparture.java
-│       └── utility
-│           ├── Clock.java
-│           ├── InputHandler.java
-│           ├── InputValidator.java
-│           └── Printer.java
+│       ├── utility
+│       │    ├── Clock.java
+│       │    ├── InputHandler.java
+│       │    ├── InputValidator.java
+│       │    └── Printer.java 
+│       └── DispatchSystem.java
 └── test
     └── java
         ├── core
