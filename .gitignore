@@ -39,3 +39,7 @@ build/
 
 ### README.md ###
 README.md
+
+
+/.idea
+/out
