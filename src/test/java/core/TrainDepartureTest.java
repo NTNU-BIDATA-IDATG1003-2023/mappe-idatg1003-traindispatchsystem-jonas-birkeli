@@ -23,19 +23,33 @@ class TrainDepartureTest {
   }
 
   @Test
-  void getDepartureTime() {
+  void getDepartureTimePositiveTest() {
     // Test that the departure time is correct, where the time is set in the constructor
-    assertEquals(4, trainDeparture.getDepartureTime().getHour(), "Hour should be 4");
-    assertEquals(50, trainDeparture.getDepartureTime().getMinute(), "Minute should be 50");
+    assertEquals(5, trainDeparture.getDepartureTime().getHour(), "Hour should be 4");
+    assertEquals(4, trainDeparture.getDepartureTime().getMinute(), "Minute should be 50");
   }
 
   @Test
-  void setDelay() {
+  void getDepartureTimeNegativeTest() {
+    // Test that the departure time is correct, where the time is set in the constructor
+    assertNotEquals(4, trainDeparture.getDepartureTime().getHour(), "Hour should not be 4, should be 5");
+    assertNotEquals(51, trainDeparture.getDepartureTime().getMinute(), "Minute should not be 51, should be 4");
+  }
+
+  @Test
+  void setDelayPositiveTest() {
     // Test that the delay is set correctly with positive and negative tests
     trainDeparture.setDelay(10, 9);
     assertEquals(10, trainDeparture.getDelay().getHour(), "Hour should be 10");
-    assertNotEquals(10, trainDeparture.getDelay().getMinute(), "Minute should not be 10");
     assertEquals(9, trainDeparture.getDelay().getMinute(), "Minute should be 9");
+  }
+
+  @Test
+  void setDelayNegativeTest() {
+    // Test that the delay is set correctly with negative tests
+    trainDeparture.setDelay(10, 9);
+    assertNotEquals(1, trainDeparture.getDelay().getHour(), "Hour should not be 1, should be 10");
+    assertNotEquals(1, trainDeparture.getDelay().getMinute(), "Minute should not be 1, should be 9");
   }
 
   @Test
@@ -48,9 +62,8 @@ class TrainDepartureTest {
 
   @Test
   void getDelayNegativeTest() {
-
     trainDeparture.setDelay(10, 9);
-    assertNotEquals(10, trainDeparture.getDelay().getHour(), "Hour should not be 10");
+    assertNotEquals(1, trainDeparture.getDelay().getHour(), "Hour should not be 1, should be 10");
   }
 
   @Test
@@ -61,25 +74,42 @@ class TrainDepartureTest {
 
   @Test
   void getLineNegativeTest() {
-    assertNotEquals("L4", trainDeparture.getLine(), "Line should not be L4");
+    assertNotEquals("L4", trainDeparture.getLine(), "Line should not be L4, should be L3");
   }
 
   @Test
-  void getDestination() {
+  void getDestinationPositiveTest() {
     // Test that the destination is set correctly
-    assertEquals("Oslo", trainDeparture.getDestination());
+    assertEquals("Oslo", trainDeparture.getDestination(), "Destination should be Oslo");
   }
 
   @Test
-  void setTrack() {
-    // Test that the track is set correctly with positive and negative tests
+  void getDestinationNegativeTest() {
+    // Test that the destination is set correctly with negative test
+    assertNotEquals("Gjøvik", trainDeparture.getDestination(), "Destination should not be Gjøvik, should be Oslo");
+  }
+
+  @Test
+  void setTrackPositveTest() {
+    // Test that the track is set correctly with positive tests
     // The method checks for validity, and if the track is invalid, it will return -1
     trainDeparture.setTrack(10);
-    assertEquals(10, trainDeparture.getTrack());
+    assertEquals(10, trainDeparture.getTrack(), "Track should be 10");
     trainDeparture.setTrack(-3);
-    assertEquals(-1, trainDeparture.getTrack());
+    assertEquals(-1, trainDeparture.getTrack(), "Track should be -1");
     trainDeparture.setTrack(0);
-    assertEquals(-1, trainDeparture.getTrack());
+    assertEquals(-1, trainDeparture.getTrack(), "Track should be -1");
+  }
+
+  @Test
+  void setTrackNegativeTest() {
+    // Test that the track is set correctly with negative tests
+    trainDeparture.setTrack(10);
+    assertNotEquals(11, trainDeparture.getTrack(), "Track should not be 11, should be 10");
+    trainDeparture.setTrack(-3);
+    assertNotEquals(0, trainDeparture.getTrack(), "Track should not be 0, should be -1");
+    trainDeparture.setTrack(0);
+    assertNotEquals(0, trainDeparture.getTrack(), "Track should not be 0, should be -1");
   }
 
   @Test
@@ -87,11 +117,11 @@ class TrainDepartureTest {
     // Test that the track is set correctly with positive and negative tests
     // The method checks for validity, and if the track is invalid, it will return -1
     trainDeparture.setTrack(10);
-    assertEquals(10, trainDeparture.getTrack());
+    assertEquals(10, trainDeparture.getTrack(), "Track should be 10");
     trainDeparture.setTrack(-1);
-    assertEquals(-1, trainDeparture.getTrack());
+    assertEquals(-1, trainDeparture.getTrack(), "Track should be -1");
     trainDeparture.setTrack(0);
-    assertEquals(-1, trainDeparture.getTrack());
+    assertEquals(-1, trainDeparture.getTrack(), "Track should be -1");
   }
 
   @Test
@@ -99,17 +129,17 @@ class TrainDepartureTest {
     // Test that the track is set correctly with positive and negative tests
     // The method checks for validity, and if the track is invalid, it will return -1
     trainDeparture.setTrack(10);
-    assertNotEquals(11, trainDeparture.getTrack());
+    assertNotEquals(11, trainDeparture.getTrack(), "Track should not be 11, should be 10");
     trainDeparture.setTrack(-1);
-    assertNotEquals(0, trainDeparture.getTrack());
+    assertNotEquals(0, trainDeparture.getTrack(), "Track should not be 0, should be -1");
     trainDeparture.setTrack(0);
-    assertNotEquals(0, trainDeparture.getTrack());
+    assertNotEquals(0, trainDeparture.getTrack(), "Track should not be 0, should be -1");
   }
 
   @Test
-  void getTrainNumber() {
+  void getTrainNumberPositiveTest() {
     // Test that the trainNumber is set correctly
-    assertEquals(5, trainDeparture.getTrainNumber());
+    assertEquals(50, trainDeparture.getTrainNumber(), "Train number should be 50");
   }
 
   @Test

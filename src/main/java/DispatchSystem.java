@@ -96,6 +96,7 @@ public class DispatchSystem {
    * @since 1.0.0
    */
   public void start() {
+    printer.println("Starting " + DispatchApp.APP_NAME + " " + DispatchApp.APP_VERSION);
     // Clears the screen before starting the program.
     // This method does not work in all terminals or operating systems.
     printer.clearScreen();

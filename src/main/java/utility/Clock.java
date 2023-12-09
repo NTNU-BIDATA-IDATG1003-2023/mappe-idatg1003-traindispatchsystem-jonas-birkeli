@@ -73,19 +73,6 @@ public class Clock {
   }
 
   /**
-   * Sets the {@code hour} and {@code minute} of the clock.
-   * Overflow will result in modulo of 24 for hour and modulo of 60 for minute,
-   * so the time will never exceed 23:59.
-   *
-   * @param time The time of the clock as an array with the first element being the hour and the
-   *             second element being the minute.
-   * @since 1.1.0
-   */
-  public void setTime(int[] time) {
-    setTime(time[0], time[1]);
-  }
-
-  /**
    * Sets the {@code hour} of the clock.
    * Checking for overflow is done in {@link #setTime(int, int)}.
    *
@@ -117,18 +104,6 @@ public class Clock {
     } else {
       this.minute = minute;
     }
-  }
-
-  /**
-   * Returns the time as an array with the first element being the hour and the second element being
-   * the minute.
-   *
-   * @return The time as an array with the first element being the hour and the second element being
-   *         the minute.
-   * @since 1.0.0
-   */
-  public int[] getTime() {
-    return new int[]{hour, minute};
   }
 
   /**

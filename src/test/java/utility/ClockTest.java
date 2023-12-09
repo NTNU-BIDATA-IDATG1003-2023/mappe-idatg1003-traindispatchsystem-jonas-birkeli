@@ -22,45 +22,39 @@ class ClockTest {
   }
 
   @Test
-  void setTime() {
-    // Test that the time is set correctly with positive and negative tests
+  void setTimePositiveTest() {
+    // Test that the time is set correctly with positive tests
     clock.setTime(10, 9);
-    assertEquals(10, clock.getHour());
-    assertNotEquals(10, clock.getMinute());
-    assertEquals(9, clock.getMinute());
+    assertEquals(10, clock.getHour(), "Hour is set correctly, is 10");
+    assertEquals(9, clock.getMinute(), "Minute is set correctly, is 9");
+  }
+  @Test
+  void setTimeNegativeTest() {
+    // Test that the time is set correctly with negative tests
+    clock.setTime(10, 9);
+    assertNotEquals(4, clock.getHour(), "Hour is not set correctly, should be 10");
+    assertNotEquals(20, clock.getMinute(), "Minute is not set correctly, should be 9");
   }
 
   @Test
-  void testSetTime() {
-    // Test that the time is set correctly with positive and negative tests
-    clock.setTime(4, 20);
-    assertEquals(10, clock.getHour());
-    assertNotEquals(10, clock.getMinute());
-    assertEquals(9, clock.getMinute());
-  }
-
-  @Test
-  void getTimePositiveTest() {
-    // Test that the time is set correctly with positive and negative tests
-    clock.setTime(40, 10);
-    assertNotEquals(40, clock.getTime()[0], "Hour is not set correctly with overflow");
-    assertEquals(16, clock.getTime()[0], "Hour is set correctly with overflow");
-    assertEquals(10, clock.getTime()[1], "Minute is set correctly with overflow");
-  }
-
-  @Test
-  void getHour() {
-    // Test that the hour is set correctly with positive and negative tests
+  void getHourPositiveTest() {
+    // Test that the hour is set correctly with positive tests
     clock.setTime(15, 8);
-    assertEquals(15, clock.getHour(), "Hour is set correctly");
-    assertNotEquals(10, clock.getHour(), "Hour is not set correctly");
+    assertEquals(15, clock.getHour(), "Hour is set correctly, is 15");
+  }
+
+  @Test
+  void getHourNegativeTest() {
+    // Test that the hour is set correctly with negative tests
+    clock.setTime(15, 8);
+    assertNotEquals(15, clock.getHour(), "Hour is not set correctly, should be 15");
   }
 
   @Test
   void getMinutePositiveTest() {
     // Test that the minute is set correctly with positive and negative tests
     clock.setTime(15, 8);
-    assertEquals(8, clock.getMinute(), "Minute is set correctly");
+    assertEquals(8, clock.getMinute(), "Minute is set correctly, is 8");
 
   }
 
@@ -68,22 +62,22 @@ class ClockTest {
   void getMinuteNegativeTest() {
     // Test that the minute is set correctly with positive and negative tests
     clock.setTime(15, 8);
-    assertNotEquals(10, clock.getMinute(), "Minute is not set correctly");
+    assertNotEquals(10, clock.getMinute(), "Minute is not set correctly, should be 8");
   }
 
   @Test
   void getTimeAsStringPositiveTest() {
     // Test that the time is set correctly with positive and negative tests
     clock.setTime(15, 8);
-    assertEquals("15:08", clock.getTimeAsString(), "Time is set correctly");
+    assertEquals("15:08", clock.getTimeAsString(), "Time is set correctly, is 15:08");
 
   }
 
   @Test
   void getTimeAsStringNegativeTest() {
     // Test that the time is set correctly with positive and negative tests
-    clock.setTime(15, 8);
-    assertNotEquals("10:08", clock.getTimeAsString(), "Time is not set correctly");
+    clock.setTime(12, 3);
+    assertNotEquals("10:08", clock.getTimeAsString(), "Time is not set correctly, should be 12:03");
   }
 
   @Test
@@ -93,9 +87,18 @@ class ClockTest {
     // 4 + 4 = 8
     // 20 + 20 = 40
     clock = clock.combine(testClock);
-    assertEquals(8, clock.getHour());
-    assertNotEquals(4, clock.getHour());
-    assertEquals(40, clock.getMinute());
-    assertNotEquals(20, clock.getMinute());
+    assertEquals(8, clock.getHour(), "Hour is combined correctly, is 8");
+    assertEquals(40, clock.getMinute(), "Minute is combined correctly, is 40");
+  }
+
+  @Test
+  void combineDelayNegativeTest() {
+    // Test that the delay is set correctly with positive and negative tests
+    Clock testClock = new Clock(4, 20);
+    // 4 + 4 = 8
+    // 20 + 20 = 40
+    clock = clock.combine(testClock);
+    assertNotEquals(4, clock.getHour(), "Hour is not combined correctly, should be 8");
+    assertNotEquals(20, clock.getMinute(), "Minute is not combined correctly, should be 40");
   }
 }

@@ -120,7 +120,6 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
   /**
    * Returns the delay of the {@code TrainDeparture}
    * as a referance to a {@code Clock} object.
-   * To check for the delay, use {@link Clock#getTime()}.
    *
    * @return the delay of the {@code TrainDeparture}.
    * @since 1.0.0
@@ -289,23 +288,23 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
    * If the specified object is a {@code TrainDeparture} and all values are equal,
    * returns true.
    *
-   * @param other the object with which to compare.
+   * @param o the object with which to compare.
    * @return true if this object is the same as the obj argument; false otherwise.
    * @since 1.2.0
    */
   @Override
-  public boolean equals(Object other) {
-    if (this == other) {
+  public boolean equals(Object o) {
+    if (this == o) {
       return true;
     }
-    if (!(other instanceof TrainDeparture that)) {
+    if (!(o instanceof TrainDeparture that)) {
       return false;
     }
-    return getTrack() == that.getTrack()
-        && Arrays.equals(getDepartureTime().getTime(), that.getDepartureTime().getTime())
-        && Arrays.equals(getDelay().getTime(), that.getDelay().getTime())
-        && Objects.equals(getLine(), that.getLine()) && Objects.equals(
-        getDestination(), that.getDestination());
+    return getTrack() == that.getTrack() && getTrainNumber() == that.getTrainNumber()
+        && Objects.equals(getDepartureTime(), that.getDepartureTime())
+        && Objects.equals(getDelay(), that.getDelay()) && Objects.equals(
+        getLine(), that.getLine()) && Objects.equals(getDestination(),
+        that.getDestination());
   }
 
   /**
@@ -319,9 +318,7 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
    */
   @Override
   public int hashCode() {
-    int result = Objects.hash(getLine(), getDestination(), getTrack());
-    result = 31 * result + Arrays.hashCode(getDepartureTime().getTime());
-    result = 31 * result + Arrays.hashCode(getDelay().getTime());
-    return result;
+    return Objects.hash(getDepartureTime(), getDelay(), getLine(), getDestination(), getTrack(),
+        getTrainNumber());
   }
 }
