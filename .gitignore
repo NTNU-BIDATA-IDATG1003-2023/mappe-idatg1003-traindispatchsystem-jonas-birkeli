@@ -41,5 +41,5 @@ build/
 README.md
 
 
-/.idea
-/out
+.idea
+out
