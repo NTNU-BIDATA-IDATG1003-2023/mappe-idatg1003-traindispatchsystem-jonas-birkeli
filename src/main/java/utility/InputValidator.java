@@ -18,6 +18,9 @@ public class InputValidator {
    * Checks if the input is parsable to an integer.
    *
    * @param input The input to check.
+   *              This input is expected to be parsable to an integer.
+   * @param min The minimum value the input can be.
+   * @param max The maximum value the input can be.
    * @return {@code true} if the input is parsable to an integer, {@code false} otherwise.
    * @since 1.0.0
    */

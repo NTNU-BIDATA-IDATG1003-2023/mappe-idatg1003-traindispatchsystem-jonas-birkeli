@@ -23,7 +23,6 @@ import utility.Clock;
  *     <li>{@link #getTrack()}</li>
  *     <li>{@link #compareTo(TrainDeparture)}</li>
  *   </ul>
- * </p>
  *
  * @author Jonas Birkeli
  * @version 1.5.0
@@ -105,6 +104,7 @@ public class TrainDeparture implements Comparable<TrainDeparture> {
    * If null, not two elements or either is negative, delay is set to 0.
    *
    * @param hour The hour of the delay for the {@code TrainDeparture}.
+   * @param minute The minute of the delay for the {@code TrainDeparture}.
    * @since 1.0.0
    */
   public void setDelay(int hour, int minute) {

@@ -25,7 +25,6 @@ public class ConfigurationOptions {
   public static final String STATION_DEPARTURE_SCREEN_TITLE =
       "AVGANGER Departures        SPOR Track   ";  // Spaces at end to account for station
 
-  private ConfigurationOptions() {
-    // Empty constructor to hide the implicit public one.
-  }
+  private ConfigurationOptions() {}
+  // Empty constructor to hide the implicit public one.
 }

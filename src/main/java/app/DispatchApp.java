@@ -1,8 +1,12 @@
+package app;
+
+import io.DispatchSystem;
+
 /**
  * Starts the application.
  */
 public class DispatchApp {
-  public static final String APP_NAME = "DispatchApp";
+  public static final String APP_NAME = "app.DispatchApp";
   public static final String APP_VERSION = "1.7.0";
   public static final String APP_AUTHOR = "Jonas Birkeli";
   public static final String APP_DESCRIPTION = "A dispatch system for trains.";

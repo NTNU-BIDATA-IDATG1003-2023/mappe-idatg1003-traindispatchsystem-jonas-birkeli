@@ -129,13 +129,11 @@ public class Clock {
   /**
    * Returns the time as a string with correct formatting.
    * Example of format:
-   * <p>
    *   <ul>
    *     <li>00:00</li>
    *     <li>09:09</li>
    *     <li>23:59</li>
    *   </ul>
-   * </p>
    *
    * @return The time as a string with correct formatting.
    * @since 1.0.0

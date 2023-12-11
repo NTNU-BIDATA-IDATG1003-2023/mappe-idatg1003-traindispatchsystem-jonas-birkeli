@@ -1,3 +1,5 @@
+package io;
+
 import static config.Colors.GREEN;
 import static config.Colors.GREEN_BRIGHT;
 import static config.Colors.RED;
@@ -26,11 +28,11 @@ import utility.InputHandler;
 import utility.Printer;
 
 /**
- * The {@code DispatchApp} class represents the main class of the program.
- * The {@code DispatchApp} class handles all user input and output,
+ * The {@code app.DispatchApp} class represents the main class of the program.
+ * The {@code app.DispatchApp} class handles all user input and output,
  * and connects the {@code Station} to the user with a text-based interface.
  * <p>
- *   The {@code DispatchApp} class has the following methods:
+ *   The {@code app.DispatchApp} class has the following methods:
  *   <ul>
  *     <li>{@link #start()}</li>
  *     <li>{@link #mainMenu()}</li>
@@ -43,7 +45,6 @@ import utility.Printer;
  *     <li>{@link #changeTime()}</li>
  *     <li>{@link #exitApplication()}</li>
  *   </ul>
- * </p>
  *
  * @author Jonas Birkeli
  * @version 1.7.0
@@ -58,7 +59,7 @@ public class DispatchSystem {
   private final Printer printer;
 
   /**
-   * Constructs a new {@code DispatchApp}.The program does not start until the {@link #start()}
+   * Constructs a new {@code app.DispatchApp}.The program does not start until the {@link #start()}
    * method is called.
    *
    * @since 1.2.0
@@ -76,7 +77,7 @@ public class DispatchSystem {
   }
 
   /**
-   * Starts the {@code DispatchApp} and runs it
+   * Starts the {@code app.DispatchApp} and runs it
    * continuously until the user chooses to exit the program.
    * The program starts in the main menu, and will run continuously until the user chooses to exit.
    * <p>
@@ -91,12 +92,11 @@ public class DispatchSystem {
    *     <li>Change time</li>
    *     <li>Exit</li>
    *   </ul>
-   * </p>
    *
    * @since 1.0.0
    */
   public void start() {
-    printer.println("Starting " + DispatchApp.APP_NAME + " " + DispatchApp.APP_VERSION);
+    printer.println("Starting " + app.DispatchApp.APP_NAME + " " + app.DispatchApp.APP_VERSION);
     // Clears the screen before starting the program.
     // This method does not work in all terminals or operating systems.
     printer.clearScreen();

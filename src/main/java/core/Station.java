@@ -25,7 +25,6 @@ import utility.Clock;
  *     <li>{@link #setStationTime(int, int)}</li>
  *     <li>{@link #getSortedStreamOfTrainDepartures()}</li>
  *   </ul>
- * </p>
  *
  * @author Jonas Birkeli
  * @version 1.6.0
@@ -237,6 +236,7 @@ public class Station {
    * If the station has a {@code TrainDeparture} with the given trainNumber, the
    * {@code TrainDeparture} is selected.
    *
+   * @param trainNumber The trainNumber of the {@code TrainDeparture} to select. Must be positive.
    * @return 0 if the {@code TrainDeparture} was found and successfully selected, -1 if the
    *        {@code TrainDeparture} was not found.
    * @since 1.4.0
@@ -254,8 +254,10 @@ public class Station {
   }
 
   /**
-   * Returns the selected {@code TrainDeparture}.
+   * Returns the selected {@code TrainDeparture}. Might return null if no {@code TrainDeparture} is
+   * selected.
    *
+   * @return The selected {@code TrainDeparture}. Null if no {@code TrainDeparture} is selected.
    * @since 1.4.0
    */
   public TrainDeparture getSelectedTrainDeparture() {
