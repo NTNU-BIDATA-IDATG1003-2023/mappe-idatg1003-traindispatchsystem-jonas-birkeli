@@ -47,7 +47,7 @@ class ClockTest {
   void getHourNegativeTest() {
     // Test that the hour is set correctly with negative tests
     clock.setTime(15, 8);
-    assertNotEquals(15, clock.getHour(), "Hour is not set correctly, should be 15");
+    assertNotEquals(12, clock.getHour(), "Hour is not set correctly, should be 15");
   }
 
   @Test

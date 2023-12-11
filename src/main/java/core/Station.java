@@ -53,8 +53,8 @@ public class Station {
    * @since 1.5.0
    */
   public void addFillerTrainDepartures() {
-    TrainDeparture dep1 = new TrainDeparture(23, 18, "L1", "Lillehammer", 2, 60);
-    TrainDeparture dep2 = new TrainDeparture(23, 57, "F8", "Gjøvik", 2, 22);
+    TrainDeparture dep1 = new TrainDeparture(23, 18, "F10", "Lillehammer", 20, 60);
+    TrainDeparture dep2 = new TrainDeparture(23, 57, "F8", "Gjøvik", -1, 22);
     TrainDeparture dep3 = new TrainDeparture(3, 59, "H3", "Hamar", 1, 47);
 
     // Train numbers are used as keys in the HashMap

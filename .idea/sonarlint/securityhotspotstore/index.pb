@@ -20,16 +20,10 @@ Y
 )src/main/java/utility/InputValidator.java,d/3/d3a5735897aa67d2fcfe2e4a3be74daf89a036ef
 W
 'src/main/java/utility/InputHandler.java,8/6/866ef484057a73f69ea582593d19c687098720d2
-U
-%src/test/java/DispatchSystemTest.java,a/f/afa7fa6837a4e1fe7526b3bb69da806ae3af1ac8
 P
  src/main/java/config/Colors.java,6/9/6905f1279adf14f1c412d917419f2db4954ff21d
-V
-&src/test/java/utility/PrinterTest.java,8/6/86fc1b4f11d04dd1d8dacc3d563ddba889934602
 ]
 -src/test/java/utility/InputValidatorTest.java,0/9/09373da44775a025cca1f6892940e681a470b880
-[
-+src/test/java/utility/InputHandlerTest.java,6/9/690b1b7e383618a461b84ca19c51ef506edd9fdf
 Q
 !src/main/java/DispatchSystem.java,4/9/49a8567997bff04e264bf4c858910f2e67761eae
 S
@@ -40,3 +34,9 @@ O
 src/main/java/core/Station.java,1/8/186fcca0dd54439f635c1be3c9866dd1cbc9eef7
 Z
 *src/test/java/core/TrainDepartureTest.java,9/0/90c1aeea5fbce3fd433d3f73eec51fb3780ad606
+V
+&src/main/java/core/DispatchSystem.java,6/1/61e2e7814348fb818706282ff2731d24a5aadf02
+T
+$src/main/java/io/DispatchSystem.java,2/9/294e38141f27a646ba811b6afbb392d6efeb5d2a
+R
+"src/main/java/app/DispatchApp.java,5/2/52402672d9fd1f688da555d2f8d7c351de83de53

@@ -57,9 +57,13 @@ public class InputValidator {
    * @return {@code true} if the input is valid, {@code false} otherwise.
    * @since 1.0.0
    */
-  public boolean validateStringInput(String input) {
+  public boolean validateStringInput(String input, int maxLength) {
     // Expects the input to be invalid
     boolean isValid = true;
+
+    if (maxLength == -1) {
+      maxLength = Integer.MAX_VALUE;
+    }
 
     if (input == null) {
       isValid = false;
@@ -71,6 +75,9 @@ public class InputValidator {
         isValid = false;
       }
       if (input.isBlank()) {
+        isValid = false;
+      }
+      if (input.length() > maxLength) {
         isValid = false;
       }
     }

@@ -42,19 +42,24 @@ class InputValidatorTest {
 
   @Test
   void inputIsValidPositiveTest() {
-    // Testing for full string, emtpy, blank and null
-    assertTrue(inputValidator.validateStringInput("1"), "1 should be valid");
-    assertTrue(inputValidator.validateStringInput("0"), "0 should be valid");
-    assertTrue(inputValidator.validateStringInput("-1"), "-1 should be valid");
+    assertTrue(inputValidator.validateStringInput("1", -1), "1 should be valid");
+    assertTrue(inputValidator.validateStringInput("0", -1), "0 should be valid");
+    assertTrue(inputValidator.validateStringInput("-1", -1), "-1 should be valid");
     assertTrue(inputValidator.validateStringInput("This is a very long string, but should still "
-        + "be valid as it is not empty or blank"), "Long string should be valid");
+        + "be valid as it is not empty or blank", -1), "Long string should be valid");
+
+    assertTrue(inputValidator.validateStringInput("13", 2), "Length of input is 2, should be valid");
+    assertTrue(inputValidator.validateStringInput("51", -1), "Length of input is not set, should be valid");
   }
 
   @Test
   void inputIsValidNegativeTest() {
-    // Testing for full string, emtpy, blank and null
-    assertFalse(inputValidator.validateStringInput(""), "Empty string should not be valid");
-    assertFalse(inputValidator.validateStringInput(" "), "Blank string should not be valid");
-    assertFalse(inputValidator.validateStringInput(null), "Null string should not be valid");
+    assertFalse(inputValidator.validateStringInput("", 1), "Empty string should not be valid");
+    assertFalse(inputValidator.validateStringInput(" ", 1), "Blank string should not be valid");
+    assertFalse(inputValidator.validateStringInput(null, 1), "Null string should not be valid");
+
+    assertFalse(inputValidator.validateStringInput("13", 1), "Length of input larger than 1, should not be valid");
+    assertFalse(inputValidator.validateStringInput("10000", 4), "Length of input larger than 4, should not be valid");
+
   }
 }

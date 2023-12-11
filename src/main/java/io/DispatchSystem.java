@@ -9,6 +9,9 @@ import static config.Colors.RESET;
 import static config.Colors.STRIKETHROUGH;
 import static config.Colors.WHITE_BOLD_BRIGHT;
 import static config.Colors.WHITE_BRIGHT;
+import static config.ConfigurationOptions.MAX_DESTINATION_LENGTH;
+import static config.ConfigurationOptions.MAX_LINE_LENGTH;
+import static config.ConfigurationOptions.MAX_TRACK_LENGTH;
 import static config.ConfigurationOptions.STATE_ADD_DEPARTURE;
 import static config.ConfigurationOptions.STATE_ASSIGN_DELAY;
 import static config.ConfigurationOptions.STATE_ASSIGN_TRACK;
@@ -221,10 +224,10 @@ public class DispatchSystem {
    * @since 1.0.0
    */
   private void viewTrainDepartures() {
-    // Format of which departures are displayed:
-    printer.print(STATION_DEPARTURE_SCREEN_TITLE);
     // Appends the clock to the end of the title as it uses print and not println
-    printer.println(station.getStationClock().getTimeAsString());
+    printer.println("\n" + station.getStationClock().getTimeAsString());
+    // Format of which departures are displayed:
+    printer.println(STATION_DEPARTURE_SCREEN_TITLE);
 
     // Loops through all departures, and prints them if they are valid
     // Departures are sorted by departure time
@@ -264,8 +267,8 @@ public class DispatchSystem {
       printer.print(WHITE_BRIGHT);
       int departureHour = inputHandler.getValidIntInput("Departure hour: ", 0, 23);
       int departureMinute = inputHandler.getValidIntInput("Departure minute: ", 0, 59);
-      String line = inputHandler.getValidStringInput("Line: ");
-      String destination = inputHandler.getValidStringInput("Destination: ");
+      String line = inputHandler.getValidStringInput("Line: ", MAX_LINE_LENGTH);
+      String destination = inputHandler.getValidStringInput("Destination: ", MAX_DESTINATION_LENGTH);
       int track = inputHandler.getValidIntInput("Track: \n(-1 for unset)", -1, 68);
 
 
@@ -305,7 +308,8 @@ public class DispatchSystem {
       printer.println(buildTrainDepartureDetails(station.getSelectedTrainDeparture()));
 
       String answer = inputHandler.getValidStringInput(
-          "Do you want to remove this train departure? (Y/n)"
+          "Do you want to remove this train departure? (Y/n)",
+          -1
       );
 
       if (answer.equalsIgnoreCase("y")) {
@@ -342,7 +346,7 @@ public class DispatchSystem {
         // If train number already exists, the user is asked if they want to override it
         printer.println(RED + "Train number already exists. Do you want to override it? (Y/n)");
         printer.println("(-1 to exit)" + RESET);  // Red text to make it more visible
-        String answer = inputHandler.getValidStringInput("Enter choice: ");
+        String answer = inputHandler.getValidStringInput("Enter choice: ", -1);
 
         // If user wants to override, the loop exits
         if (answer.equalsIgnoreCase("y")) {
@@ -435,6 +439,7 @@ public class DispatchSystem {
       printer.println(buildTrainDepartureDetails(station.getSelectedTrainDeparture()));
     } else {
       printer.printError("No train departure found with train number " + trainNumber + ".");
+      printer.println("To view all train-numbers, select 'View train departures'");
     }
   }
 
@@ -446,7 +451,10 @@ public class DispatchSystem {
    */
   private void searchTrainDepartureByDestination() {
     printer.println("Search train departure by destination. Not case sensitive.");
-    String destination = inputHandler.getValidStringInput("Enter destination: ");
+    String destination = inputHandler.getValidStringInput(
+        "Enter destination: ",
+        MAX_DESTINATION_LENGTH
+    );
 
     // Making a temporary stream to check if any train departures are found.
     // Is made into a stream of details of each train departure.
@@ -575,20 +583,27 @@ public class DispatchSystem {
 
     objectInformation.append(" ")
        .append(trainDeparture.getLine())
-        .append(" ")
+        .append(" ".repeat(
+            MAX_LINE_LENGTH - trainDeparture.getLine().length())
+        )
         .append(trainDeparture.getDestination())
-        .append(" ");
+        .append(" ".repeat(
+            MAX_DESTINATION_LENGTH - trainDeparture.getDestination().length())
+        );
 
     if (trainDeparture.getTrack() == -1) {
       // If the track is not set, we display "TBA" instead of the track number
       objectInformation.append("TBA");
     } else {
-      objectInformation.append(trainDeparture.getTrack());
+      objectInformation.append(trainDeparture.getTrack())
+          .append(" ".repeat(
+              MAX_TRACK_LENGTH - String.valueOf(trainDeparture.getTrack()).length())
+          );
     }
 
-    objectInformation.append(" ")
-        .append(trainDeparture.getTrainNumber())
-        .append("\n");
+    objectInformation.append("          ")  // Empty string for spacing the trainnumber away form the details
+        .append(trainDeparture.getTrainNumber()).append("\n");
+
 
     // Initializing a temporary string for returning, in case some values are not set
     String returnString = "";

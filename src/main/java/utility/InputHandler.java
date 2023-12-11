@@ -35,10 +35,11 @@ public class InputHandler {
    * If the input is valid, the input is returned.
    *
    * @param inputMessage Message to display before waiting for user input.
+   * @param maxLength The maximum length the input can be. -1 for unset.
    * @return The user input as a string.
    * @since 1.0.0
    */
-  public String getValidStringInput(String inputMessage) {
+  public String getValidStringInput(String inputMessage, int maxLength) {
     // Variables used in the method
     boolean validInput = false;
     String input = "";
@@ -49,8 +50,9 @@ public class InputHandler {
       try {
         input = scanner.nextLine();
 
-        if (!inputValidator.validateStringInput(input)) {
+        if (!inputValidator.validateStringInput(input, maxLength)) {
           printer.printError(INVALID_INPUT_MESSAGE);
+          printer.println("Input must be between 1 and " + maxLength + " characters.");
         } else {
           // Input has been validated and is valid
           validInput = true;
@@ -83,7 +85,7 @@ public class InputHandler {
 
     while (!validInput) {
       // Tries to get user input, catches exceptions if input is invalid
-      input = getValidStringInput(inputMessage);
+      input = getValidStringInput(inputMessage, -1);
 
       if (!inputValidator.validateIntInput(input, min, max)) {
         printer.printError(
