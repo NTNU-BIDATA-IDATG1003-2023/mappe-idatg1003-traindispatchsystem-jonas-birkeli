@@ -23,9 +23,9 @@ public class ConfigurationOptions {
   public static final String INVALID_INPUT_MESSAGE = "Invalid input. Please try again.";
 
   public static final String STATION_DEPARTURE_SCREEN_TITLE =
-      "AVGANGER Departures            SPOR Track   TOG-NUMMER Train-number";  // Spaces at end to account for station
-  public static final int MAX_DESTINATION_LENGTH = 15;
-  public static final int MAX_LINE_LENGTH = 4;
+      "AVGANGER Departures                      SPOR Track   TOG-NUMMER Train-number";  // Spaces at end to account for station
+  public static final int MAX_DESTINATION_LENGTH = "Øvraørnefjeddstakkslåttå".length();  // Øvraørnefjeddstakkslåttå is the city in Norway with the longest name
+  public static final int MAX_LINE_LENGTH = 3;
   public static final int MAX_TRACK_LENGTH = 3;
 
   private ConfigurationOptions() {}

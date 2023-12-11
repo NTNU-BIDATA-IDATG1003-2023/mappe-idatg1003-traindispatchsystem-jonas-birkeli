@@ -586,10 +586,12 @@ public class DispatchSystem {
         .append(" ".repeat(
             MAX_LINE_LENGTH - trainDeparture.getLine().length())
         )
+        .append(" ")
         .append(trainDeparture.getDestination())
         .append(" ".repeat(
             MAX_DESTINATION_LENGTH - trainDeparture.getDestination().length())
-        );
+        )
+        .append(" ");
 
     if (trainDeparture.getTrack() == -1) {
       // If the track is not set, we display "TBA" instead of the track number

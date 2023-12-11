@@ -56,11 +56,15 @@ public class Station {
     TrainDeparture dep1 = new TrainDeparture(23, 18, "F10", "Lillehammer", 20, 60);
     TrainDeparture dep2 = new TrainDeparture(23, 57, "F8", "Gjøvik", -1, 22);
     TrainDeparture dep3 = new TrainDeparture(3, 59, "H3", "Hamar", 1, 47);
+    TrainDeparture dep4 = new TrainDeparture(3, 59, "JB8", "Dette er en lang streng", 3, 123456789);
+
+    dep4.setDelay(0, 1);
 
     // Train numbers are used as keys in the HashMap
     addTrainDeparture(dep1);
     addTrainDeparture(dep2);
     addTrainDeparture(dep3);
+    addTrainDeparture(dep4);
   }
 
   /**
@@ -112,9 +116,9 @@ public class Station {
   public Stream<TrainDeparture> getStreamOfTimeFilteredTrainDepartures() {
     return getSortedStreamOfTrainDepartures()
         .filter(
-            d -> d.getDepartureTime().getHour() > stationTime.getHour()
-                || (d.getDepartureTime().getHour() == stationTime.getHour()
-                && d.getDepartureTime().getMinute() >= stationTime.getMinute())
+            d -> d.getDepartureTime().combine(d.getDelay()).getHour() > stationTime.getHour()
+                || (d.getDepartureTime().combine(d.getDelay()).getHour() == stationTime.getHour()
+                && d.getDepartureTime().combine(d.getDelay()).getMinute() >= stationTime.getMinute())
         );
   }
 
