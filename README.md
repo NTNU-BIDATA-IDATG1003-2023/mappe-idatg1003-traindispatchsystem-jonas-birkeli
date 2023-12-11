@@ -16,29 +16,29 @@ Maven project with the following structure:
 src
 ├── main
 │   └── java
+│       ├── app
+│       │   └── DispatchApp.java
 │       ├── config
 │       │   ├── Colors.java
 │       │   └── ConfigurationOptions.java
 │       ├── core
 │       │   ├── Station.java
 │       │   └── TrainDeparture.java
-│       ├── utility
-│       │    ├── Clock.java
-│       │    ├── InputHandler.java
-│       │    ├── InputValidator.java
-│       │    └── Printer.java 
-│       └── DispatchSystem.java
+│       ├── io
+│       │   └── DispatchSystem.java
+│       └── utility
+│           ├── Clock.java
+│           ├── InputHandler.java
+│           ├── InputValidator.java
+│           └── Printer.java 
 └── test
     └── java
         ├── core
         │   ├── StationTest.java
         │   └── TrainDepartureTest.java
-        ├── utility
-        │   ├── ClockTest.java
-        │   ├── InputHandlerTest.java
-        │   ├── InputValidatorTest.java
-        │   └── PrinterTest.java
-        └ DispatchSystem.java
+        └── utility
+            ├── ClockTest.java
+            └── InputValidatorTest.java
 
 ```
 
