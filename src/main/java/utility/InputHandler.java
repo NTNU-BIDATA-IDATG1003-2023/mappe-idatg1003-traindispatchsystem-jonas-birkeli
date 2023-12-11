@@ -1,9 +1,8 @@
 package utility;
 
-
-import lang.UserTextFeedback;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import lang.UserTextFeedback;
 
 /**
  * Class for handling user input.

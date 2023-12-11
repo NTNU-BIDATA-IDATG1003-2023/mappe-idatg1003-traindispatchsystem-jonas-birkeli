@@ -1,46 +1,20 @@
 package io;
 
-import static config.ConfigurationOptions.MAX_DESTINATION_LENGTH;
-import static config.ConfigurationOptions.MAX_LINE_LENGTH;
-import static config.ConfigurationOptions.MAX_TRACK_LENGTH;
-import static config.ConfigurationOptions.STATE_ADD_DEPARTURE;
-import static config.ConfigurationOptions.STATE_ASSIGN_DELAY;
-import static config.ConfigurationOptions.STATE_ASSIGN_TRACK;
-import static config.ConfigurationOptions.STATE_CHANGE_TIME;
-import static config.ConfigurationOptions.STATE_EXIT;
-import static config.ConfigurationOptions.STATE_HELP;
-import static config.ConfigurationOptions.STATE_REMOVE_DEPARTURE;
-import static config.ConfigurationOptions.STATE_SEARCH_BY_DESTINATION;
-import static config.ConfigurationOptions.STATE_SELECT_TRAIN_BY_NUMBER;
-import static config.ConfigurationOptions.STATE_VIEW_DEPARTURES;
-import static config.ConfigurationOptions.STATION_DEPARTURE_SCREEN_TITLE;
-
 import config.Colors;
-import lang.UserTextFeedback;
+import config.ConfigurationOptions;
 import core.Station;
 import core.TrainDeparture;
 import java.util.stream.Stream;
+import lang.UserTextFeedback;
 import utility.InputHandler;
 import utility.Printer;
 
 /**
- * The {@code app.DispatchApp} class represents the main class of the program.
- * The {@code app.DispatchApp} class handles all user input and output,
+ * The {@code DispatchApp} class represents the main class of the program.
+ * The {@code DispatchApp} class handles the main loop of the program,
  * and connects the {@code Station} to the user with a text-based interface.
- * <p>
- *   The {@code app.DispatchApp} class has the following methods:
- *   <ul>
- *     <li>{@link #start()}</li>
- *     <li>{@link #mainMenu()}</li>
- *     <li>{@link #viewTrainDepartures()}</li>
- *     <li>{@link #addTrainDeparture()}</li>
- *     <li>{@link #assignTrackToTrainDeparture()}</li>
- *     <li>{@link #assignDelayToTrainDeparture()}</li>
- *     <li>{@link #selectTrainDepartureByTrainNumber()}</li>
- *     <li>{@link #searchTrainDepartureByDestination()}</li>
- *     <li>{@link #changeTime()}</li>
- *     <li>{@link #exitApplication()}</li>
- *   </ul>
+ * <br>
+ * The program can be started with the {@link #start()} method.
  *
  * @author Jonas Birkeli
  * @version 1.7.0
@@ -55,7 +29,7 @@ public class DispatchSystem {
   private final Printer printer;
 
   /**
-   * Constructs a new {@code app.DispatchApp}.The program does not start until the {@link #start()}
+   * Constructs a new {@code DispatchApp}.The program does not start until the {@link #start()}
    * method is called.
    *
    * @since 1.2.0
@@ -73,21 +47,25 @@ public class DispatchSystem {
   }
 
   /**
-   * Starts the {@code app.DispatchApp} and runs it
+   * Starts the {@code DispatchApp} and runs it
    * continuously until the user chooses to exit the program.
    * The program starts in the main menu, and will run continuously until the user chooses to exit.
-   * <p>
-   *   The main menu has the following options:
-   *   <ul>
-   *     <li>View train departures</li>
-   *     <li>Add train departure</li>
-   *     <li>Assign track to train departure</li>
-   *     <li>Assign delay to train departure</li>
-   *     <li>Search train departure by number</li>
-   *     <li>Search train departure by destination</li>
-   *     <li>Change time</li>
-   *     <li>Exit</li>
-   *   </ul>
+   * The program will clear the screen before starting.
+   * <br>
+   * The user will be prompted with a main menu,
+   * where the user can choose between the following options:
+   * <ul>
+   *   <li>View train departures</li>
+   *   <li>Add train departure</li>
+   *   <li>Remove selected train departure</li>
+   *   <li>Assign track to selected train departure</li>
+   *   <li>Assign delay to selected train departure</li>
+   *   <li>Select train departure by number</li>
+   *   <li>Search train departure by destination</li>
+   *   <li>Change time</li>
+   *   <li>Exit</li>
+   *   <li>Help</li>
+   * </ul>
    *
    * @since 1.0.0
    */
@@ -104,19 +82,30 @@ public class DispatchSystem {
 
       mainMenu();
       switch (state) {
-        case STATE_VIEW_DEPARTURES -> viewTrainDepartures();
-        case STATE_ADD_DEPARTURE -> addTrainDeparture();
-        case STATE_REMOVE_DEPARTURE -> removeTrainDeparture();
-        case STATE_ASSIGN_TRACK -> assignTrackToTrainDeparture();
-        case STATE_ASSIGN_DELAY -> assignDelayToTrainDeparture();
-        case STATE_SELECT_TRAIN_BY_NUMBER -> selectTrainDepartureByTrainNumber();
-        case STATE_SEARCH_BY_DESTINATION -> searchTrainDepartureByDestination();
-        case STATE_CHANGE_TIME -> changeTime();
-        case STATE_EXIT -> exitApplication();
-        case STATE_HELP -> help();
-        default -> running = false;
+        case ConfigurationOptions.STATE_VIEW_DEPARTURES ->
+            viewTrainDepartures();
+        case ConfigurationOptions.STATE_ADD_DEPARTURE ->
+            addTrainDeparture();
+        case ConfigurationOptions.STATE_REMOVE_DEPARTURE ->
+            removeTrainDeparture();
+        case ConfigurationOptions.STATE_ASSIGN_TRACK ->
+            assignTrackToTrainDeparture();
+        case ConfigurationOptions.STATE_ASSIGN_DELAY ->
+            assignDelayToTrainDeparture();
+        case ConfigurationOptions.STATE_SELECT_TRAIN_BY_NUMBER ->
+            selectTrainDepartureByTrainNumber();
+        case ConfigurationOptions.STATE_SEARCH_BY_DESTINATION ->
+            searchTrainDepartureByDestination();
+        case ConfigurationOptions.STATE_CHANGE_TIME ->
+            changeTime();
+        case ConfigurationOptions.STATE_EXIT ->
+            exitApplication();
+        case ConfigurationOptions.STATE_HELP ->
+            help();
+        default ->
+            running = false;
       }
-      if (state != STATE_EXIT) {
+      if (state != ConfigurationOptions.STATE_EXIT) {
         // If we are not exiting the program, we wait for user input before clearing the screen.
         // This way, the user has time to read the output before it is cleared.
         inputHandler.waitForUserInput();
@@ -127,21 +116,10 @@ public class DispatchSystem {
 
   /**
    * Displays the main menu of the program.
-   * The main menu has the following options:
-   * <ul>
-   *   <li>View train departures</li>
-   *   <li>Add train departure</li>
-   *   <li>Assign track to train departure</li>
-   *   <li>Assign delay to train departure</li>
-   *   <li>Search train departure by number</li>
-   *   <li>Search train departure by destination</li>
-   *   <li>Change time</li>
-   *   <li>Exit</li>
-   * </ul>
-   * <p>Continuously asks for user input until a valid choice is made.
-   *    If the user input is not a valid choice, an error message is displayed.
-   *    If the user input is a valid choice, the state of the program is changed
-   *    to the corresponding choice.</p>
+   * Continuously asks for user input until a valid choice is made.
+   * If the user input is not a valid choice, an error message is displayed.
+   * If the user input is a valid choice, the state of the program is changed
+   * to the corresponding choice.</p>
    *
    * @since 1.0.0
    */
@@ -178,10 +156,11 @@ public class DispatchSystem {
    * <p>
    *   The departures are displayed in the following format:
    *   <ul>
-   *     <li>Departure time including delay</li>
+   *     <li>Departure time, including delay</li>
    *     <li>Line</li>
    *     <li>Destination</li>
    *     <li>Track</li>
+   *     <li>Train number</li>
    *   </ul>
    * </p>
    *
@@ -191,7 +170,7 @@ public class DispatchSystem {
     // Appends the clock to the end of the title as it uses print and not println
     printer.println("\n" + station.getStationClock().getTimeAsString());
     // Format of which departures are displayed:
-    printer.println(STATION_DEPARTURE_SCREEN_TITLE);
+    printer.println(ConfigurationOptions.STATION_DEPARTURE_SCREEN_TITLE);
 
     // Loops through all departures, and prints them if they are valid
     // Departures are sorted by departure time
@@ -236,10 +215,10 @@ public class DispatchSystem {
           UserTextFeedback.PROMPT_ENTER_DEPARTURE_MINUTE, 0, 59
       );
       String line = inputHandler.getValidStringInput(
-          UserTextFeedback.PROMPT_ENTER_LINE, MAX_LINE_LENGTH
+          UserTextFeedback.PROMPT_ENTER_LINE, ConfigurationOptions.MAX_LINE_LENGTH
       );
       String destination = inputHandler.getValidStringInput(
-          UserTextFeedback.PROMPT_ENTER_DESTINATION, MAX_DESTINATION_LENGTH
+          UserTextFeedback.PROMPT_ENTER_DESTINATION, ConfigurationOptions.MAX_DESTINATION_LENGTH
       );
       int track = inputHandler.getValidIntInput(
           UserTextFeedback.PROMPT_ENTER_TRACK_HELP, -1, 68
@@ -308,7 +287,9 @@ public class DispatchSystem {
     boolean validInput = false;
     int trainNumber;
     do {
-      trainNumber = inputHandler.getValidIntInput(UserTextFeedback.PROMPT_ENTER_TRAIN_NUMBER, 1, Integer.MAX_VALUE);
+      trainNumber = inputHandler.getValidIntInput(
+          UserTextFeedback.PROMPT_ENTER_TRAIN_NUMBER, 1, Integer.MAX_VALUE
+      );
 
       if (station.hasTrainDepartureWithTrainNumber(trainNumber)) {
         // If train number already exists, the user is asked if they want to override it
@@ -418,7 +399,7 @@ public class DispatchSystem {
     printer.println(UserTextFeedback.PROMPT_SEARCH_TRAIN);
     String destination = inputHandler.getValidStringInput(
         UserTextFeedback.PROMPT_ENTER_DESTINATION,
-        MAX_DESTINATION_LENGTH
+        ConfigurationOptions.MAX_DESTINATION_LENGTH
     );
 
     // Making a temporary stream to check if any train departures are found.
@@ -522,12 +503,12 @@ public class DispatchSystem {
     objectInformation.append(" ")
        .append(trainDeparture.getLine())
         .append(" ".repeat(
-            MAX_LINE_LENGTH - trainDeparture.getLine().length())
+            ConfigurationOptions.MAX_LINE_LENGTH - trainDeparture.getLine().length())
         )
         .append(" ")
         .append(trainDeparture.getDestination())
         .append(" ".repeat(
-            MAX_DESTINATION_LENGTH - trainDeparture.getDestination().length())
+            ConfigurationOptions.MAX_DESTINATION_LENGTH - trainDeparture.getDestination().length())
         )
         .append(" ");
 
@@ -537,11 +518,14 @@ public class DispatchSystem {
     } else {
       objectInformation.append(trainDeparture.getTrack())
           .append(" ".repeat(
-              MAX_TRACK_LENGTH - String.valueOf(trainDeparture.getTrack()).length())
+              ConfigurationOptions.MAX_TRACK_LENGTH - String.valueOf(
+                  trainDeparture.getTrack()).length()
+              )
           );
     }
 
-    objectInformation.append("          ")  // Empty string for spacing the trainnumber away form the details
+    objectInformation.append("          ")
+        // Empty string for spacing the trainnumber away form the details
         .append(trainDeparture.getTrainNumber()).append("\n");
 
     // Initializing a temporary string for returning, in case some values are not set

@@ -30,13 +30,16 @@ import static config.ConfigurationOptions.STATE_VIEW_DEPARTURES;
 public class UserTextFeedback {
   public static final String ERROR_TRY_AGAIN = "Please try again.";
   public static final String INPUT_INVALID = "Invalid input." + ERROR_TRY_AGAIN;
-  public static final String INVALID_INPUT_LENGTH = "Invalid input. Please enter a string with a maximum length of %d.";
-  public static final String INPUT_INVALID_NUMBER_RANGE = "Please enter a number between %d and %d.";
+  public static final String INVALID_INPUT_LENGTH =
+      "Invalid input. Please enter a string with a maximum length of %d.";
+  public static final String INPUT_INVALID_NUMBER_RANGE =
+      "Please enter a number between %d and %d.";
   public static final String TBA = "TBA";
 
-  public static final String ERROR_SEARCH_FOR_TRAIN_FIRST = "Please search for a train departure using its train-number.";
+  public static final String ERROR_SEARCH_FOR_TRAIN_FIRST =
+      "Please search for a train departure using its train-number.";
   public static final String PROMPT_ENTER_HOUR = "Enter hour: ";
-  public static final String PROMPT_ENTER_MINUTE ="Enter minute: ";
+  public static final String PROMPT_ENTER_MINUTE = "Enter minute: ";
   public static final String ERROR_NO_TRAIN_SELECTED = "No train departure selected."
       + ERROR_SEARCH_FOR_TRAIN_FIRST;
   public static final String PROMPT_ENTER_TRAIN_NUMBER = "Enter train number: ";
@@ -48,15 +51,17 @@ public class UserTextFeedback {
   // **********************
   public static final String PROMPT_TRAIN_FOR_REMOVAL = WHITE_BRIGHT
       + "Remove train departure: " + RESET;
-  public static final String PROMPT_REMOVE_EXISTING_TRAIN = "Do you want to remove this train departure? (Y/n)"; 
+  public static final String PROMPT_REMOVE_EXISTING_TRAIN =
+      "Do you want to remove this train departure? (Y/n)";
   public static final String STATUS_REMOVING_TRAIN = GREEN_BRIGHT
-    + "Train departure successfully removed." + RESET;
+      + "Train departure successfully removed." + RESET;
   public static final String STATUS_NOT_REMOVING_TRAIN = "Not removing train departure.";
 
   // *********************
   // MAIN MENU
   // **********************
-  public static final String PROMPT_SELECTED_TRAIN_HEADER = WHITE_BOLD_BRIGHT + "Selected train departure:\n" + RESET;
+  public static final String PROMPT_SELECTED_TRAIN_HEADER = WHITE_BOLD_BRIGHT
+      + "Selected train departure:\n" + RESET;
 
   private static final StringBuilder mainMenuMessage = new StringBuilder()
       .append(WHITE_BOLD_BRIGHT + "Train Dispatch System\n\n" + RESET)
@@ -80,7 +85,8 @@ public class UserTextFeedback {
       .append(". Exit\n")
       .append(STATE_HELP)
       .append(". Help\n");
-  public static final String MAIN_MENU_OPTIONS = String.valueOf(mainMenuMessage);  // Making it accessible outside the class
+  public static final String MAIN_MENU_OPTIONS = String.valueOf(mainMenuMessage);
+  // Making it accessible outside the class
 
 
   // *********************
@@ -95,7 +101,7 @@ public class UserTextFeedback {
   public static final String PROMPT_TRAIN_ADDED_SUCCESSFULLY_1 = GREEN_BRIGHT
       + "Train departure for ";
   public static final String PROMPT_TRAIN_ADDED_SUCCESSFULLY_2 =  GREEN_BRIGHT
-    + " with train number " + RESET;
+      + " with train number " + RESET;
   public static final String PROMPT_TRAIN_ADDED_SUCCESSFULLY_3 = GREEN_BRIGHT
       + " successfully added." + RESET;
 
@@ -104,25 +110,30 @@ public class UserTextFeedback {
   // **********************
   public static final String PROMPT_NUMBER_OVERRIDE_CHOICE = RED
       + "Train number already exists. Do you want to override it? (Y/n)"
-      + "\n(-1 to cancel): " + RESET;  // IMPORTANT; -1 is used to cancel the procedure, hard-coded in InputHandler
+      + "\n(-1 to cancel): " + RESET;
+  // IMPORTANT; -1 is used to cancel the procedure, hard-coded in InputHandler
   public static final String PROMPT_CANCEL_ADD_TRAIN = "Exiting procedure to add train departure.";
 
   // *********************
   // ASSIGN TRACK
   // **********************
-  public static final String PROMPT_ASSIGN_TRACK = WHITE_BRIGHT + "Assign track to train departure." + RESET;
-  public static final String PROMPT_TRACK_ASSIGNED_SUCCESSFULLY = GREEN_BRIGHT + "Track successfully assigned to train departure." + RESET;
+  public static final String PROMPT_ASSIGN_TRACK = WHITE_BRIGHT
+      + "Assign track to train departure." + RESET;
+  public static final String PROMPT_TRACK_ASSIGNED_SUCCESSFULLY = GREEN_BRIGHT
+      + "Track successfully assigned to train departure." + RESET;
 
 
   // *********************
   // ASSIGN DELAY
   // **********************
-  public static final String PROMPT_ASSIGN_DELAY = WHITE_BRIGHT + "Assign delay to train departure." + RESET;
+  public static final String PROMPT_ASSIGN_DELAY = WHITE_BRIGHT
+      + "Assign delay to train departure." + RESET;
 
   // *********************
   // SELECT TRAIN DEPARTURE
   // **********************
-  public static final String PROMPT_SELECT_TRAIN = WHITE_BRIGHT + "Select train departure by number" + RESET;
+  public static final String PROMPT_SELECT_TRAIN = WHITE_BRIGHT
+      + "Select train departure by number" + RESET;
   public static final String PROMPT_TRAIN_SELECTED_SUCCESSFULLY = "Train successfully selected.";
   public static final String ERROR_NO_TRAIN_WITH_NUMBER = "No train departure with number %d found."
       + ERROR_SEARCH_FOR_TRAIN_FIRST;
@@ -131,15 +142,18 @@ public class UserTextFeedback {
   // *********************
   // SEARCH TRAIN DEPARTURE
   // **********************
-  public static final String PROMPT_SEARCH_TRAIN = "Search train departure by destination. Not case sensitive.";
+  public static final String PROMPT_SEARCH_TRAIN =
+      "Search train departure by destination. Not case sensitive.";
   public static final String PROMPT_ENTER_DESTINATION = "Enter destination: ";
   public static final String PROMPT_TRAIN_FOUND = GREEN_BRIGHT + "Train departure found:" + RESET;
-  public static final String ERROR_NO_TRAIN_FOUND = "No train departure found with destination %s .";
+  public static final String ERROR_NO_TRAIN_FOUND =
+      "No train departure found with destination %s .";
 
   // *********************
   // CHANGE TIME
   // **********************
-  public static final String PROMPT_CHANGE_TIME = WHITE_BRIGHT + "Changing time of station. " + RESET;
+  public static final String PROMPT_CHANGE_TIME = WHITE_BRIGHT
+      + "Changing time of station. " + RESET;
   public static final String ERROR_TIME_NOT_LATER = "Time must be later than current time.";
   public static final String TIME_CHANGED_SUCCESFULLY = "Time changed successfully to %s";
 
@@ -170,7 +184,8 @@ public class UserTextFeedback {
       .append("The selected train departure will be displayed at the bottom when viewing ")
       .append("train departures.\n")
       .append("You can modify the track and delay of a train departure.\n\n");
-  public static final String HELP_MESSAGE = String.valueOf(helpMessage);  // Making it accessible outside the class
+  public static final String HELP_MESSAGE = String.valueOf(helpMessage);
+  // Making it accessible outside the class
 
   // What the user is prompted to enter when prompted with multiple choices
   public static final String INPUT_CHOICE = "Enter choice: ";

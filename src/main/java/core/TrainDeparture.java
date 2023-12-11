@@ -9,8 +9,7 @@ import utility.Clock;
  * The {@code TrainDeparture} class represents a train on a station.
  * All {@code TrainDeparture}s has a departuretime,
  * delay, line, destination and track.
- * <p>
- *   This class has the following methods:
+ * This class has the following methods:
  *   <ul>
  *     <li>{@link #getDepartureTime()}</li>
  *     <li>{@link #setDelay(int, int)}</li>

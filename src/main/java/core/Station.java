@@ -13,8 +13,7 @@ import utility.Clock;
  * Class for representing a station.
  * The station has a collection of every train departure, and has the responsibility of adding,
  * searching and sorting the train departures for later printing or other use-cases.
- * <p>
- *   This class has the following methods:
+ * This class has the following methods:
  *   <ul>
  *     <li>{@link #addTrainDeparture(TrainDeparture)}</li>
  *     <li>{@link #getTrainDepartureByTrainNumber(int)}</li>
@@ -56,15 +55,17 @@ public class Station {
     TrainDeparture dep1 = new TrainDeparture(23, 18, "F10", "Lillehammer", 20, 60);
     TrainDeparture dep2 = new TrainDeparture(23, 57, "F8", "Gjøvik", -1, 22);
     TrainDeparture dep3 = new TrainDeparture(3, 59, "H3", "Hamar", 1, 47);
-    TrainDeparture dep4 = new TrainDeparture(3, 59, "JB8", "Dette er en lang streng", 3, 123456789);
 
-    dep4.setDelay(0, 1);
-
-    // Train numbers are used as keys in the HashMap
     addTrainDeparture(dep1);
     addTrainDeparture(dep2);
     addTrainDeparture(dep3);
+    // Train numbers are used as keys in the HashMap
+
+    TrainDeparture dep4 = new TrainDeparture(3, 59, "JB8", "Dette er en lang streng", 3, 123456789);
+    dep4.setDelay(0, 1);
+
     addTrainDeparture(dep4);
+
   }
 
   /**
@@ -118,7 +119,8 @@ public class Station {
         .filter(
             d -> d.getDepartureTime().combine(d.getDelay()).getHour() > stationTime.getHour()
                 || (d.getDepartureTime().combine(d.getDelay()).getHour() == stationTime.getHour()
-                && d.getDepartureTime().combine(d.getDelay()).getMinute() >= stationTime.getMinute())
+                && d.getDepartureTime().combine(d.getDelay()).getMinute() >= stationTime.getMinute()
+            )
         );
   }
 
