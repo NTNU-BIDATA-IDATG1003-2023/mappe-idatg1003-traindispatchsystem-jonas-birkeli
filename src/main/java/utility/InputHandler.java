@@ -1,7 +1,7 @@
 package utility;
 
-import static config.ConfigurationOptions.INVALID_INPUT_MESSAGE;
 
+import lang.UserTextFeedback;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -51,14 +51,14 @@ public class InputHandler {
         input = scanner.nextLine();
 
         if (!inputValidator.validateStringInput(input, maxLength)) {
-          printer.printError(INVALID_INPUT_MESSAGE);
-          printer.println("Input must be between 1 and " + maxLength + " characters.");
+          printer.printError(UserTextFeedback.INPUT_INVALID);
+          printer.println(String.format(UserTextFeedback.INVALID_INPUT_LENGTH, maxLength));
         } else {
           // Input has been validated and is valid
           validInput = true;
         }
       } catch (NoSuchElementException | IllegalStateException e) {
-        printer.printError(INVALID_INPUT_MESSAGE);
+        printer.printError(UserTextFeedback.INPUT_INVALID);
         // Error message
       }
     }
@@ -88,9 +88,7 @@ public class InputHandler {
       input = getValidStringInput(inputMessage, -1);
 
       if (!inputValidator.validateIntInput(input, min, max)) {
-        printer.printError(
-            "Input does not match the requirements. Must be between " + min + " and " + max + "."
-        );
+        printer.printError(String.format(UserTextFeedback.INPUT_INVALID_NUMBER_RANGE, min, max));
         continue;
       }
 

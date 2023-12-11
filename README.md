@@ -7,8 +7,9 @@ STUDENT ID = "107006"
 
 ## Project description
 
-Train dispatch system, where the user can view traindepartures, add traindepartures, search for and select traindepartures, and perform certain actions on the selected traindeparture.
-
+Train dispatch system, where the user can view traindepartures, add traindepartures, remove traindepartures, search for and select traindepartures, and perform certain actions on the selected traindeparture.
+You can also update the time of the station, and quit the application. 
+There is a help option that shows the user the different options and how to use them.
 ## Project structure
 
 Maven project with the following structure:
@@ -54,20 +55,21 @@ The program will show a list of options, and the user can choose an option by ty
 The options are as following:
 1. View train-departures
 2. Add train-departure
-3. Assign track to train-departure
-4. Assign delay to train-departure's departure-time
-5. Search train-departure by unique train-number
-6. Search train-departure by destination
-7. Update time of station
-8. Quit application
-9. Help
+3. Remove selected train-departure
+4. Assign track to selevted train-departure
+5. Assign delay to selected train-departure's departure-time
+6. Seelct a train-departure by its unique train-number
+7. Search train-departure by destination
+8. Update time of station
+9. Quit application
+10. Help
 
 The user can choose an option by typing the corresponding number, and the program will then execute the corresponding method.
-The user can quit the application by typing 8.
+The user can quit the application by typing 9.
 
 ## How to run the tests
 
-The tests can be run by running the DispatchAppTest.java, core.StationTest.java, core.TrainDepartureTest.java, utility.ClockTest.java, utility.InputHandlerTest.java, utility.InputValidatorTest.java, and utility.PrinterTest.java files.
+The tests can be run by running the core.StationTest.java, core.TrainDepartureTest.java, utility.ClockTest.java and utility.InputValidatorTest.java files.
 The tests can be run by right-clicking the file and choosing "Run 'DispatchAppTest'".
 The tests can also be run by clicking the green play button in the top right corner of the file.
 
