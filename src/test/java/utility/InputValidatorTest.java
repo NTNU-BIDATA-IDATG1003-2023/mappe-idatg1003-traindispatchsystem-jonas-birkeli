@@ -20,28 +20,29 @@ class InputValidatorTest {
   }
 
   @Test
-  void isAcceptableIntPositiveTest() {
+  void validateIntInputPositiveTest() {
     // Testing for positive and negative integers
     // by using the same min and max values
     assertTrue(inputValidator.validateIntInput("1", 1, 1), "1 is valid");
     assertTrue(inputValidator.validateIntInput("1", 0, 2), "1 is valid");
     assertTrue(inputValidator.validateIntInput("-1", -1, 0), "1 is valid");
     assertTrue(inputValidator.validateIntInput("1", 1, 1), "1 is valid");
-
+    // Feedback messages produced by CoPilot
   }
 
   @Test
-  void isAcceptableIntNegativeTest() {
-    // Testing for negative integers
+  void validateIntInputNegativeTest() {
+    // Testing for negative integers and NaN
     assertFalse(inputValidator.validateIntInput("0", 1, 1), "0 is not valid as it is out of bounds");
     assertFalse(inputValidator.validateIntInput("-1", 1, 1), "-1 is not valid as it is out of bounds");
     assertFalse(inputValidator.validateIntInput("", 1, 1), "Empty string is not valid");
     assertFalse(inputValidator.validateIntInput(" ", 1, 1), "Blank string is not valid");
     assertFalse(inputValidator.validateIntInput(null, 1, 1), "Null string is not valid");
+    // Feedback messages produced by CoPilot
   }
 
   @Test
-  void inputIsValidPositiveTest() {
+  void validateStringInputPositiveTest() {
     assertTrue(inputValidator.validateStringInput("1", -1), "1 should be valid");
     assertTrue(inputValidator.validateStringInput("0", -1), "0 should be valid");
     assertTrue(inputValidator.validateStringInput("-1", -1), "-1 should be valid");
@@ -50,6 +51,7 @@ class InputValidatorTest {
 
     assertTrue(inputValidator.validateStringInput("13", 2), "Length of input is 2, should be valid");
     assertTrue(inputValidator.validateStringInput("51", -1), "Length of input is not set, should be valid");
+    // Feedback messages produced by CoPilot
   }
 
   @Test
@@ -60,6 +62,7 @@ class InputValidatorTest {
 
     assertFalse(inputValidator.validateStringInput("13", 1), "Length of input larger than 1, should not be valid");
     assertFalse(inputValidator.validateStringInput("10000", 4), "Length of input larger than 4, should not be valid");
+    // Feedback messages produced by CoPilot
 
   }
 }

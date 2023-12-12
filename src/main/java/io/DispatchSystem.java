@@ -21,6 +21,12 @@ import utility.Printer;
  * @since 1.0.0
  */
 public class DispatchSystem {
+  public static final String APP_NAME = "DispatchApp";
+  public static final String APP_VERSION = "1.7.0";
+  public static final String APP_AUTHOR = "Jonas Birkeli";
+  public static final String APP_DESCRIPTION = "A dispatch system for trains.";
+  public static final String APP_RELEASE_DATE = "29-11-2023";
+
   // Fields in this class
   private int state;
   private boolean running;
@@ -29,8 +35,10 @@ public class DispatchSystem {
   private final Printer printer;
 
   /**
-   * Constructs a new {@code DispatchApp}.The program does not start until the {@link #start()}
-   * method is called.
+   * Constructs a new {@code DispatchApp}. This only initializes the fields of the class.
+   * The program does not start until the {@link #start()} method is called.
+   * The constructor will add some filler train departures to the station,
+   * to make the station look more realistic.
    *
    * @since 1.2.0
    */
@@ -70,7 +78,7 @@ public class DispatchSystem {
    * @since 1.0.0
    */
   public void start() {
-    printer.println("Starting " + app.DispatchApp.APP_NAME + " " + app.DispatchApp.APP_VERSION);
+    printer.println("Starting " + APP_NAME + " v." + APP_VERSION);
     // Clears the screen before starting the program.
     // This method does not work in all terminals or operating systems.
     printer.clearScreen();
@@ -149,8 +157,8 @@ public class DispatchSystem {
   }
 
   /**
-   * Displays all train departures.
-   * If some info from one departure is missing, it will not be displayed.
+   * Displays all {@code TrainDeparture}s with a header for formatting alongside the station time.
+   * If some info from one {@code TrainDeparture} is missing, it will not be displayed.
    * If departure time is earlier than current time, it will not be displayed.
    *
    * <p>
@@ -300,7 +308,7 @@ public class DispatchSystem {
         if (answer.equalsIgnoreCase("y")) {
           validInput = true;
         } else if (answer.equals("-1")) {
-          trainNumber = -1;
+          trainNumber = -1;  // If user wants to exit, -1 is returned
           printer.println(UserTextFeedback.PROMPT_CANCEL_ADD_TRAIN);
 
           validInput = true;
@@ -454,7 +462,8 @@ public class DispatchSystem {
 
   /**
    * Displays a help message to the user on how the program works.
-   * Explains what to do to modify a train departure, and lists what you can do in this program.
+   * Explains what to do to modify a {@code TrainDeparture},
+   * and lists what you can do in this program.
    *
    * @since 1.4.0
    */
@@ -466,12 +475,14 @@ public class DispatchSystem {
   /**
    * Creates a String representation of every valuable field for an end-user to read.
    * If {@code TrainDeparture.line} or {@code TrainDeparture.destination} is not set,
-   * the method returns an empty string.
+   * the method will return an empty string.
    * If {@code TrainDeparture.track} is not set,
-   * the method returns "TBA" instead of the track number.
+   * the method sets "TBA" as field instead of the track number.
    * If {@code TrainDeparture.delay} is not set,
-   * the method returns the departure time without delay.
-   * If {@code TrainDeparture.delay} is set, the method returns the departure time with delay.
+   * the method ignores the delay.
+   * If {@code TrainDeparture.delay}, it strikes through the departure time,
+   * and displays the actual departure time.
+   * <br>
    * If all values are present, the method returns a string with all values.
    *
    * @param trainDeparture The {@code TrainDeparture} to build a string representation of.
@@ -494,8 +505,7 @@ public class DispatchSystem {
             .append(" ")
             .append(trainDeparture
                 .getDepartureTime()
-                .combine(trainDeparture.getDelay())
-                .getTimeAsString()
+                .combine(trainDeparture.getDelay()).getTimeAsString()
           // Combining the departure-time with delay to get the actual departure time
           );
     }

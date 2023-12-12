@@ -2,11 +2,8 @@ package utility;
 
 /**
  * The {@code InputValidator} class is used to validate input.
- * <p>
- *   This class is used to validate input.
- *   It is used to check if the input is parsable to an integer.
- *   It is also used to check if the input is valid.
- * </p>
+ * This class is used to validate input.
+ * It is used to check if the input meat the requirements by the given parameters.
  *
  * @author Jonas Birkeli
  * @version 1.0.0
@@ -15,7 +12,7 @@ package utility;
 public class InputValidator {
 
   /**
-   * Checks if the input is parsable to an integer.
+   * Checks if the input is parsable to an integer, and if the integer is within the given range.
    *
    * @param input The input to check.
    *              This input is expected to be parsable to an integer.

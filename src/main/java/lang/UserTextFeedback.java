@@ -28,6 +28,9 @@ import static config.ConfigurationOptions.STATE_VIEW_DEPARTURES;
  * @since 1.0.0
  */
 public class UserTextFeedback {
+  // *********************
+  // COMMON MESSAGES
+  // **********************
   public static final String ERROR_TRY_AGAIN = "Please try again.";
   public static final String INPUT_INVALID = "Invalid input." + ERROR_TRY_AGAIN;
   public static final String INVALID_INPUT_LENGTH =
@@ -35,7 +38,6 @@ public class UserTextFeedback {
   public static final String INPUT_INVALID_NUMBER_RANGE =
       "Please enter a number between %d and %d.";
   public static final String TBA = "TBA";
-
   public static final String ERROR_SEARCH_FOR_TRAIN_FIRST =
       "Please search for a train departure using its train-number.";
   public static final String PROMPT_ENTER_HOUR = "Enter hour: ";
@@ -44,7 +46,7 @@ public class UserTextFeedback {
       + ERROR_SEARCH_FOR_TRAIN_FIRST;
   public static final String PROMPT_ENTER_TRAIN_NUMBER = "Enter train number: ";
   public static final String PROMPT_ENTER_TRACK = "Enter track: ";
-  public static final String bruh = "bruh";
+  public static final String INPUT_CHOICE = "Enter choice: ";
 
   // *********************
   // REMOVE TRAIN DEPARTURE
@@ -76,7 +78,7 @@ public class UserTextFeedback {
       .append(STATE_ASSIGN_DELAY)
       .append(". Assign delay to" + WHITE_BOLD + " selected" + RESET + " train departure\n")
       .append(STATE_SELECT_TRAIN_BY_NUMBER)
-      .append("." + WHITE + " Select" + RESET + " train departure by number\n")
+      .append("." + WHITE_BOLD + " Select" + RESET + " train departure by number\n")
       .append(STATE_SEARCH_BY_DESTINATION)
       .append(". Search train departure by destination\n")
       .append(STATE_CHANGE_TIME)
@@ -186,9 +188,6 @@ public class UserTextFeedback {
       .append("You can modify the track and delay of a train departure.\n\n");
   public static final String HELP_MESSAGE = String.valueOf(helpMessage);
   // Making it accessible outside the class
-
-  // What the user is prompted to enter when prompted with multiple choices
-  public static final String INPUT_CHOICE = "Enter choice: ";
 
   // *********************
   // EXIT APPLICATION

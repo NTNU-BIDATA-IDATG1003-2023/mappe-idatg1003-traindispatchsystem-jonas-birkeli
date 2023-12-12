@@ -34,6 +34,7 @@ class ClockTest {
     clock.setTime(10, 9);
     assertNotEquals(4, clock.getHour(), "Hour is not set correctly, should be 10");
     assertNotEquals(20, clock.getMinute(), "Minute is not set correctly, should be 9");
+    // Feedback messages produced by CoPilot
   }
 
   @Test
@@ -89,6 +90,7 @@ class ClockTest {
     clock = clock.combine(testClock);
     assertEquals(8, clock.getHour(), "Hour is combined correctly, is 8");
     assertEquals(40, clock.getMinute(), "Minute is combined correctly, is 40");
+    // Feedback messages produced by CoPilot
   }
 
   @Test
@@ -100,5 +102,6 @@ class ClockTest {
     clock = clock.combine(testClock);
     assertNotEquals(4, clock.getHour(), "Hour is not combined correctly, should be 8");
     assertNotEquals(20, clock.getMinute(), "Minute is not combined correctly, should be 40");
+    // Feedback messages produced by CoPilot
   }
 }

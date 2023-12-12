@@ -5,6 +5,8 @@ import static config.Colors.RESET;
 
 /**
  * Class for handling user output.
+ * This class makes it easy to adjust values and/or add new features to the application,
+ * like adding colors to the output, or changing the output stream.
  *
  * @author Jonas Birkeli
  * @version 1.0.0
@@ -43,11 +45,12 @@ public class Printer {
    * This method uses ANSI escape codes to clear the screen.
    * This method is not supported on all operating systems.
    * If the method is not supported, the screen is not cleared.
-   * This method has been created using CoPilot. <br>
+   * This method has been created using CoPilot.
    *
    * @since 1.0.0
    */
   public void clearScreen() {
+    // Produced by CoPilot
     System.out.print("\033[H\033[2J");
     System.out.flush();
   }

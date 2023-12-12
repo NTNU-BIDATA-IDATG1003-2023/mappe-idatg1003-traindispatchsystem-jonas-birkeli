@@ -91,6 +91,7 @@ public class InputHandler {
         continue;
       }
 
+      // No exception will be thrown, as the input has been validated
       inputAsInt = Integer.parseInt(input);
 
       // If no exception is thrown, the input is valid.

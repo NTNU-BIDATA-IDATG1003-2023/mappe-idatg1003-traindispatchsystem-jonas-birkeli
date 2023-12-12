@@ -108,6 +108,7 @@ public class Clock {
 
   /**
    * Returns the {@code horr} of the clock.
+   * The {@code hour} is returned as an integer which is between 0 and 23.
    *
    * @return The {@code hour} of the clock.
    * @since 1.2.0
@@ -118,6 +119,7 @@ public class Clock {
 
   /**
    * Returns the {@code minute} of the clock.
+   * The {@code minute} is returned as an integer which is between 0 and 59.
    *
    * @return The {@code minute} of the clock.
    * @since 1.2.0
@@ -171,6 +173,8 @@ public class Clock {
     int newMinute = this.minute + delay.getMinute();
 
     newHour += newMinute / 60;  // How many times minute fits within 60
+    // Floor division, not accounting for negative numbers
+
     newHour %= 24;  // Overflow check
     newMinute %= 60;  // Overflow check
 

@@ -3,7 +3,8 @@ package config;
 
 /**
  * A class containing ANSI escape codes for colors.
- * SC gotten from: https://www.w3schools.blog/ansi-colors-java
+ * SC gotten from: https://www.w3schools.blog/ansi-colors-java and CoPilot.
+ * Some colors are not used, but are kept for future use.
  *
  * @version 1.0.0
  * @since 1.0.0
@@ -13,6 +14,7 @@ public class Colors {
   public static final String RESET = "\033[0m";  // Text Reset
 
   // Strikethrough
+  // Produced by CoPilot
   public static final String STRIKETHROUGH = "\u001B[9m";
 
   // Regular Colors
@@ -85,6 +87,7 @@ public class Colors {
   public static final String CYAN_BACKGROUND_BRIGHT = "\033[0;106m";  // CYAN
   public static final String WHITE_BACKGROUND_BRIGHT = "\033[0;107m";   // WHITE
 
+  // Produced by CoPilot
   private Colors() {}
   // Empty constructor to hide the implicit public one.
 }

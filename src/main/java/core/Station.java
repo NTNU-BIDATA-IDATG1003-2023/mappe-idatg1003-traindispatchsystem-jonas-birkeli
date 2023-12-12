@@ -55,6 +55,8 @@ public class Station {
     TrainDeparture dep1 = new TrainDeparture(23, 18, "F10", "Lillehammer", 20, 60);
     TrainDeparture dep2 = new TrainDeparture(23, 57, "F8", "Gjøvik", -1, 22);
     TrainDeparture dep3 = new TrainDeparture(3, 59, "H3", "Hamar", 1, 47);
+    // Produced by CoPilot /\
+    //                     ||
 
     addTrainDeparture(dep1);
     addTrainDeparture(dep2);
@@ -97,13 +99,21 @@ public class Station {
 
   /**
    * Returns the {@code TrainDeparture} with the given trainNumber.
+   * May return null if the station does not have a {@code TrainDeparture} with the given
+   * trainNumber.
    *
    * @param trainNumber The trainNumber of the {@code TrainDeparture} to return.
    * @return The {@code TrainDeparture} with the given train-number.
    * @since 1.0.0
    */
   public TrainDeparture getTrainDepartureByTrainNumber(int trainNumber) {
-    return trainDepartures.get(trainNumber);
+    TrainDeparture trainDeparture = null;
+
+    if (hasTrainDepartureWithTrainNumber(trainNumber)) {
+      trainDeparture = trainDepartures.get(trainNumber);
+    }
+
+    return trainDeparture;
   }
 
   /**
@@ -121,17 +131,19 @@ public class Station {
                 || (d.getDepartureTime().combine(d.getDelay()).getHour() == stationTime.getHour()
                 && d.getDepartureTime().combine(d.getDelay()).getMinute() >= stationTime.getMinute()
             )
+        // If hour is greater than station hour, we know the train departs after the station
+        // time.
+        // If hour is equal to station hour, we need to check if the minute is greater than
+        // or equal to the station minute.
         );
   }
-
-
 
   /**
    * Filters out the destinations that does not contain the given partial complete destination, and
    * returns a stream of the trains that passes the filter.
    * If no {@code TrainDeparture} has this destination, an empty stream is returned.
    * If there are multiple {@code TrainDepartures} with this destination, all of them are returned.
-   * The stream is sorted by departure time.
+   * The stream is sorted by departure time, not including delay.
    *
    * @param partialDestination The partial complete destination to filter for.
    * @return A stream of {@code TrainDepartures} that has the given partial complete destination.

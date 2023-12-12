@@ -32,6 +32,7 @@ class StationTest {
     assertEquals(55, station.getTrainDepartureByTrainNumber(55).getTrainNumber(), "Train number should be 55");
     assertNotEquals(14, station.getTrainDepartureByTrainNumber(55).getDepartureTime().getHour(), "Hour should not be 14, should be 18");
     assertEquals(15, station.getTrainDepartureByTrainNumber(55).getDepartureTime().getMinute(), "Minute should be 15, should be 15");
+    // Feedback messages produced by CoPilot
   }
 
   @Test
@@ -98,12 +99,14 @@ class StationTest {
   void getStationClockPositiveTest() {
     assertEquals(4, station.getStationClock().getHour(), "Hour should be 4");
     assertEquals(20, station.getStationClock().getMinute(), "Minute should be 20");
+    // Feedback messages produced by CoPilot
   }
 
   @Test
   void getStationClockNegativeTest() {
     assertNotEquals(5, station.getStationClock().getHour(), "Hour should not be 5, should be 4");
     assertNotEquals(21, station.getStationClock().getMinute(), "Minute should not be 21, should be 20");
+    // Feedback messages produced by CoPilot
   }
 
   @Test
@@ -111,6 +114,7 @@ class StationTest {
     station.setStationTime(5, 0);
     assertEquals(5, station.getStationClock().getHour(), "Hour should be 5");
     assertEquals(0, station.getStationClock().getMinute(), "Minute should be 0");
+    // Feedback messages produced by CoPilot
   }
 
   @Test
@@ -118,5 +122,6 @@ class StationTest {
     station.setStationTime(5, 0);
     assertNotEquals(4, station.getStationClock().getHour(), "Hour should not be 4, should be 5");
     assertNotEquals(1, station.getStationClock().getMinute(), "Minute should not be 1, should be 0");
+    // Feedback messages produced by CoPilot
   }
 }

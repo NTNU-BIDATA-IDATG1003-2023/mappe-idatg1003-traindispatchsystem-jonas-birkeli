@@ -99,6 +99,7 @@ class TrainDepartureTest {
     assertEquals(-1, trainDeparture.getTrack(), "Track should be -1");
     trainDeparture.setTrack(0);
     assertEquals(-1, trainDeparture.getTrack(), "Track should be -1");
+    // Feedback messages produced by CoPilot
   }
 
   @Test
@@ -110,6 +111,7 @@ class TrainDepartureTest {
     assertNotEquals(0, trainDeparture.getTrack(), "Track should not be 0, should be -1");
     trainDeparture.setTrack(0);
     assertNotEquals(0, trainDeparture.getTrack(), "Track should not be 0, should be -1");
+    // Feedback messages produced by CoPilot
   }
 
   @Test
@@ -122,6 +124,7 @@ class TrainDepartureTest {
     assertEquals(-1, trainDeparture.getTrack(), "Track should be -1");
     trainDeparture.setTrack(0);
     assertEquals(-1, trainDeparture.getTrack(), "Track should be -1");
+    // Feedback messages produced by CoPilot
   }
 
   @Test
@@ -134,6 +137,7 @@ class TrainDepartureTest {
     assertNotEquals(0, trainDeparture.getTrack(), "Track should not be 0, should be -1");
     trainDeparture.setTrack(0);
     assertNotEquals(0, trainDeparture.getTrack(), "Track should not be 0, should be -1");
+    // Feedback messages produced by CoPilot
   }
 
   @Test
@@ -155,6 +159,7 @@ class TrainDepartureTest {
 
     TrainDeparture trainDeparture3 = new TrainDeparture(5, 5, "L3", "Oslo", 4, 49);
     assertEquals(-1, trainDeparture.compareTo(trainDeparture3), "Should be less or -1");
+    // Produced by CoPilot
   }
 
   @Test
@@ -170,5 +175,6 @@ class TrainDepartureTest {
 
     TrainDeparture trainDeparture3 = new TrainDeparture(5, 5, "L3", "Oslo", 4, 49);
     assertNotEquals(0, trainDeparture.compareTo(trainDeparture3), "Should be less or -1");
+    // Feedback messages produced by CoPilot
   }
 }

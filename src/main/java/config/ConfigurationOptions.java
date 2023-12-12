@@ -28,6 +28,7 @@ public class ConfigurationOptions {
   public static final int MAX_LINE_LENGTH = 3;
   public static final int MAX_TRACK_LENGTH = 3;
 
+  // Produced by CoPilot
   private ConfigurationOptions() {}
   // Empty constructor to hide the implicit public one.
 }
