@@ -22,10 +22,10 @@ import utility.Printer;
  */
 public class DispatchSystem {
   public static final String APP_NAME = "DispatchApp";
-  public static final String APP_VERSION = "1.7.0";
+  public static final String APP_VERSION = "2.0.0";
   public static final String APP_AUTHOR = "Jonas Birkeli";
   public static final String APP_DESCRIPTION = "A dispatch system for trains.";
-  public static final String APP_RELEASE_DATE = "29-11-2023";
+  public static final String APP_RELEASE_DATE = "12-12-2023";
 
   // Fields in this class
   private int state;
